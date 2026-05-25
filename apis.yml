@@ -1,0 +1,347 @@
+aid: docupanda
+url: https://raw.githubusercontent.com/api-evangelist/docupanda/refs/heads/main/apis.yml
+apis:
+- aid: docupanda:docupanda-documents-api
+  name: DocuPanda Documents API
+  tags:
+  - AI
+  - Document Extraction
+  - Documents
+  - OCR
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  - url: https://docs.docupipe.ai/docs/getting-started
+    type: GettingStarted
+  - url: https://docs.docupipe.ai/llms.txt
+    type: APIReference
+  description: Submit, retrieve, list, search, split, merge, bulk-download, and delete documents.
+    DocuPanda parses files into searchable PDFs and structured page-level text, tables, and bounding
+    boxes. Supports handwriting, checkboxes, tables, 60+ languages, presigned download URLs for the
+    original file, OCR PDF, and a permanent public URL.
+- aid: docupanda:docupanda-schemas-api
+  name: DocuPanda Schemas API
+  tags:
+  - AI
+  - Document Extraction
+  - Schemas
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Create, edit, copy, delete, and list extraction schemas, plus AI auto-generate a schema
+    from sample documents and retrieve schema proposals per document. Schemas define the structured
+    JSON shape DocuPanda will produce when standardizing documents.
+- aid: docupanda:docupanda-standardizations-api
+  name: DocuPanda Standardizations API
+  tags:
+  - AI
+  - Document Extraction
+  - Standardization
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Run the agentic V3 standardization engine (or legacy V2) against documents to produce
+    schema-compliant JSON. Retrieve results as JSON, plaintext, or XML; bulk-download as Excel or
+    merged Excel; query results in natural language; and match standardizations against candidate
+    lists.
+- aid: docupanda:docupanda-classifications-api
+  name: DocuPanda Classifications API
+  tags:
+  - AI
+  - Classification
+  - Document Extraction
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Classify batches of documents into a workspace-defined taxonomy. Manage the class
+    taxonomy (add, edit, delete, list, copy classes across workspaces) and route documents to the
+    right downstream schema or workflow based on the assigned class.
+- aid: docupanda:docupanda-analysis-api
+  name: DocuPanda Analysis API
+  tags:
+  - AI
+  - Analysis
+  - Document Extraction
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Run free-form LLM analysis prompts against a single document or a batch and retrieve
+    the resulting analysis by id. Useful for one-off Q&A, summaries, or red-flag checks that do not
+    require a fixed extraction schema.
+- aid: docupanda:docupanda-reviews-api
+  name: DocuPanda Reviews API
+  tags:
+  - AI
+  - Document Extraction
+  - Review
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Generate visual extraction reviews that highlight where each standardized field was
+    sourced in the original document. List, update, share via presigned URL, and delete reviews.
+    Underpins human-in-the-loop QA on production extractions.
+- aid: docupanda:docupanda-workflows-api
+  name: DocuPanda Workflows API
+  tags:
+  - AI
+  - Document Extraction
+  - Workflows
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Define on-submit-document workflows that chain classification, schema selection,
+    standardization, and review automatically when a new document is uploaded. List, update, and
+    delete workflows.
+- aid: docupanda:docupanda-jobs-api
+  name: DocuPanda Jobs API
+  tags:
+  - AI
+  - Document Extraction
+  - Jobs
+  - Audit
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Inspect every job DocuPanda runs on your behalf with the credit cost it consumed.
+    Retrieve a job by id, list jobs, bulk-delete jobs, and pull a summary count with credit breakdown
+    for FinOps reporting.
+- aid: docupanda:docupanda-webhooks-api
+  name: DocuPanda Webhooks API
+  tags:
+  - AI
+  - Document Extraction
+  - Webhooks
+  - Events
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Register and deregister webhook endpoints to receive event-driven callbacks when
+    documents finish processing, classifications complete, or standardizations are ready. Includes a
+    portal-link endpoint that hands users a managed Svix-style subscription portal.
+- aid: docupanda:docupanda-account-api
+  name: DocuPanda Account API
+  tags:
+  - AI
+  - Account
+  - Document Extraction
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  properties:
+  - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+    type: Documentation
+  description: Fetch the current account profile including remaining credits, plan tier, and
+    workspace context. Pair with the Jobs API to build internal usage dashboards.
+name: DocuPanda
+tags:
+- AI
+- Artificial Intelligence
+- Document Extraction
+- Document Intelligence
+- IDP
+- OCR
+- Document AI
+image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+kind: contract
+access: 3rd-Party
+common:
+- type: Portal
+  url: https://www.docupipe.ai/
+- type: Portal
+  url: https://www.docupanda.io
+  name: DocuPanda (legacy domain, redirects to DocuPipe)
+- type: Documentation
+  url: https://docs.docupipe.ai/
+- type: APIReference
+  url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+- type: GettingStarted
+  url: https://docs.docupipe.ai/docs/getting-started
+- type: Authentication
+  url: https://docs.docupipe.ai/reference/authentication
+- type: APIReference
+  url: https://docs.docupipe.ai/llms.txt
+  name: llms.txt index of all API endpoints
+- type: SignUp
+  url: https://app.docupipe.ai/
+- type: Login
+  url: https://app.docupipe.ai/
+- type: Console
+  url: https://app.docupipe.ai/
+- type: StatusPage
+  url: https://www.docupipe.ai/status
+- type: Blog
+  url: https://www.docupipe.ai/blog
+- type: Security
+  url: https://www.docupipe.ai/security
+- type: TrustCenter
+  url: https://docupipe.com/security
+- type: Compliance
+  url: https://www.docupipe.ai/security
+  name: SOC 2 Type 2, ISO 27001, HIPAA, GDPR
+- type: PrivacyPolicy
+  url: https://www.docupipe.ai/privacy
+- type: TermsOfService
+  url: https://www.docupipe.ai/terms
+- type: GitHubOrganization
+  url: https://github.com/DocuPanda
+- type: SDK
+  url: https://github.com/DocuPanda/docupanda-python-api
+  name: DocuPanda Python SDK
+- type: Tool
+  url: https://github.com/DocuPanda/docupanda-desktop
+  name: DocuPanda Desktop (upload/download client)
+- type: Pricing
+  url: https://www.docupipe.ai/pricing
+  data:
+  - id: starter
+    name: Starter
+    entries:
+    - geo: US
+      unit: 1
+      label: User
+      limit: 1
+      price: 0
+      metric: user
+      timeFrame: month
+      description: 100 monthly credits plus a 300-credit sign-up bonus. Full API access. No credit card required.
+    elements:
+    - name: Full API access
+    - name: 100 monthly credits + 300 sign-up bonus
+    - name: No credit card required
+    description: Free trial tier for evaluation.
+  - id: business
+    name: Business
+    entries:
+    - geo: US
+      unit: 1
+      label: User
+      limit: 1
+      price: 99
+      metric: user
+      timeFrame: month
+      description: 2,500 monthly credits. Overage at $0.08 per credit. 20% discount with annual billing.
+    elements:
+    - name: 2,500 monthly credits
+    - name: Customer support
+    - name: Data retention policies
+    - name: HIPAA BAA available
+    description: Most popular tier for production workloads.
+  - id: premium
+    name: Premium
+    entries:
+    - geo: US
+      unit: 1
+      label: User
+      limit: 1
+      price: 499
+      metric: user
+      timeFrame: month
+      description: 20,000 monthly credits. Overage at $0.05 per credit. 20% discount with annual billing.
+    elements:
+    - name: 20,000 monthly credits
+    - name: Priority support
+    - name: Unlimited seats
+    - name: Shared team workspaces
+    - name: Production and development environments
+    description: For teams running document AI in production at scale.
+  - id: enterprise
+    name: Enterprise
+    entries:
+    - geo: US
+      unit: 1
+      label: User
+      limit: 1
+      price: Call
+      metric: user
+      timeFrame: month
+      description: Custom credit volume with negotiated discounts.
+    elements:
+    - name: Volume discounts
+    - name: On-premises deployment
+    - name: Dedicated solution engineer
+    - name: SLA guarantees
+    description: For enterprises with private deployment or compliance requirements.
+  name: Plans
+- type: Integrations
+  data:
+  - name: Make
+    description: Native Make app — DocuPanda actions and triggers for the no-code automation platform with 2,000+ connected apps.
+  - name: Workato
+    description: DocuPanda Document Understanding connector for the Workato enterprise iPaaS.
+  - name: n8n
+    description: DocuPipe for n8n — extract documents inside open-source n8n workflows.
+  - name: Microsoft Power Automate
+    description: DocuPanda connector for Microsoft Power Automate.
+  - name: Boost.space
+    description: DocuPanda integration on the Boost.space platform.
+- type: Features
+  data:
+  - Document extraction across PDFs, images, Office docs, handwriting, tables, and checkboxes
+  - 60+ language support
+  - Custom JSON schemas with AI-assisted auto-generation from sample documents
+  - Agentic V3 standardization engine with legacy V2 still supported
+  - Document classification with workspace-defined taxonomies
+  - On-submit-document workflows that chain classify → schema-select → standardize → review
+  - Visual review with source highlighting for human-in-the-loop QA
+  - Natural-language query across standardized data
+  - Searchable PDFs with built-in OCR
+  - Bulk download as Excel, merged Excel, XML, OCR PDF, and original file
+  - Document split (AI-based) and document merge
+  - Webhooks via portal-link subscription management
+  - Per-job credit accounting via the Jobs API
+  - SOC 2 Type 2, ISO 27001, HIPAA, GDPR
+  - End-to-end encryption in transit and at rest
+  - Segregated workspaces, audit logs, redundancy and disaster recovery
+  - On-premises / VPC deployment for Enterprise
+  sources:
+  - https://www.docupipe.ai/
+  - https://www.docupipe.ai/pricing
+  - https://www.docupipe.ai/security
+  - https://docs.docupipe.ai/llms.txt
+  updated: '2026-05-25'
+- type: UseCases
+  data:
+  - name: Finance
+    description: Extract structured data from invoices, bank statements, loan applications, and purchase orders.
+  - name: Healthcare
+    description: Standardize medical records and insurance claims with HIPAA BAA coverage.
+  - name: Logistics
+    description: Parse bills of lading, shipping documents, and customs paperwork.
+  - name: Real Estate
+    description: Extract lease terms (rental amount, dates, deposits, clauses) from rental and lease agreements.
+  - name: Legal
+    description: Standardize contracts and extract clause-level data for downstream review.
+  - name: Global Operations
+    description: 60+ language support for multinational document pipelines.
+created: '2026-05-25'
+modified: '2026-05-25'
+specificationVersion: '0.16'
+position: Consuming
+description: DocuPanda (now also branded DocuPipe, operated by Hoss Inc.) is an AI-powered document
+  intelligence API that converts unstructured documents — invoices, leases, medical records, claims,
+  contracts, bills of lading, receipts, and more — into reliable structured JSON. The platform pairs
+  an OCR + parsing pipeline with custom extraction schemas, an agentic standardization engine,
+  classification, workflows, visual review, and webhooks. Over one billion pages processed, SOC 2
+  Type 2 and ISO 27001 certified, HIPAA BAA available, and deployable in cloud, VPC, or on-premises.
+maintainers:
+- FN: Kin Lane
+  email: info@apievangelist.com
+  X: apievangelist
+  url: https://apievangelist.com
