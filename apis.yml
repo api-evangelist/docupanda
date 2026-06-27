@@ -178,7 +178,7 @@ common:
 - type: APIReference
   url: https://docs.docupipe.ai/llms.txt
   name: llms.txt index of all API endpoints
-- type: SignUp
+- type: Signup
   url: https://app.docupipe.ai/
 - type: Login
   url: https://app.docupipe.ai/
@@ -201,10 +201,10 @@ common:
   url: https://www.docupipe.ai/terms
 - type: GitHubOrganization
   url: https://github.com/DocuPanda
-- type: SDK
+- type: SDKs
   url: https://github.com/DocuPanda/docupanda-python-api
   name: DocuPanda Python SDK
-- type: Tool
+- type: Tools
   url: https://github.com/DocuPanda/docupanda-desktop
   name: DocuPanda Desktop (upload/download client)
 - type: Pricing
