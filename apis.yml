@@ -162,6 +162,10 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.j
 kind: contract
 access: 3rd-Party
 common:
+- type: TrustCenter
+  url: security/docupanda-trust-center.yml
+- type: DomainSecurity
+  url: security/docupanda-domain-security.yml
 - type: Portal
   url: https://www.docupipe.ai/
 - type: Portal
