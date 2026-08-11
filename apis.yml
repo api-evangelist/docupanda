@@ -17,10 +17,11 @@ apis:
     type: GettingStarted
   - url: https://docs.docupipe.ai/llms.txt
     type: APIReference
-  description: Submit, retrieve, list, search, split, merge, bulk-download, and delete documents.
-    DocuPanda parses files into searchable PDFs and structured page-level text, tables, and bounding
-    boxes. Supports handwriting, checkboxes, tables, 60+ languages, presigned download URLs for the
-    original file, OCR PDF, and a permanent public URL.
+  description: >-
+    Submit, retrieve, list, search, split, merge, bulk-download, and delete documents. DocuPanda parses
+    files into searchable PDFs and structured page-level text, tables, and bounding boxes. Supports handwriting,
+    checkboxes, tables, 60+ languages, presigned download URLs for the original file, OCR PDF, and a permanent
+    public URL.
 - aid: docupanda:docupanda-schemas-api
   name: DocuPanda Schemas API
   tags:
@@ -32,9 +33,10 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Create, edit, copy, delete, and list extraction schemas, plus AI auto-generate a schema
-    from sample documents and retrieve schema proposals per document. Schemas define the structured
-    JSON shape DocuPanda will produce when standardizing documents.
+  description: >-
+    Create, edit, copy, delete, and list extraction schemas, plus AI auto-generate a schema from sample
+    documents and retrieve schema proposals per document. Schemas define the structured JSON shape DocuPanda
+    will produce when standardizing documents.
 - aid: docupanda:docupanda-standardizations-api
   name: DocuPanda Standardizations API
   tags:
@@ -46,10 +48,10 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Run the agentic V3 standardization engine (or legacy V2) against documents to produce
-    schema-compliant JSON. Retrieve results as JSON, plaintext, or XML; bulk-download as Excel or
-    merged Excel; query results in natural language; and match standardizations against candidate
-    lists.
+  description: >-
+    Run the agentic V3 standardization engine (or legacy V2) against documents to produce schema-compliant
+    JSON. Retrieve results as JSON, plaintext, or XML; bulk-download as Excel or merged Excel; query results
+    in natural language; and match standardizations against candidate lists.
 - aid: docupanda:docupanda-classifications-api
   name: DocuPanda Classifications API
   tags:
@@ -61,9 +63,10 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Classify batches of documents into a workspace-defined taxonomy. Manage the class
-    taxonomy (add, edit, delete, list, copy classes across workspaces) and route documents to the
-    right downstream schema or workflow based on the assigned class.
+  description: >-
+    Classify batches of documents into a workspace-defined taxonomy. Manage the class taxonomy (add, edit,
+    delete, list, copy classes across workspaces) and route documents to the right downstream schema or
+    workflow based on the assigned class.
 - aid: docupanda:docupanda-analysis-api
   name: DocuPanda Analysis API
   tags:
@@ -75,9 +78,10 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Run free-form LLM analysis prompts against a single document or a batch and retrieve
-    the resulting analysis by id. Useful for one-off Q&A, summaries, or red-flag checks that do not
-    require a fixed extraction schema.
+  description: >-
+    Run free-form LLM analysis prompts against a single document or a batch and retrieve the resulting
+    analysis by id. Useful for one-off Q&A, summaries, or red-flag checks that do not require a fixed
+    extraction schema.
 - aid: docupanda:docupanda-reviews-api
   name: DocuPanda Reviews API
   tags:
@@ -89,9 +93,10 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Generate visual extraction reviews that highlight where each standardized field was
-    sourced in the original document. List, update, share via presigned URL, and delete reviews.
-    Underpins human-in-the-loop QA on production extractions.
+  description: >-
+    Generate visual extraction reviews that highlight where each standardized field was sourced in the
+    original document. List, update, share via presigned URL, and delete reviews. Underpins human-in-the-loop
+    QA on production extractions.
 - aid: docupanda:docupanda-workflows-api
   name: DocuPanda Workflows API
   tags:
@@ -103,9 +108,9 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Define on-submit-document workflows that chain classification, schema selection,
-    standardization, and review automatically when a new document is uploaded. List, update, and
-    delete workflows.
+  description: >-
+    Define on-submit-document workflows that chain classification, schema selection, standardization,
+    and review automatically when a new document is uploaded. List, update, and delete workflows.
 - aid: docupanda:docupanda-jobs-api
   name: DocuPanda Jobs API
   tags:
@@ -118,9 +123,9 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Inspect every job DocuPanda runs on your behalf with the credit cost it consumed.
-    Retrieve a job by id, list jobs, bulk-delete jobs, and pull a summary count with credit breakdown
-    for FinOps reporting.
+  description: >-
+    Inspect every job DocuPanda runs on your behalf with the credit cost it consumed. Retrieve a job by
+    id, list jobs, bulk-delete jobs, and pull a summary count with credit breakdown for FinOps reporting.
 - aid: docupanda:docupanda-webhooks-api
   name: DocuPanda Webhooks API
   tags:
@@ -133,9 +138,10 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Register and deregister webhook endpoints to receive event-driven callbacks when
-    documents finish processing, classifications complete, or standardizations are ready. Includes a
-    portal-link endpoint that hands users a managed Svix-style subscription portal.
+  description: >-
+    Register and deregister webhook endpoints to receive event-driven callbacks when documents finish
+    processing, classifications complete, or standardizations are ready. Includes a portal-link endpoint
+    that hands users a managed Svix-style subscription portal.
 - aid: docupanda:docupanda-account-api
   name: DocuPanda Account API
   tags:
@@ -147,8 +153,129 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Fetch the current account profile including remaining credits, plan tier, and
-    workspace context. Pair with the Jobs API to build internal usage dashboards.
+  description: >-
+    Fetch the current account profile including remaining credits, plan tier, and workspace context. Pair
+    with the Jobs API to build internal usage dashboards.
+- aid: docupanda:docupanda-account-api
+  name: DocuPanda Account API
+  description: The Account API from DocuPanda — 1 operation(s) for account.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Account
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-account-api-openapi.yml
+- aid: docupanda:docupanda-analysis-api
+  name: DocuPanda Analysis API
+  description: The Analysis API from DocuPanda — 4 operation(s) for analysis.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Analysis
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-analysis-api-openapi.yml
+- aid: docupanda:docupanda-classification-api
+  name: DocuPanda Classification API
+  description: The Classification API from DocuPanda — 6 operation(s) for classification.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Classification
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-classification-api-openapi.yml
+- aid: docupanda:docupanda-document-api
+  name: DocuPanda Document API
+  description: The Document API from DocuPanda — 18 operation(s) for document.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Document
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-document-api-openapi.yml
+- aid: docupanda:docupanda-docupipe-api
+  name: DocuPanda Docu Pipe API
+  description: The DocuPipe API from DocuPanda — 1 operation(s) for docupipe.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - DocuPipe
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-docupipe-api-openapi.yml
+- aid: docupanda:docupanda-health-api
+  name: DocuPanda Health API
+  description: The Health API from DocuPanda — 1 operation(s) for health.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-health-api-openapi.yml
+- aid: docupanda:docupanda-job-api
+  name: DocuPanda Job API
+  description: The Job API from DocuPanda — 3 operation(s) for job.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Job
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-job-api-openapi.yml
+- aid: docupanda:docupanda-review-api
+  name: DocuPanda Review API
+  description: The Review API from DocuPanda — 6 operation(s) for review.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Review
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-review-api-openapi.yml
+- aid: docupanda:docupanda-schema-api
+  name: DocuPanda Schema API
+  description: The Schema API from DocuPanda — 8 operation(s) for schema.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Schema
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-schema-api-openapi.yml
+- aid: docupanda:docupanda-standardization-api
+  name: DocuPanda Standardization API
+  description: The Standardization API from DocuPanda — 16 operation(s) for standardization.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Standardization
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-standardization-api-openapi.yml
+- aid: docupanda:docupanda-webhook-api
+  name: DocuPanda Webhook API
+  description: The Webhook API from DocuPanda — 5 operation(s) for webhook.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Webhook
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-webhook-api-openapi.yml
+- aid: docupanda:docupanda-workflow-api
+  name: DocuPanda Workflow API
+  description: The Workflow API from DocuPanda — 5 operation(s) for workflow.
+  humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
+  baseURL: https://app.docupipe.ai
+  tags:
+  - Workflow
+  properties:
+  - type: OpenAPI
+    url: openapi/docupanda-workflow-api-openapi.yml
 name: DocuPanda
 tags:
 - AI

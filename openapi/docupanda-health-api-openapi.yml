@@ -1,0 +1,47 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Health API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Health
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Health check endpoint to confirm the service is operational.
+      operationId: health_check
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Health
+    post:
+      summary: Health Check Post
+      description: Health check endpoint to confirm the service is operational.
+      operationId: health_check_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Health
+components:
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer

@@ -1,0 +1,491 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Classification API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Classification
+paths:
+  /class:
+    post:
+      tags:
+      - Classification
+      summary: Add a Class
+      description: Add a new class to the taxonomy of classes, including name and description.
+      operationId: post_add_class
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassAddRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassObject'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /class/edit:
+    post:
+      tags:
+      - Classification
+      summary: Edit a Class
+      description: Edit an existing class's name or description. The classId is preserved, so every document, classification job, and workflow that references this class continues to work unchanged. Changing the description affects future classification behavior because the description is passed to the classifier as part of the taxonomy.
+      operationId: post_edit_class
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditClassRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditClassResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /copy/classification:
+    post:
+      tags:
+      - Classification
+      summary: Copy a Class to Another Workspace
+      description: Duplicate one of your taxonomy classes into a different workspace. Provide the existing classId and the target workspaceId to create a copy with a new classId owned by the destination workspace.
+      operationId: post_copy_classification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassCopyRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassObject'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /class/{class_id}:
+    delete:
+      summary: Delete a Class
+      description: Delete a class from the taxonomy of classes by providing the class ID.
+      operationId: delete_class
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: class_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Class Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Classification
+  /classes:
+    get:
+      summary: List Classes
+      description: List all classes that have been defined in the taxonomy.
+      operationId: list_classes
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: include_unknown
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Include Unknown
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassObject'
+                title: Response List Classes Classes Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Classification
+  /classify/batch:
+    post:
+      tags:
+      - Classification
+      summary: Classify Documents
+      description: Classify a batch of one or multiple documents all at once by passing a list of document IDs, and an optional list of class IDs to use for classification. If no class IDs are provided, all classes will be used. To use the `unknown` class, either pass its classId ('unknown') or set the includeUnknown flag as True.
+      operationId: post_classify_batch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassifyBatchRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassifyBatchResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+components:
+  schemas:
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+    ClassObject:
+      properties:
+        classId:
+          type: string
+          title: Class ID
+          description: Unique identifier of the classification object.
+        className:
+          type: string
+          title: Class Name
+          description: Name of the class.
+        description:
+          type: string
+          title: Description
+          description: Description of the class.
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of the classification creation.
+      type: object
+      required:
+      - classId
+      - className
+      title: ClassObject
+      description: Public-facing representation of DocuPipeClass.
+    InsufficientCreditsError:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Explanation about the exhausted credits
+      type: object
+      required:
+      - detail
+      title: InsufficientCreditsError
+    ClassifyBatchResponse:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: ID of the batch classification job
+        documentCount:
+          type: integer
+          title: Document Count
+          description: Number of documents processed
+        pageCount:
+          type: integer
+          title: Page Count
+          description: Number of pages processed
+        classificationJobIds:
+          items:
+            type: string
+          type: array
+          title: Classification Job IDs
+          description: List of individual job IDs for each document's classify job
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Status
+          description: Status of the batch classification job
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the classification job
+      type: object
+      required:
+      - jobId
+      - status
+      title: ClassifyBatchResponse
+    EditClassRequest:
+      properties:
+        classId:
+          type: string
+          title: Class ID
+          description: Unique identifier of the class to edit.
+        className:
+          type: string
+          title: Class Name
+          description: New name to assign to the class. Omit or send null to leave unchanged. Cannot be empty.
+        description:
+          type: string
+          title: Description
+          description: New description to assign to the class. Omit or send null to leave unchanged. Send an empty string to clear. Used by the classifier when deciding which class fits a document.
+      type: object
+      required:
+      - classId
+      title: EditClassRequest
+    ClassifyBatchRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs to classify
+        classIds:
+          items:
+            type: string
+          type: array
+          title: Class IDs
+          description: List of class IDs to use for classification
+        multiClass:
+          type: boolean
+          title: Multi-Class
+          description: Whether to allow multiple classifications per document
+          default: false
+        includeUnknown:
+          type: boolean
+          title: Include Unknown
+          description: Whether to include the 'unknown' class in the classification (only relevant if multiClass is false)
+          default: true
+        instructions:
+          type: string
+          title: Instructions
+          description: Instructions for the AI on how to classify the documents
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+          description: '*Advanced Feature*
+
+            Mode of display to run. The options are:
+
+            `auto`: AI decides how to display the document (default)
+
+            `spatial`: Display text spatially, as it appears in the document
+
+            `sections`: Display text from top to bottom as sections, with tables appearing as markdown
+
+            `image`: Display as an image.'
+          default: auto
+      type: object
+      required:
+      - documentIds
+      title: ClassifyBatchRequest
+    ProcessingStatus:
+      type: string
+      enum:
+      - processing
+      - completed
+      - error
+      title: ProcessingStatus
+    ClassCopyRequest:
+      properties:
+        classId:
+          type: string
+          title: Class ID
+          description: Unique identifier of the class to copy.
+        targetWorkspaceApiKey:
+          type: string
+          title: Target Workspace api key
+          description: API key of the target workspace.
+      type: object
+      required:
+      - classId
+      - targetWorkspaceApiKey
+      title: ClassCopyRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DisplayMode:
+      type: string
+      enum:
+      - auto
+      - spatial
+      - sections
+      - image
+      title: DisplayMode
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ClassAddRequest:
+      properties:
+        className:
+          type: string
+          title: Class Name
+          description: Name of the class to be added.
+        description:
+          type: string
+          title: Description
+          description: Description of the class to be added. This will be used by the AI to classify documents.
+      type: object
+      required:
+      - className
+      title: ClassAddRequest
+    DeletionResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion was successful or not.
+      type: object
+      required:
+      - success
+      title: DeletionResponse
+    EditClassResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the class was successfully edited.
+      type: object
+      required:
+      - success
+      title: EditClassResponse
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer

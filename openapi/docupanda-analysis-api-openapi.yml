@@ -1,0 +1,494 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Analysis API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Analysis
+paths:
+  /analyze/document:
+    post:
+      tags:
+      - Analysis
+      summary: Analyze Document
+      description: Analyze a single document by passing a `documentId` and a list of questions in natural language. If the `pages` parameter is provided, the AI will only analyze the specified pages. Poll for the results using the `GET /job/{jobId}` endpoint with the returned jobId.
+      operationId: post_analyze_document
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeDocumentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAnalyzeResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /analyze/data:
+    post:
+      tags:
+      - Analysis
+      summary: Analyze Data
+      description: "Analyze multiple documents all at once, either by passing a list of Document IDs or by passing a dataset name. If both are pased, we will use the intersection of the two. Analysis works by passing a list of questions in natural language. If a schemaId is passed, the AI will first use the standardizations of those documents under the provided schema to narrow down which documents are relevant. Only then, it will analyze the documents and provide answers to the questions, along with confidence scores and citations.\nIf a schemaId is not passed, the AI will manually examine all documents, with a limit of 50.\n When schemaId is passed, the AI can optionally also perform database queries for statistical calculations and         answer the questions based on those results."
+      operationId: post_analyze_data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeDataRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAnalyzeResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /analysis/{analysis_id}:
+    get:
+      summary: Retrieve Analysis
+      operationId: get_analysis
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: analysis_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Analysis Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Analysis'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Retrieve an analysis object by providing the analysis ID, which has the questions and answers.
+      tags:
+      - Analysis
+  /analyses:
+    get:
+      summary: List Analyses
+      operationId: list_analyses
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The maximum number of analyses to return. maximum is 20
+          default: 1000
+          title: Limit
+        description: The maximum number of analyses to return. maximum is 20
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The number of analyses to skip (to paginate through the data)
+          default: 0
+          title: Offset
+        description: The number of analyses to skip (to paginate through the data)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Analysis'
+                title: Response List Analyses Analyses Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: List all analyses that have been performed.
+      tags:
+      - Analysis
+    delete:
+      summary: Delete Multiple Analyses
+      description: Delete multiple analyses at once by providing a list of analysis IDs.
+      operationId: delete_analyses
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAnalysesRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Analysis
+components:
+  schemas:
+    Confidence:
+      type: string
+      enum:
+      - high
+      - medium
+      - low
+      title: Confidence
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+    InsufficientCreditsError:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Explanation about the exhausted credits
+      type: object
+      required:
+      - detail
+      title: InsufficientCreditsError
+    AnalyzeDocumentRequest:
+      properties:
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document to be questioned.
+        questions:
+          items:
+            type: string
+          type: array
+          title: Questions
+          description: List of questions to be answered.
+        instructions:
+          type: string
+          title: Instructions
+          description: Global instructions to provide additional guidelines or context to the AI when answering the questions.
+        pages:
+          items:
+            type: integer
+          type: array
+          title: Pages
+          description: List of page numbers to be analyzed (zero indexed). If not provided, all pages will be analyzed.
+      type: object
+      required:
+      - documentId
+      - questions
+      title: AnalyzeDocumentRequest
+    DeleteAnalysesRequest:
+      properties:
+        analysisIds:
+          items:
+            type: string
+          type: array
+          title: Analysis IDs
+          description: List of analysis IDs to be deleted.
+      type: object
+      required:
+      - analysisIds
+      title: DeleteAnalysesRequest
+    AnalyzeDataRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs to analyze. If both dataset and documentIds are provided, we take the intersection of the two.
+        dataset:
+          type: string
+          title: Dataset
+          description: Dataset which defines what documents are included in the analysis. If both dataset and documentIds are provided, we take the intersection of the two.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema to be used for the analysis. If provided, only those documents with a valid standardization under this schema will be included in the analysis.
+        questions:
+          items:
+            type: string
+          type: array
+          title: Questions
+          description: List of questions to be answered.
+        instructions:
+          type: string
+          title: Instructions
+          description: Global instructions to provide additional guidelines or context to the AI when answering the questions.
+      type: object
+      required:
+      - questions
+      title: AnalyzeDataRequest
+      description: "Asyncronous request for the Analyze Data endpoint\n    "
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PostAnalyzeResponse:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier for the submitted job.
+        analysisId:
+          type: string
+          title: Analysis ID
+          description: Unique identifier for the analysis.
+        success:
+          type: boolean
+          title: Success
+          description: Whether the job was successful launched or not.
+      type: object
+      required:
+      - jobId
+      - analysisId
+      - success
+      title: PostAnalyzeResponse
+      description: "Asyncronous response for analyze-document or analyze-data\n    "
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Citation:
+      properties:
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document where the citation is found.
+        pages:
+          items:
+            type: integer
+          type: array
+          title: Pages
+          description: List of page numbers where the citation is found (zero-indexed).
+      type: object
+      required:
+      - documentId
+      - pages
+      title: Citation
+    Analysis:
+      properties:
+        analysisId:
+          type: string
+          title: Analysis ID
+          description: Unique identifier of the analysis object.
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job that created the analysis.
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs that were analyzed.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the file that was analyzed, if there is only a single document.
+        dataset:
+          type: string
+          title: Dataset
+          description: Dataset which defines what documents are included in the analysis.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema used to fetch standardizations for querying.
+        numDocs:
+          type: integer
+          title: Number of Documents
+          description: Number of documents analyzed.
+        pages:
+          items:
+            type: integer
+          type: array
+          title: Pages
+          description: List of page numbers to analyze. If none, all pages are analyzed. Only applies for single document.
+        data:
+          items:
+            $ref: '#/components/schemas/QuestionAnswer'
+          type: array
+          title: Data (Questions and Answers)
+          description: List of questions and answers for the analysis, along with confidence and citations.
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of the analysis job.
+      type: object
+      required:
+      - analysisId
+      - jobId
+      - data
+      title: Analysis
+      description: Public-facing representation of DocuPipeAnalysis.
+    DeletionResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion was successful or not.
+      type: object
+      required:
+      - success
+      title: DeletionResponse
+    QuestionAnswer:
+      properties:
+        question:
+          type: string
+          title: Question
+          description: The question to be answered.
+        answer:
+          type: string
+          title: Answer
+          description: The answer to the question.
+        confidence:
+          $ref: '#/components/schemas/Confidence'
+          description: The confidence level of the answer.
+        citations:
+          items:
+            $ref: '#/components/schemas/Citation'
+          type: array
+          title: Citations
+          description: List of citations for the answer.
+      type: object
+      required:
+      - question
+      title: QuestionAnswer
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer
