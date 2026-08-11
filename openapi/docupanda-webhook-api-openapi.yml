@@ -1,0 +1,339 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Webhook API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Webhook
+paths:
+  /webhook/get-portal-link:
+    get:
+      tags:
+      - Webhook
+      summary: Get Webhook Portal URL
+      description: Generates a magic link for you to log on to URL to the app portal. From the portal you can configure webhook subscriptions in a user-friendly interface.
+      operationId: get_portal_link
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookPortalResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /webhook/generate-endpoint:
+    post:
+      tags:
+      - Webhook
+      summary: Register an Endpoint
+      description: Register a webhook endpoint for the current workspace. Set subscribedEvents to receive only those event types. If subscribedEvents is omitted, the endpoint receives all events.
+      operationId: generate_endpoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebhookEndpointRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWebhookEndpointResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /webhook/endpoint/{endpoint_id}:
+    get:
+      summary: Retrieve an Endpoint
+      description: Retrieve a webhook endpoint by its endpoint ID.
+      operationId: get_webhook_endpoint
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: endpoint_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Endpoint Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpointResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Webhook
+  /webhook/endpoints:
+    get:
+      tags:
+      - Webhook
+      summary: List Endpoints
+      description: List all webhook endpoints registered for the current workspace.
+      operationId: list_webhook_endpoints
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WebhookEndpointResponse'
+                type: array
+                title: Response List Webhook Endpoints Webhook Endpoints Get
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /webhook/delete-endpoint:
+    post:
+      tags:
+      - Webhook
+      summary: Deregister an Endpoint
+      description: Deregister a webhook endpoint from the current workspace. The endpoint stops receiving new events.
+      operationId: delete_endpoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteWebhookEndpointRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteWebhookEndpointResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+components:
+  schemas:
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+    DeleteWebhookEndpointResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: The webhook endpoint was successfully deleted
+          default: true
+      type: object
+      title: DeleteWebhookEndpointResponse
+    EventTypeEnum:
+      type: string
+      enum:
+      - document.processed.success
+      - document.processed.error
+      - standardization.processed.success
+      - standardization.processed.error
+      - review.processed.success
+      - review.processed.error
+      - review.verified.success
+      - review.rejected.success
+      - schema.processed.success
+      - schema.processed.error
+      - classification.processed.success
+      - classification.processed.error
+      - split.processed.success
+      - split.processed.error
+      - merge.processed.success
+      - merge.processed.error
+      - workflow.processed.success
+      - workflow.processed.error
+      title: EventTypeEnum
+    CreateWebhookEndpointRequest:
+      properties:
+        url:
+          type: string
+          title: Url
+          description: The URL of the webhook endpoint
+        subscribedEvents:
+          items:
+            $ref: '#/components/schemas/EventTypeEnum'
+          type: array
+          title: Subscribedevents
+          description: The events to subscribe to, if not specified, all events will be sent to the endpoint
+      type: object
+      required:
+      - url
+      title: CreateWebhookEndpointRequest
+    WebhookEndpointResponse:
+      properties:
+        endpointId:
+          type: string
+          title: Endpointid
+          description: The ID which identifies the webhook endpoint
+        url:
+          type: string
+          title: Url
+          description: The URL which receives webhook events
+        description:
+          type: string
+          title: Description
+          description: The webhook endpoint description
+        subscribedEvents:
+          items:
+            $ref: '#/components/schemas/EventTypeEnum'
+          type: array
+          title: Subscribedevents
+          description: The events sent to this endpoint. If not specified, all events are sent
+        disabled:
+          type: boolean
+          title: Disabled
+          description: Whether delivery to this webhook endpoint is disabled
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+          description: The date and time when the webhook endpoint was created
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+          description: The date and time when the webhook endpoint was last updated
+      type: object
+      required:
+      - endpointId
+      - url
+      - description
+      - disabled
+      - createdAt
+      - updatedAt
+      title: WebhookEndpointResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WebhookPortalResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+          description: Generates a magic link for you to log on to URL to the app portal. From the portal you can configure webhook subscriptions
+        token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Token
+          description: Svix app portal access token. Only populated for self-hosted on prem deployments of docupipe.
+        appId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Appid
+          description: Svix application ID. Only populated for self-hosted on prem deployments of docupipe.
+        serverUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Serverurl
+          description: Svix server URL for self-hosted Svix portal access.
+      type: object
+      required:
+      - url
+      title: WebhookPortalResponse
+    DeleteWebhookEndpointRequest:
+      properties:
+        endpointId:
+          type: string
+          title: Endpointid
+          description: The ID which identifies the webhook endpoint
+      type: object
+      required:
+      - endpointId
+      title: DeleteWebhookEndpointRequest
+    CreateWebhookEndpointResponse:
+      properties:
+        endpointId:
+          type: string
+          title: Endpointid
+          description: The ID which identifies the endpoint
+      type: object
+      required:
+      - endpointId
+      title: CreateWebhookEndpointResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer
