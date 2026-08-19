@@ -347,7 +347,7 @@ common:
     description: 60+ language support for multinational document pipelines.
 created: '2026-05-25'
 modified: '2026-05-25'
-specificationVersion: '0.16'
+specificationVersion: '0.23'
 position: Consuming
 description: DocuPanda (now also branded DocuPipe, operated by Hoss Inc.) is an AI-powered document
   intelligence API that converts unstructured documents — invoices, leases, medical records, claims,
