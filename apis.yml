@@ -4,6 +4,11 @@ apis:
 - aid: docupanda:docupanda-documents-api
   name: DocuPanda Documents API
   tags:
+  - Artificial Intelligence
+  - Document Extraction
+  - Documents
+  - OCR
+  tags_raw:
   - AI
   - Document Extraction
   - Documents
@@ -24,6 +29,10 @@ apis:
 - aid: docupanda:docupanda-schemas-api
   name: DocuPanda Schemas API
   tags:
+  - Artificial Intelligence
+  - Document Extraction
+  - Schemas
+  tags_raw:
   - AI
   - Document Extraction
   - Schemas
@@ -38,6 +47,10 @@ apis:
 - aid: docupanda:docupanda-standardizations-api
   name: DocuPanda Standardizations API
   tags:
+  - Artificial Intelligence
+  - Document Extraction
+  - Standardization
+  tags_raw:
   - AI
   - Document Extraction
   - Standardization
@@ -53,6 +66,10 @@ apis:
 - aid: docupanda:docupanda-classifications-api
   name: DocuPanda Classifications API
   tags:
+  - Artificial Intelligence
+  - Classification
+  - Document Extraction
+  tags_raw:
   - AI
   - Classification
   - Document Extraction
@@ -67,6 +84,10 @@ apis:
 - aid: docupanda:docupanda-analysis-api
   name: DocuPanda Analysis API
   tags:
+  - Artificial Intelligence
+  - Analysis
+  - Document Extraction
+  tags_raw:
   - AI
   - Analysis
   - Document Extraction
@@ -81,6 +102,10 @@ apis:
 - aid: docupanda:docupanda-reviews-api
   name: DocuPanda Reviews API
   tags:
+  - Artificial Intelligence
+  - Document Extraction
+  - Review
+  tags_raw:
   - AI
   - Document Extraction
   - Review
@@ -95,6 +120,10 @@ apis:
 - aid: docupanda:docupanda-workflows-api
   name: DocuPanda Workflows API
   tags:
+  - Artificial Intelligence
+  - Document Extraction
+  - Workflows
+  tags_raw:
   - AI
   - Document Extraction
   - Workflows
@@ -109,6 +138,11 @@ apis:
 - aid: docupanda:docupanda-jobs-api
   name: DocuPanda Jobs API
   tags:
+  - Artificial Intelligence
+  - Document Extraction
+  - Job
+  - Audit
+  tags_raw:
   - AI
   - Document Extraction
   - Jobs
@@ -124,6 +158,11 @@ apis:
 - aid: docupanda:docupanda-webhooks-api
   name: DocuPanda Webhooks API
   tags:
+  - Artificial Intelligence
+  - Document Extraction
+  - Webhook
+  - Event
+  tags_raw:
   - AI
   - Document Extraction
   - Webhooks
@@ -139,6 +178,10 @@ apis:
 - aid: docupanda:docupanda-account-api
   name: DocuPanda Account API
   tags:
+  - Artificial Intelligence
+  - Account
+  - Document Extraction
+  tags_raw:
   - AI
   - Account
   - Document Extraction
@@ -151,6 +194,13 @@ apis:
     workspace context. Pair with the Jobs API to build internal usage dashboards.
 name: DocuPanda
 tags:
+- Artificial Intelligence
+- Document Extraction
+- Document Intelligence
+- IDP
+- OCR
+- Document AI
+tags_raw:
 - AI
 - Artificial Intelligence
 - Document Extraction
