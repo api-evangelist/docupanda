@@ -1,0 +1,1655 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Standardization API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Standardization
+paths:
+  /standardization/{standardization_id}:
+    get:
+      summary: Retrieve a Standardization JSON
+      operationId: get_standardization
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: standardization_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Standardization Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Standardization'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Retrieve the standardization results of a document as a JSON object.
+      tags:
+      - Standardization
+    delete:
+      summary: Delete a Standardization
+      description: Delete a standardization by providing the standardization ID.
+      operationId: delete_standardization
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: standardization_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Standardization Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Standardization
+  /standardization/{standardization_id}/xml:
+    get:
+      summary: Retrieve a Standardization XML
+      operationId: get_standardization_xml
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: standardization_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Standardization Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardizationXml'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Retrieve the standardization results of a document as an XML object.
+      tags:
+      - Standardization
+  /standardization/{standardization_id}/text:
+    get:
+      summary: Retrieve a Standardization as Plaintext
+      operationId: get_standardization_text
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: standardization_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Standardization Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardizationText'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Retrieve the standardization results of a document as a human-readable plaintext document. Field names are converted from camelCase to space-separated title case, null values are skipped, primitive arrays render as bullet lists, and object arrays render as separated indented blocks. Useful for downloading the extraction as a `.txt` file that a non-technical user can read directly without parsing JSON.
+      tags:
+      - Standardization
+  /standardization/{standardization_id}/pdf:
+    get:
+      summary: Retrieve a Standardization as PDF
+      operationId: get_standardization_pdf
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: standardization_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Standardization Id
+      responses:
+        '200':
+          description: PDF rendering of the standardization
+          content:
+            application/json:
+              schema: {}
+            application/pdf: {}
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Retrieve the standardization results of a document as a printable PDF. Renders the same content as the plaintext export with section headers, bold field names, and bullet lists, suitable for downloading as a `.pdf` that a non-technical user can read or import into a downstream system without parsing JSON.
+      tags:
+      - Standardization
+  /standardization/download/bulk-xml:
+    post:
+      tags:
+      - Standardization
+      summary: Bulk Download Standardization XMLs
+      description: Download multiple standardization results as XML files in a single zip archive. Provide a list of standardization IDs and receive a presigned URL to download a zip file containing all the XML files. Maximum 100 standardizations per request. The download URL expires after 24 hours.
+      operationId: bulk_xml_download
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkXmlDownloadRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /standardization/download/bulk-excel:
+    post:
+      tags:
+      - Standardization
+      summary: Bulk Download Standardization Excels
+      description: Download multiple standardization results as Excel files in a single zip archive. Provide a list of standardization IDs and receive a presigned URL to download a zip file containing all the Excel files. Maximum 50 standardizations per request. The download URL expires after 24 hours.
+      operationId: bulk_excel_download
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkExcelDownloadRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /standardization/download/merged-excel:
+    post:
+      tags:
+      - Standardization
+      summary: Download Merged Standardization Excel
+      description: Merge multiple standardization results into a single Excel file. Scalar fields become one row per document, array fields are concatenated across all documents. A _source column identifies which document each row came from. Maximum 100 standardizations per request. The download URL expires after 24 hours.
+      operationId: merged_excel_download
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MergedExcelDownloadRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /standardization/{standardization_id}/download/excel-url:
+    get:
+      summary: Download Excel URL
+      description: 'Generate an Excel file from the standardization JSON by providing a standardization ID. All arrays in the JSON will be put in a separate sheet, and all the non-array fields will be put in the main sheet. Returns a presigned URL to download the Excel file. This URL is valid for a limited time (e.g., 1 hour) and allows secure access to the Excel file stored on DocuPipe. '
+      operationId: download_excel_url
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: standardization_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Standardization Id
+      - name: hours
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of hours the URL should be valid for
+          default: 6
+          title: Hours
+        description: Number of hours the URL should be valid for
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal Server Error
+      tags:
+      - Standardization
+  /standardizations:
+    delete:
+      summary: Delete Multiple Standardizations
+      description: Delete multiple standardizations at once by providing a list of standardization IDs.
+      operationId: delete_standardizations
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteStandardizationsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Standardization
+    get:
+      summary: List Standardizations
+      description: Retrieve all standardizations of documents that have been processed using a specific schema.
+      operationId: list_standardizations
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: schema_id
+        in: query
+        required: false
+        schema:
+          type: string
+          description: The schema ID to filter standardizations by
+          title: Schema Id
+        description: The schema ID to filter standardizations by
+      - name: document_id
+        in: query
+        required: false
+        schema:
+          type: string
+          description: The ID of the document to filter standardizations by
+          title: Document Id
+        description: The ID of the document to filter standardizations by
+      - name: standardization_ids
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Comma-separated standardization IDs to fetch. Returns exactly the requested standardizations that exist (an unknown or still-processing ID is simply absent). Maximum 1000 IDs.
+          title: Standardization Ids
+        description: Comma-separated standardization IDs to fetch. Returns exactly the requested standardizations that exist (an unknown or still-processing ID is simply absent). Maximum 1000 IDs.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The maximum number of standardizations to return. Maximum is 1000
+          default: 20
+          title: Limit
+        description: The maximum number of standardizations to return. Maximum is 1000
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The number of standardizations to skip (to paginate through the data)
+          default: 0
+          title: Offset
+        description: The number of standardizations to skip (to paginate through the data)
+      - name: exclude_payload
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Whether to exclude the data payload in the response
+          default: true
+          title: Exclude Payload
+        description: Whether to exclude the data payload in the response
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Standardization'
+                title: Response List Standardizations Standardizations Get
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Standardization
+  /v2/standardize/batch:
+    post:
+      tags:
+      - Standardization
+      summary: Standardize V2 (Legacy)
+      description: "Standardize a batch documents, either by passing a list of Document IDs or by passing a dataset name. Pass a schemaId to standardize the documents using a specific structure, or leave it empty to create an ad-hoc structure as the AI sees fit. Standardization handles lists (arrays) by splitting documents into smaller sub-documents behind the scenes - the AI will do its best to decide how and when it is appropriate to split.\n\n<Accordion title=\"Advanced Parameters\" icon=\"fa-cog\">You can specify certain parameters, by default they are left to `auto` which lets the AI decide.\n1. `displayMode` - Controls how the AI sees the document. The options are:\n   - `auto` - Automatically determine the best mode based on the document content.\n   - `spatial` - Represent text in the document according to its spatial layout.\n   - `sections` - Represent the document as a list of sections (paragraphs, tables, images, etc.) as seen in the web UX.\n2. `splitMode` - Controls how the AI splits the document into sub-documents. The options are:\n   - `auto` - Automatically determine the best mode based on the document content.\n   - `all` - Split the document into single-page sub-documents, so each page is handled separately.\n   - `never` - Do not split the document at all, so the entire document is handled as a single unit. This can lead to poor performance for long documents, or documents with lots of dense data that needs to be extracted.\n3. `effortLevel` - Controls how much effort the AI puts into the standardization. The options are:\n   - `standard` - Use the standard effort level.\n   - `high` - Use the high effort level, which takes longer but can produce better results. Costs +2 credits per page.\n</Accordion>\n\n**Note:** The `guidelines` field has a maximum length of 50,000 characters."
+      operationId: post_standardize_batch_v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StandardizeV2BatchRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardizeBatchResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /v3/standardize:
+    post:
+      tags:
+      - Standardization
+      summary: Standardize V3
+      description: 'Standardize a single document using the V3 agentic engine. V3 uses an agentic architecture that automatically determines the optimal extraction strategy for each document - no manual configuration of display modes, split modes, or effort levels needed.
+
+
+        Unlike V2, this endpoint processes a single document per call. To standardize multiple documents, fire parallel requests.
+
+
+        If no `schemaId` is provided, a schema is first auto-generated from the document (same engine as `/schema/autogenerate`) and saved as a draft, then the document is standardized against it. The generated schema''s ID is returned in the response''s `schemaId` field. Schema generation costs schema credits in addition to the standardization credits.
+
+
+        <Accordion title="Parameters" icon="fa-cog">- `schemaId` - Optional schema to standardize against. If omitted, a draft schema is auto-generated from the document.
+
+        - `pages` - Optional list of 0-indexed page numbers to standardize. If not provided, the entire document is standardized.
+
+        - `guidelines` - Optional extraction guidelines that override the schema''s default guidelines.
+
+        - `useMetadata` - Whether to include document metadata during extraction (default: false).
+
+        - `effortLevel` - `standard` (default) uses faster models, `high` uses the best models for better results at +2 credits per page.
+
+        </Accordion>
+
+
+        **Note:** The `guidelines` field has a maximum length of 50,000 characters.'
+      operationId: post_standardize_v3
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StandardizeV3Request'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardizeV3Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /enterprise/matching:
+    post:
+      tags:
+      - Standardization
+      summary: Match a standardization to a list of candidates
+      description: Use this endpoint to match a standardization to a list of candidates. You can provide a standardization id and a list of candidates. A candidate must have and id  and a record which details all its properties. You can optionally provide instructions to clarify the task rules
+      operationId: match_standardization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchingRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchingResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /extractions:
+    get:
+      summary: List Extractions
+      description: Retrieve standardization and reasoning extraction results in one list. Each result includes zero or more source document IDs, extracted data, and reasoning text when the result came from a reasoning operation.
+      operationId: list_extractions
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: extraction_id
+        in: query
+        required: false
+        schema:
+          type: string
+          description: The extraction ID to retrieve
+          title: Extraction Id
+        description: The extraction ID to retrieve
+      - name: schema_id
+        in: query
+        required: false
+        schema:
+          type: string
+          description: The schema ID to filter extractions by
+          title: Schema Id
+        description: The schema ID to filter extractions by
+      - name: document_id
+        in: query
+        required: false
+        schema:
+          type: string
+          description: The source document ID to filter extractions by
+          title: Document Id
+        description: The source document ID to filter extractions by
+      - name: extraction_type
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Filter by standardization or reasoning
+          title: Extraction Type
+        description: Filter by standardization or reasoning
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The maximum number of extractions to return. Maximum is 1000
+          default: 20
+          title: Limit
+        description: The maximum number of extractions to return. Maximum is 1000
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The number of extractions to skip
+          default: 0
+          title: Offset
+        description: The number of extractions to skip
+      - name: exclude_payload
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Whether to exclude the data payload in the response
+          default: false
+          title: Exclude Payload
+        description: Whether to exclude the data payload in the response
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Extraction'
+                title: Response List Extractions Extractions Get
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Standardization
+  /standardizations/search:
+    get:
+      summary: Search Standardizations
+      description: Search standardizations by filename, document ID, or standardization ID using case-insensitive partial matching. You can optionally filter results by schema ID or dataset name.
+      operationId: search_standardizations
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Search query to match against filename, document ID, or standardization ID
+          title: Query
+        description: Search query to match against filename, document ID, or standardization ID
+      - name: schema_id
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Optional schema ID filter
+          title: Schema Id
+        description: Optional schema ID filter
+      - name: dataset
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Optional dataset filter
+          title: Dataset
+        description: Optional dataset filter
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Maximum number of results to return (1-500)
+          default: 100
+          title: Limit
+        description: Maximum number of results to return (1-500)
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of results to skip for pagination
+          default: 0
+          title: Offset
+        description: Number of results to skip for pagination
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Standardization'
+                title: Response Search Standardizations Standardizations Search Get
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Standardization
+  /query:
+    post:
+      tags:
+      - Standardization
+      summary: Query Standardizations
+      description: Query the documents you have standardized using free form language.The query should be written in plain language, and should describe what you're looking for. e.g "Find all the documents where the rental is above $1000 in San Francisco". The endpoint will return a list of standardizations that match the query, along with AI-generated feedback on the query. The maximum number of standardizations returned is 200.
+      operationId: post_query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /standardizations/summary:
+    get:
+      tags:
+      - Standardization
+      summary: Get Standardization Count
+      description: Get a count of your standardizations, including the total number as well as the list of unique schema names
+      operationId: get_standardization_summary
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardizationSummary'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+components:
+  schemas:
+    Extraction:
+      properties:
+        extractionId:
+          type: string
+          title: Extraction ID
+          description: Unique identifier of the extraction result.
+        extractionType:
+          type: string
+          enum:
+          - standardization
+          - reasoning
+          title: Extraction Type
+          description: Operation that produced this extraction.
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: Source documents associated with the extraction. Reasoning extractions can have zero, one, or many.
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          title: Extraction Data
+          description: Extracted JSON data. Standardizations return one object; reasoning extractions return a list of records.
+        reasoning:
+          type: string
+          title: Reasoning
+          description: Reasoning text for a reasoning extraction. Always null for a standardization.
+        sourceStandardizationIds:
+          items:
+            type: string
+          type: array
+          title: Source Standardization IDs
+          description: Standardization results consumed by a reasoning extraction.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Schema used to shape the extraction, if any.
+        schemaName:
+          type: string
+          title: Schema Name
+          description: Name of the schema used to shape the extraction, if any.
+        jobId:
+          type: string
+          title: Job ID
+          description: Job that created the extraction.
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp when the extraction was created.
+      type: object
+      required:
+      - extractionId
+      - extractionType
+      title: Extraction
+      description: "public representation shared by standardization and reasoning extraction results\n    "
+    DisplayMode:
+      type: string
+      enum:
+      - auto
+      - spatial
+      - sections
+      - image
+      title: DisplayMode
+    StandardizationXml:
+      properties:
+        standardizationId:
+          type: string
+          title: Standardization ID
+          description: Unique identifier of the standardization object.
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        data:
+          additionalProperties: true
+          type: object
+          title: Standardization Result
+          description: The standardized result of the document. This is a structured JSON object.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema used for standardization.
+        schemaName:
+          type: string
+          title: Schema Name
+          description: Name of the schema used for standardization.
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job that created the standardization.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset to which the document belongs
+        filename:
+          type: string
+          title: Filename
+          description: Name of the file that was standardized.
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+          description: Display mode actually used during standardization.
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of the standardization job.
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Metadata associated with the document that originated this standardization. This just echoes any metadata you have previously posted on document creation.
+        fieldMetadata:
+          additionalProperties: true
+          type: object
+          title: Field Metadata
+          description: Per-field extraction metadata mapping dot-paths to page numbers and confidence levels.
+        xml:
+          type: string
+          title: XML
+          description: The XML result of the standardization.
+      type: object
+      required:
+      - standardizationId
+      - documentId
+      - data
+      title: StandardizationXml
+      description: Public-facing representation of DocuPipeStandardization with its XML result.
+    MergedExcelDownloadRequest:
+      properties:
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+          description: List of standardization IDs to merge into a single Excel file.
+        maxWaitSeconds:
+          type: integer
+          title: Max Wait Seconds
+          description: If greater than 0, wait up to this many seconds for the standardizations to finish processing before merging (useful when calling right after upload, so you don't get blank rows). Default 0 merges whatever data is available immediately.
+          default: 0
+        addSourceCol:
+          type: boolean
+          title: Add Source Column
+          description: If true (default), prepend a column naming the source document each row came from. Set false to omit it.
+          default: true
+      type: object
+      required:
+      - standardizationIds
+      title: MergedExcelDownloadRequest
+    DeletionResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion was successful or not.
+      type: object
+      required:
+      - success
+      title: DeletionResponse
+    Standardization:
+      properties:
+        standardizationId:
+          type: string
+          title: Standardization ID
+          description: Unique identifier of the standardization object.
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        data:
+          additionalProperties: true
+          type: object
+          title: Standardization Result
+          description: The standardized result of the document. This is a structured JSON object.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema used for standardization.
+        schemaName:
+          type: string
+          title: Schema Name
+          description: Name of the schema used for standardization.
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job that created the standardization.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset to which the document belongs
+        filename:
+          type: string
+          title: Filename
+          description: Name of the file that was standardized.
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+          description: Display mode actually used during standardization.
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of the standardization job.
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Metadata associated with the document that originated this standardization. This just echoes any metadata you have previously posted on document creation.
+        fieldMetadata:
+          additionalProperties: true
+          type: object
+          title: Field Metadata
+          description: Per-field extraction metadata mapping dot-paths to page numbers and confidence levels.
+      type: object
+      required:
+      - standardizationId
+      - documentId
+      - data
+      title: Standardization
+      description: Public-facing representation of DocuPipeStandardization.
+    PresignedUrlResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - url
+      title: PresignedUrlResponse
+    ProcessingStatus:
+      type: string
+      enum:
+      - processing
+      - completed
+      - error
+      title: ProcessingStatus
+    EffortLevel:
+      type: string
+      enum:
+      - standard
+      - high
+      - extended
+      title: EffortLevel
+    MatchCandidate:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: The id of the record
+        record:
+          additionalProperties: true
+          type: object
+          title: Record
+          description: The record to be matched, can be any dictionary
+      type: object
+      required:
+      - id
+      - record
+      title: MatchCandidate
+    MatchingResponse:
+      properties:
+        reasoning:
+          type: string
+          title: Reasoning
+          description: The reasoning behind the match
+        matchingRecords:
+          items:
+            $ref: '#/components/schemas/MatchCandidate'
+          type: array
+          title: Matchingrecords
+          description: The records that matched in descending order of likelihood. Usually one record
+      type: object
+      required:
+      - reasoning
+      - matchingRecords
+      title: MatchingResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DeleteStandardizationsRequest:
+      properties:
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+          description: List of standardization IDs to be deleted.
+      type: object
+      required:
+      - standardizationIds
+      title: DeleteStandardizationsRequest
+    BulkExcelDownloadRequest:
+      properties:
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+          description: List of standardization IDs to download as Excel files.
+      type: object
+      required:
+      - standardizationIds
+      title: BulkExcelDownloadRequest
+    StandardizeV3Request:
+      properties:
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document to be standardized.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Schema to use for standardization. If omitted, a draft schema is auto-generated from the document (costs schema generation credits in addition to standardization credits).
+        guidelines:
+          type: string
+          title: Guidelines
+          description: Extraction guidelines. Overrides schema guidelines.
+        useMetadata:
+          type: boolean
+          title: Use Metadata
+          description: Whether to use metadata during standardization.
+          default: false
+        pages:
+          items:
+            type: integer
+          type: array
+          title: Pages
+          description: Optional list of 0-indexed page numbers to standardize. If not provided, the entire document will be standardized.
+          examples:
+          - - 0
+            - 1
+            - 5
+        stdVersion:
+          $ref: '#/components/schemas/StdVersionV3'
+          title: Standardization Version
+          description: Version of the standardization job.
+          default: 3
+        effortLevel:
+          $ref: '#/components/schemas/EffortLevelV3'
+          title: Effort Level
+          description: Level of effort for extraction. 'standard' uses cheaper/faster models (default), 'high' uses the best models.
+          default: standard
+        timeout:
+          type: integer
+          title: Timeout
+          description: The job timeout (in seconds) for webhook error reporting
+      type: object
+      required:
+      - documentId
+      title: StandardizeV3Request
+    StandardizeBatchResponse:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the standardization job.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the standardization job.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp of last update
+          description: Timestamp of the last update to the job.
+        documentCount:
+          type: integer
+          title: Document Count
+          description: Number of documents this job will effect. Documents already standardized from previous runs will not be counted.
+        pageCount:
+          type: integer
+          title: Page Count
+          description: Number of pages this job will effect. Pages already standardized from previous runs will not be counted.
+        standardizationJobIds:
+          items:
+            type: string
+          type: array
+          title: Standardization Job IDs
+          description: List of individual standardization job IDs that were run in this batch job.
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+          description: List of individual standardization IDs that were created in this batch job.
+        details:
+          type: string
+          title: Details
+          description: Details of the status of the job.
+      type: object
+      required:
+      - jobId
+      - status
+      - timestamp
+      - documentCount
+      - pageCount
+      title: StandardizeBatchResponse
+    SplitMode:
+      type: string
+      enum:
+      - auto
+      - all
+      - never
+      title: SplitMode
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+    EffortLevelV3:
+      type: string
+      enum:
+      - standard
+      - high
+      title: EffortLevelV3
+    InsufficientCreditsError:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Explanation about the exhausted credits
+      type: object
+      required:
+      - detail
+      title: InsufficientCreditsError
+    BulkXmlDownloadRequest:
+      properties:
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+          description: List of standardization IDs to download as XML files.
+      type: object
+      required:
+      - standardizationIds
+      title: BulkXmlDownloadRequest
+    MatchingRequest:
+      properties:
+        standardizationId:
+          type: string
+          title: Standardizationid
+          description: The id of the standardization you're looking to match
+        matchCandidates:
+          items:
+            $ref: '#/components/schemas/MatchCandidate'
+          type: array
+          title: Matchcandidates
+        instructions:
+          type: string
+          title: Instructions
+          description: The instructions for the match
+      type: object
+      required:
+      - standardizationId
+      - matchCandidates
+      - instructions
+      title: MatchingRequest
+    StdVersionV2:
+      type: number
+      enum:
+      - 2
+      - 2.1
+      - 2.2
+      - 2.3
+      title: StdVersionV2
+    StandardizationText:
+      properties:
+        standardizationId:
+          type: string
+          title: Standardization ID
+          description: Unique identifier of the standardization object.
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        data:
+          additionalProperties: true
+          type: object
+          title: Standardization Result
+          description: The standardized result of the document. This is a structured JSON object.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema used for standardization.
+        schemaName:
+          type: string
+          title: Schema Name
+          description: Name of the schema used for standardization.
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job that created the standardization.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset to which the document belongs
+        filename:
+          type: string
+          title: Filename
+          description: Name of the file that was standardized.
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+          description: Display mode actually used during standardization.
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of the standardization job.
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Metadata associated with the document that originated this standardization. This just echoes any metadata you have previously posted on document creation.
+        fieldMetadata:
+          additionalProperties: true
+          type: object
+          title: Field Metadata
+          description: Per-field extraction metadata mapping dot-paths to page numbers and confidence levels.
+        text:
+          type: string
+          title: Text
+          description: The plaintext result of the standardization.
+      type: object
+      required:
+      - standardizationId
+      - documentId
+      - data
+      title: StandardizationText
+      description: Public-facing representation of DocuPipeStandardization with its plaintext result.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    QueryResponse:
+      properties:
+        standardizations:
+          items:
+            $ref: '#/components/schemas/Standardization'
+          type: array
+          title: Standardizations
+          description: List of document standardization objects that match the query.
+          default: []
+        queryFeedback:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query Feedback
+          description: AI generated feedback on the query, which may include suggestions for improvement, ambiguities, or explanation about the query feasibility
+      type: object
+      title: QueryResponse
+    QueryRequest:
+      properties:
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema.
+        query:
+          type: string
+          title: Query
+          description: Free language text explaining what documents you're after. if the text is empty
+          examples:
+          - Documents with monthly rent over $1000
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset to which the document belongs If empty, the query will run on all documents
+        limit:
+          type: integer
+          title: Limit
+          description: Maximum number of documents to return. If not specified will default to 100
+          default: 100
+      type: object
+      required:
+      - schemaId
+      - query
+      title: QueryRequest
+    StandardizeV2BatchRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs to be standardized, up to 100 per batch.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema to be used for standardization - if not provided, one will be inferred.
+        guidelines:
+          type: string
+          title: Guidelines
+          description: Guidelines to apply to the schema when standardizing. If this is provided, it will override the schema guidelines.
+        useMetadata:
+          type: boolean
+          title: Use Metadata
+          description: Whether to use metadata during standardization.
+          default: false
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+          description: '*Advanced Feature*
+
+            Mode of display to run. The options are:
+
+            `auto`: AI decides how to display the document (default)
+
+            `spatial`: Display text spatially, as it appears in the document
+
+            `sections`: Display text from top to bottom as sections, with tables appearing as markdown
+
+            `image`: Display as an image, accompanied by section view'
+          default: auto
+        splitMode:
+          $ref: '#/components/schemas/SplitMode'
+          title: Split Mode
+          description: '*Advanced Feature*
+
+            Mode of splitting to run. Splitting is used to extract array fields efficiently. The options are:
+
+            `auto`: AI decides how to split the document (default)
+
+            `never`: Never split the document (this could lead to errors or poor performance for large documents)
+
+            `all`: Split the document into individual pages'
+          default: auto
+        effortLevel:
+          $ref: '#/components/schemas/EffortLevel'
+          title: Effort Level
+          description: '*Advanced Feature*
+
+            Level of effort to run. The options are:
+
+            `standard`: Standard effort level (default)
+
+            `high`: High effort level, for more difficult documents'
+          default: standard
+        stdVersion:
+          $ref: '#/components/schemas/StdVersionV2'
+          title: Standardization Version
+          description: 'Version of the standardization job. Options: 2.0, 2.1, 2.2 (default, stable), 2.3 (experimental, higher quality but may have runtime instability).'
+          default: 2.2
+        pages:
+          items:
+            items:
+              type: integer
+            type: array
+          type: array
+          title: Target Page Ranges
+          description: '*Advanced Feature*
+
+            For every document, list of all pages that you want want to standardize.  Page numbers are zero-indexed positions within each uploaded document. If not provided, the entire document will be standardized.'
+          examples:
+          - - 0
+            - 1
+            - 5
+        timeout:
+          type: integer
+          title: Timeout
+          description: The job timeout (in seconds) for webhook error reporting
+      type: object
+      required:
+      - documentIds
+      title: StandardizeV2BatchRequest
+    StdVersionV3:
+      type: number
+      enum:
+      - 3
+      title: StdVersionV3
+    StandardizationSummary:
+      properties:
+        totalStandardizations:
+          type: integer
+          title: Total Standardizations
+          description: Total number of standardizations.
+        schemaNames:
+          items:
+            type: string
+          type: array
+          title: Schema Names
+          description: List of schema names.
+      type: object
+      required:
+      - totalStandardizations
+      - schemaNames
+      title: StandardizationSummary
+    StandardizeV3Response:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the standardization job.
+        standardizationId:
+          type: string
+          title: Standardization ID
+          description: Unique identifier of the standardization result.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the standardization job.
+        documentId:
+          type: string
+          title: Document ID
+          description: Document being standardized.
+        pageCount:
+          type: integer
+          title: Page Count
+          description: Number of pages being standardized.
+        schemaId:
+          type: string
+          title: Schema ID
+          description: ID of the auto-generated draft schema. Only set when no schemaId was provided in the request.
+      type: object
+      required:
+      - jobId
+      - standardizationId
+      - status
+      - documentId
+      - pageCount
+      title: StandardizeV3Response
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer

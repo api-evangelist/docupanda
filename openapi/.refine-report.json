@@ -1,0 +1,45 @@
+{
+  "provider": "docupanda",
+  "sources": [
+    "docupanda-openapi.yml"
+  ],
+  "outputs": [
+    "docupanda-account-api-openapi.yml",
+    "docupanda-analysis-api-openapi.yml",
+    "docupanda-classification-api-openapi.yml",
+    "docupanda-docupipe-api-openapi.yml",
+    "docupanda-document-api-openapi.yml",
+    "docupanda-health-api-openapi.yml",
+    "docupanda-job-api-openapi.yml",
+    "docupanda-review-api-openapi.yml",
+    "docupanda-schema-api-openapi.yml",
+    "docupanda-standardization-api-openapi.yml",
+    "docupanda-webhook-api-openapi.yml",
+    "docupanda-workflow-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/docupanda-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "docupanda-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "docupanda-openapi.yml: tagged paths GET / -> DocuPipe",
+    "docupanda-openapi.yml: tagged paths GET /health -> Health",
+    "docupanda-openapi.yml: tagged paths POST /health -> Health",
+    "docupanda-openapi.yml: declared missing tag: Account",
+    "docupanda-openapi.yml: declared missing tag: Analysis",
+    "docupanda-openapi.yml: declared missing tag: Classification",
+    "docupanda-openapi.yml: declared missing tag: DocuPipe",
+    "docupanda-openapi.yml: declared missing tag: Document",
+    "docupanda-openapi.yml: declared missing tag: Health",
+    "docupanda-openapi.yml: declared missing tag: Job",
+    "docupanda-openapi.yml: declared missing tag: Review",
+    "docupanda-openapi.yml: declared missing tag: Schema",
+    "docupanda-openapi.yml: declared missing tag: Standardization",
+    "docupanda-openapi.yml: declared missing tag: Webhook",
+    "docupanda-openapi.yml: declared missing tag: Workflow",
+    "apis.yml register: written (+12 apis, 22 total)"
+  ],
+  "skipped": []
+}

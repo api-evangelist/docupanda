@@ -1,0 +1,1023 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Workflow API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Workflow
+paths:
+  /workflow/on-submit-document:
+    post:
+      tags:
+      - Workflow
+      summary: Create a Workflow
+      description: 'Use this endpoint to create a workflow that triggers when a document is submitted.
+
+
+        The workflow can be configured to either:
+
+        1. Always run the specified schema(s) on the document, set via the `standardizeStep`.
+
+        2. Always run the specified schema(s) on the document, then follow up with a review step, set via the `standardizeReviewStep`.
+
+        3. Split the document and standardize each resulting sub-document, set via the `splitStandardizeStep`.
+
+        4. Conditionally run one or more schemas based on the document''s `classId`, set via the `classifyStandardizeStep`.
+
+        5. Split the document, classify each resulting sub-document, and standardize based on class-to-schema mappings, set via the `splitClassifyStandardizeStep`.
+
+
+        Note: You must provide exactly one of these inputs.
+
+
+        To run the workflow, use the `POST /document` endpoint with the `workflowId` that gets returned from this endpoint. '
+      operationId: post_workflow_on_submit_document
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowOnSubmitDocumentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowPostResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /workflow/{workflow_id}/update:
+    post:
+      summary: Update a Workflow
+      operationId: update_workflow
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: workflow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workflow Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowOnSubmitDocumentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowPostResponse'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+          description: Payment Required
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Update an existing workflow by posting the same parameters as `POST /workflow/on-submit-document`. The workflow will retain its original `workflowId`.
+      tags:
+      - Workflow
+  /v2/workflow/{workflow_id}/run:
+    post:
+      summary: Run a Workflow
+      operationId: run_workflow_v2
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: workflow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workflow Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowV2RunRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowV2RunResponse'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal Server Error
+      description: "Run a workflow on one or more documents. This call returns immediately with a `jobId`; poll `GET /job/{job_id}` until the job status is `completed`, then read the results off the job's `outputs` field. For production integrations we recommend [webhooks](https://docs.docupipe.ai/reference/webhooks) instead of polling.\n\n## Providing documents\n\nEach entry in `inputs` supplies exactly one document, in one of two ways:\n\n1. `documentId` - reference a document already uploaded and processed in your workspace.\n2. `document` - upload a new file inline (base64 `file` or `url`). The file is parsed first and the workflow runs once parsing completes. The optional parameters `pages`, `dataset`, `metadata`, `parseVersion`, and `processingMethod` apply to inline uploads only and are rejected when combined with `documentId`.\n\n## Matching documents to workflow inputs\n\nA workflow declares one or more named inputs. Each input expects either a **single document** (exactly one) or a **document stack** (one or more). How you label your `inputs` entries depends on how many inputs the workflow has:\n\n- **One input** (whether a single document or a stack): `inputLabel` is optional. Every entry you submit is automatically assigned to that input. To fill a stack, just send multiple entries.\n- **Multiple inputs**: every entry **must** set `inputLabel` to the exact label of the workflow input it belongs to. Labels are case-sensitive. Repeat the same label across entries to add several documents to a stack input.\n\nEvery workflow input must receive at least one document, and single-document inputs accept exactly one. Requests that omit a required `inputLabel`, use an unknown label, or leave an input empty are rejected with a `400` error that lists the labels the workflow expects.\n\n### Example: workflow with one input\n\n```json\n{\"inputs\": [{\"documentId\": \"abc123\"}]}\n```\n\n### Example: one stack input, three documents\n\n```json\n{\"inputs\": [\n  {\"documentId\": \"abc123\"},\n  {\"documentId\": \"def456\"},\n  {\"document\": {\"url\": \"https://example.com/invoice.pdf\"}}\n]}\n```\n\n### Example: multiple inputs, labels required\n\n```json\n{\"inputs\": [\n  {\"inputLabel\": \"contract\", \"documentId\": \"abc123\"},\n  {\"inputLabel\": \"invoices\", \"documentId\": \"def456\"},\n  {\"inputLabel\": \"invoices\", \"documentId\": \"ghi789\"}\n]}\n```\n\n## Reading the results\n\nWhen the job completes, each element of the job's `outputs` is typed by `outputType`. For extraction outputs, `extraction.items` holds one item per document with its `documentId`, `standardizationId`, and inline `data`. When a result is too large to inline, `data` is null; fetch it with `GET /standardization/{standardization_id}`. Redaction outputs use `redaction.items`; each item includes its `redactionId` and authenticated `downloadUrl` for the flattened redacted PDF."
+      tags:
+      - Workflow
+  /workflows:
+    get:
+      tags:
+      - Workflow
+      summary: List your Workflows
+      description: This endpoint returns a list of all your workflows.
+      operationId: list_workflows
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Workflow'
+                type: array
+                title: Response List Workflows Workflows Get
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /workflow/{workflow_id}:
+    delete:
+      summary: Delete a Workflow
+      description: Delete a workflow by providing the workflow ID.
+      operationId: delete_workflow
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: workflow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workflow Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Workflow
+components:
+  schemas:
+    Workflow:
+      properties:
+        workflowId:
+          type: string
+          title: Workflow ID
+          description: Unique identifier of the workflow.
+        workflowContents:
+          additionalProperties: true
+          type: object
+          title: Workflow Contents
+          description: The details of the workflow. Currently this will always be a dictionary with key being 'step' and value being StandardizeStep, StandardizeReviewStep, ClassifyStandardizeStep, SplitStandardizeStep, or SplitClassifyStandardizeStep.
+        workflowTrigger:
+          additionalProperties: true
+          type: object
+          title: Workflow Trigger
+          description: The trigger that activates the workflow.
+        workflowName:
+          type: string
+          title: Workflow Name
+          description: Name of the workflow.
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of the workflow creation.
+      type: object
+      required:
+      - workflowId
+      - workflowContents
+      - workflowTrigger
+      title: Workflow
+    DisplayMode:
+      type: string
+      enum:
+      - auto
+      - spatial
+      - sections
+      - image
+      title: DisplayMode
+    SplitClassifyStandardizeStep:
+      properties:
+        classIds:
+          items:
+            type: string
+          type: array
+          title: Classids
+          description: The ids of the classes to classify the data to. If omitted or empty list, use all classes.
+          examples:
+          - - classId1
+            - classId2
+        multiClass:
+          type: boolean
+          title: Multi-Class
+          description: Whether the classification is multi-class or not.
+          default: false
+        includeUnknown:
+          type: boolean
+          title: Include Unknown
+          description: Whether to include the 'unknown' class in the classification. Only relevant for if multiClass is false and classIds is not provided.
+          default: true
+        instructions:
+          type: string
+          title: Instructions
+          description: Instructions for the AI on how to classify the document.
+        classToSchema:
+          additionalProperties:
+            type: string
+          type: object
+          title: Classtoschema
+          description: A mapping of class ID to a schema that we should standardize into. Note that not every class must be mapped to a schema, if you do not wish to standardize certain classes. Any schemas mentioned will trigger a standardize action based on the schemaId provided.
+          examples:
+          - classId1: schemaId1
+            classId2: schemaId2
+        stdVersion:
+          $ref: '#/components/schemas/StdVersion'
+          title: Stdversion
+          description: 'The version of the standardization engine. Supported values: [2.0, 2.1, 2.2, 2.3, 3.0]. Use 3.0 for the V3 engine. This is the only version field you need to set.'
+          default: 3
+        stdReleaseVersion:
+          $ref: '#/components/schemas/StdReleaseVersion'
+          description: 'Deprecated - set `stdVersion` instead and this will be inferred automatically (e.g. `stdVersion=3.0` infers release 3). Kept for backwards compatibility. Supported values: [1, 2, 3].'
+          default: 2
+          deprecated: true
+        guidelines:
+          type: string
+          title: Guidelines
+          description: Guidelines for the AI on how to standardize the documents. If omitted, use the schema's guidelines.
+        useMetadata:
+          type: boolean
+          title: Use Metadata
+          description: Whether to use metadata during standardization.
+          default: false
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Displaymode
+          description: 'The display mode of the standardization. For V1, this is called `standardizationMode`. The options are: `auto`, `spatial`, `sections`.'
+          default: auto
+        splitMode:
+          $ref: '#/components/schemas/SplitMode'
+          title: Splitmode
+          description: 'The split mode of the standardization. The options are: `auto`, `never`, `all`.'
+          default: auto
+        effortLevel:
+          $ref: '#/components/schemas/EffortLevel'
+          title: Effortlevel
+          description: 'The effort level of the standardization. The options are: `standard`, `high`.'
+          default: standard
+        standardizeTimeout:
+          type: integer
+          title: Standardizetimeout
+          description: The timeout in seconds for the standardization operation for webhook error reporting
+        pages:
+          additionalProperties:
+            items:
+              type: integer
+            type: array
+          type: object
+          title: Pages
+          description: 'Optional per-class page restriction, keyed by classId. Keys must be a subset of `classToSchema` keys. Values are non-empty lists of 0-indexed page numbers with no duplicates. **Indices are interpreted against each sub-document produced by the split, not the original uploaded document** - e.g. `{"classId1": [0]}` means the first page of every sub-document classified as `classId1`. Any classId not present in this dict standardizes the full sub-document. Out-of-range pages are silently filtered out at execution time.'
+          examples:
+          - classId1:
+            - 0
+            - 1
+        splitInstructions:
+          type: string
+          title: Splitinstructions
+          description: Optional instructions that control how the document is split before classification and standardization.
+        splitDatasetSuffix:
+          type: string
+          title: Splitdatasetsuffix
+          description: Suffix appended to the dataset provided during upload when assigning sub-documents. If the original document has no dataset, this suffix is used as the entire dataset name.
+        splitFilenamePrefix:
+          type: string
+          title: Splitfilenameprefix
+          description: Filename prefix to apply to each generated sub-document during the split operation.
+        splitDisplayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Splitdisplaymode
+          description: 'Display mode to use when running the split operation. The options mirror the split endpoint: `auto`, `spatial`, `sections`, `image`.'
+          default: auto
+        splitVersion:
+          $ref: '#/components/schemas/SplitVersion'
+          description: 'Version of the split behavior. Supported values: 1.0, 1.1.'
+          default: 1.1
+      type: object
+      required:
+      - classToSchema
+      title: SplitClassifyStandardizeStep
+    DeletionResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion was successful or not.
+      type: object
+      required:
+      - success
+      title: DeletionResponse
+    StandardizeReviewStep:
+      properties:
+        schemaIds:
+          items:
+            type: string
+          type: array
+          title: Schemaids
+          description: The IDs of all the schemas to standardize the document into.
+        stdVersion:
+          $ref: '#/components/schemas/StdVersion'
+          title: Stdversion
+          description: 'The version of the standardization engine. Supported values: [2.0, 2.1, 2.2, 2.3, 3.0]. Use 3.0 for the V3 engine. This is the only version field you need to set.'
+          default: 3
+        stdReleaseVersion:
+          $ref: '#/components/schemas/StdReleaseVersion'
+          description: 'Deprecated - set `stdVersion` instead and this will be inferred automatically (e.g. `stdVersion=3.0` infers release 3). Kept for backwards compatibility. Supported values: [1, 2, 3].'
+          default: 2
+          deprecated: true
+        guidelines:
+          type: string
+          title: Guidelines
+          description: Guidelines for the AI on how to standardize the documents. If omitted, use the schema's guidelines.
+        useMetadata:
+          type: boolean
+          title: Use Metadata
+          description: Whether to use metadata during standardization.
+          default: false
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Displaymode
+          description: 'The display mode of the standardization. For V1, this is called `standardizationMode`. The options are: `auto`, `spatial`, `sections`.'
+          default: auto
+        splitMode:
+          $ref: '#/components/schemas/SplitMode'
+          title: Splitmode
+          description: 'The split mode of the standardization. The options are: `auto`, `never`, `all`.'
+          default: auto
+        effortLevel:
+          $ref: '#/components/schemas/EffortLevel'
+          title: Effortlevel
+          description: 'The effort level of the standardization. The options are: `standard`, `high`.'
+          default: standard
+        standardizeTimeout:
+          type: integer
+          title: Standardizetimeout
+          description: The timeout in seconds for the standardization operation for webhook error reporting
+        pages:
+          items:
+            anyOf:
+            - items:
+                type: integer
+              type: array
+            - type: 'null'
+          type: array
+          title: Pages
+          description: Optional per-schema page restriction, aligned with `schemaIds` by index. Each entry is either `null` (standardize the full document against that schema) or a non-empty list of 0-indexed page numbers with no duplicates. If provided, length must equal `len(schemaIds)`. If omitted, every schema runs against the full document. Out-of-range pages are silently filtered out at execution time.
+          examples:
+          - - null
+            - - 0
+              - 1
+        reviewInstructions:
+          type: string
+          title: Reviewinstructions
+          description: Instructions for the review process. If omitted, run review with default behavior.
+      type: object
+      required:
+      - schemaIds
+      title: StandardizeReviewStep
+    StandardizeStep:
+      properties:
+        schemaIds:
+          items:
+            type: string
+          type: array
+          title: Schemaids
+          description: The IDs of all the schemas to standardize the document into.
+        stdVersion:
+          $ref: '#/components/schemas/StdVersion'
+          title: Stdversion
+          description: 'The version of the standardization engine. Supported values: [2.0, 2.1, 2.2, 2.3, 3.0]. Use 3.0 for the V3 engine. This is the only version field you need to set.'
+        stdReleaseVersion:
+          $ref: '#/components/schemas/StdReleaseVersion'
+          description: 'Deprecated - set `stdVersion` instead and this will be inferred automatically (e.g. `stdVersion=3.0` infers release 3). Kept for backwards compatibility. Supported values: [1, 2, 3].'
+          deprecated: true
+        guidelines:
+          type: string
+          title: Guidelines
+          description: Guidelines for the AI on how to standardize the documents. If omitted, use the schema's guidelines.
+        useMetadata:
+          type: boolean
+          title: Use Metadata
+          description: Whether to use metadata during standardization.
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Displaymode
+          description: 'The display mode of the standardization. For V1, this is called `standardizationMode`. The options are: `auto`, `spatial`, `sections`.'
+        splitMode:
+          $ref: '#/components/schemas/SplitMode'
+          title: Splitmode
+          description: 'The split mode of the standardization. The options are: `auto`, `never`, `all`.'
+        effortLevel:
+          $ref: '#/components/schemas/EffortLevel'
+          title: Effortlevel
+          description: 'The effort level of the standardization. The options are: `standard`, `high`.'
+        standardizeTimeout:
+          type: integer
+          title: Standardizetimeout
+          description: The timeout in seconds for the standardization operation for webhook error reporting
+        pages:
+          items:
+            anyOf:
+            - items:
+                type: integer
+              type: array
+            - type: 'null'
+          type: array
+          title: Pages
+          description: Optional per-schema page restriction, aligned with `schemaIds` by index. Each entry is either `null` (standardize the full document against that schema) or a non-empty list of 0-indexed page numbers with no duplicates. If provided, length must equal `len(schemaIds)`. If omitted, every schema runs against the full document. Out-of-range pages are silently filtered out at execution time.
+          examples:
+          - - null
+            - - 0
+              - 1
+      type: object
+      required:
+      - schemaIds
+      title: StandardizeStep
+    ProcessingStatus:
+      type: string
+      enum:
+      - processing
+      - completed
+      - error
+      title: ProcessingStatus
+    EffortLevel:
+      type: string
+      enum:
+      - standard
+      - high
+      - extended
+      title: EffortLevel
+    ProcessingMethod:
+      type: string
+      enum:
+      - asImage
+      - removeWatermark
+      title: ProcessingMethod
+    SplitVersion:
+      type: number
+      enum:
+      - 1
+      - 1.1
+      title: SplitVersion
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WorkflowPostResponse:
+      properties:
+        workflowId:
+          type: string
+          title: Workflowid
+          description: The id of the workflow that was created. Call POST `/document` with this workflowId to run it
+        success:
+          type: boolean
+          title: Success
+          description: Whether the workflow was successfully created
+      type: object
+      required:
+      - workflowId
+      - success
+      title: WorkflowPostResponse
+    WorkflowV2RunInput:
+      properties:
+        inputLabel:
+          type: string
+          title: Inputlabel
+          description: Label of the workflow input this document belongs to (case-sensitive). Required when the workflow has multiple inputs; optional when it has exactly one (single document or stack), where every entry is assigned to that input. Repeat the same label across entries to add several documents to a stack input.
+        documentId:
+          type: string
+          title: Documentid
+          description: Reference an existing, fully processed workspace document. Provide exactly one of 'documentId' or 'document'.
+        document:
+          $ref: '#/components/schemas/InputDocument'
+          title: Document
+          description: Or upload a new document inline using url or base64 file; it is parsed before the workflow runs.
+        pages:
+          items:
+            type: integer
+          type: array
+          title: Pages
+          description: Inline-upload only. Zero-indexed pages to parse. Null/empty means all pages.
+        dataset:
+          type: string
+          title: Dataset
+          description: Inline-upload only. Dataset to assign the uploaded document to.
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Inline-upload only. Optional metadata to associate with the document.
+        parseVersion:
+          type: number
+          title: Parseversion
+          description: Inline-upload only. Parsing version.
+        processingMethod:
+          $ref: '#/components/schemas/ProcessingMethod'
+          title: Processingmethod
+          description: Inline-upload only. Processing method.
+      type: object
+      title: WorkflowV2RunInput
+    SplitMode:
+      type: string
+      enum:
+      - auto
+      - all
+      - never
+      title: SplitMode
+    StdVersion:
+      type: number
+      enum:
+      - 2
+      - 2.1
+      - 2.2
+      - 2.3
+      - 3
+      title: StdVersion
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+    InsufficientCreditsError:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Explanation about the exhausted credits
+      type: object
+      required:
+      - detail
+      title: InsufficientCreditsError
+    StdReleaseVersion:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      title: StdReleaseVersion
+    FileExtension:
+      type: string
+      enum:
+      - pdf
+      - png
+      - jpeg
+      - webp
+      - tiff
+      - txt
+      - json
+      - xml
+      - html
+      - doc
+      - docx
+      - csv
+      - xlsx
+      - xls
+      - eml
+      title: FileExtension
+    FileType:
+      type: string
+      enum:
+      - pdf
+      - image
+      - text
+      - json
+      - html
+      - word
+      - table
+      title: FileType
+    WorkflowV2RunResponse:
+      properties:
+        workflowId:
+          type: string
+          title: Workflowid
+          description: Workflow that was run.
+        jobId:
+          type: string
+          title: Jobid
+          description: WorkflowV2Job id for this run. Poll GET /job/{job_id}.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          description: Overall run status.
+        inputs:
+          items:
+            $ref: '#/components/schemas/WorkflowV2RunInputResult'
+          type: array
+          title: Inputs
+          description: Per-input resolution.
+      type: object
+      required:
+      - workflowId
+      - jobId
+      - status
+      - inputs
+      title: WorkflowV2RunResponse
+    WorkflowOnSubmitDocumentRequest:
+      properties:
+        standardizeStep:
+          $ref: '#/components/schemas/StandardizeStep'
+          title: Standardize Step
+          description: This step will always standardize the submitted document through one or more schemas you specify.
+        standardizeReviewStep:
+          $ref: '#/components/schemas/StandardizeReviewStep'
+          title: Standardize and Review Step
+          description: This step standardizes the document and immediately reviews every resulting standardization.
+        classifyStandardizeStep:
+          $ref: '#/components/schemas/ClassifyStandardizeStep'
+          title: Classify and Standardize Step
+          description: This step allows you to decide on a list of class IDs to classify into, and define which schemas to standardize by, conditional on the classification result. You may choose to only standardize some of the classes, or standardize the same class by multiple schemas.
+        splitStandardizeStep:
+          $ref: '#/components/schemas/SplitStandardizeStep'
+          title: Split and Standardize Step
+          description: This step first runs a split operation on the submitted document, then standardizes every resulting sub-document using all schemas provided in `schemaIds`.
+        splitClassifyStandardizeStep:
+          $ref: '#/components/schemas/SplitClassifyStandardizeStep'
+          title: Split, Classify, and Standardize Step
+          description: This step runs a split operation on the submitted document, then classifies each resulting sub-document, and finally standardizes any sub-document whose classification matches a provided class-to-schema mapping.
+        workflowName:
+          type: string
+          title: Workflowname
+          description: Optionally name your workflow
+      type: object
+      title: WorkflowOnSubmitDocumentRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SplitStandardizeStep:
+      properties:
+        schemaIds:
+          items:
+            type: string
+          type: array
+          title: Schemaids
+          description: Optional list of schema IDs to standardize each resulting sub-document. If omitted or empty, only the split operation is performed.
+        stdVersion:
+          $ref: '#/components/schemas/StdVersion'
+          title: Stdversion
+          description: 'The version of the standardization engine. Supported values: [2.0, 2.1, 2.2, 2.3, 3.0]. Use 3.0 for the V3 engine. This is the only version field you need to set.'
+          default: 3
+        stdReleaseVersion:
+          $ref: '#/components/schemas/StdReleaseVersion'
+          description: 'Deprecated - set `stdVersion` instead and this will be inferred automatically (e.g. `stdVersion=3.0` infers release 3). Kept for backwards compatibility. Supported values: [1, 2, 3].'
+          default: 2
+          deprecated: true
+        guidelines:
+          type: string
+          title: Guidelines
+          description: Guidelines for the AI on how to standardize the documents. If omitted, use the schema's guidelines.
+        useMetadata:
+          type: boolean
+          title: Use Metadata
+          description: Whether to use metadata during standardization.
+          default: false
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Displaymode
+          description: 'The display mode of the standardization. For V1, this is called `standardizationMode`. The options are: `auto`, `spatial`, `sections`.'
+          default: auto
+        splitMode:
+          $ref: '#/components/schemas/SplitMode'
+          title: Splitmode
+          description: 'The split mode of the standardization. The options are: `auto`, `never`, `all`.'
+          default: auto
+        effortLevel:
+          $ref: '#/components/schemas/EffortLevel'
+          title: Effortlevel
+          description: 'The effort level of the standardization. The options are: `standard`, `high`.'
+          default: standard
+        standardizeTimeout:
+          type: integer
+          title: Standardizetimeout
+          description: The timeout in seconds for the standardization operation for webhook error reporting
+        pages:
+          items:
+            anyOf:
+            - items:
+                type: integer
+              type: array
+            - type: 'null'
+          type: array
+          title: Pages
+          description: Optional per-schema page restriction, aligned with `schemaIds` by index. Each entry is either `null` (standardize the full sub-document against that schema) or a non-empty list of 0-indexed page numbers with no duplicates. **Indices are interpreted against each sub-document produced by the split, not the original uploaded document** - e.g. `[[0]]` means the first page of every sub-document. If provided, length must equal `len(schemaIds)`. If omitted, every schema runs against the full sub-document. Out-of-range pages are silently filtered out at execution time.
+          examples:
+          - - null
+            - - 0
+              - 1
+        splitInstructions:
+          type: string
+          title: Splitinstructions
+          description: Optional instructions that control how the document is split before standardization.
+        splitDatasetSuffix:
+          type: string
+          title: Splitdatasetsuffix
+          description: Suffix appended to the dataset provided during upload when assigning sub-documents. If the original document has no dataset, this suffix is used as the entire dataset name.
+        splitFilenamePrefix:
+          type: string
+          title: Splitfilenameprefix
+          description: Filename prefix to apply to each generated sub-document during the split operation.
+        splitDisplayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Splitdisplaymode
+          description: 'Display mode to use when running the split operation. The options mirror the split endpoint: `auto`, `spatial`, `sections`, `image`.'
+          default: auto
+        splitVersion:
+          $ref: '#/components/schemas/SplitVersion'
+          description: 'Version of the split behavior. Supported values: 1.0, 1.1.'
+          default: 1.1
+      type: object
+      title: SplitStandardizeStep
+    File:
+      properties:
+        contents:
+          type: string
+          contentMediaType: application/octet-stream
+          title: File Contents
+          description: Binary string representing the content of the file in base64 encoding.
+      type: object
+      required:
+      - contents
+      title: File
+    ClassifyStandardizeStep:
+      properties:
+        classIds:
+          items:
+            type: string
+          type: array
+          title: Classids
+          description: The ids of the classes to classify the data to. If omitted or empty list, use all classes.
+          examples:
+          - - classId1
+            - classId2
+        multiClass:
+          type: boolean
+          title: Multi-Class
+          description: Whether the classification is multi-class or not.
+        includeUnknown:
+          type: boolean
+          title: Include Unknown
+          description: Whether to include the 'unknown' class in the classification. Only relevant for if multiClass is false and classIds is not provided.
+        instructions:
+          type: string
+          title: Instructions
+          description: Instructions for the AI on how to classify the document.
+        classToSchema:
+          additionalProperties:
+            type: string
+          type: object
+          title: Classtoschema
+          description: A mapping of class ID to a schema that we should standardize into. Note that not every class must be mapped to a schema, if you do not wish to standardize certain classes. Any schemas mentioned will trigger a standardize action based on the schemaId provided.
+          examples:
+          - classId1: schemaId1
+            classId2: schemaId2
+        stdVersion:
+          $ref: '#/components/schemas/StdVersion'
+          title: Stdversion
+          description: 'The version of the standardization engine. Supported values: [2.0, 2.1, 2.2, 2.3, 3.0]. Use 3.0 for the V3 engine. This is the only version field you need to set.'
+        stdReleaseVersion:
+          $ref: '#/components/schemas/StdReleaseVersion'
+          description: 'Deprecated - set `stdVersion` instead and this will be inferred automatically (e.g. `stdVersion=3.0` infers release 3). Kept for backwards compatibility. Supported values: [1, 2, 3].'
+          deprecated: true
+        guidelines:
+          type: string
+          title: Guidelines
+          description: Guidelines for the AI on how to standardize the documents. If omitted, use the schema's guidelines.
+        useMetadata:
+          type: boolean
+          title: Use Metadata
+          description: Whether to use metadata during standardization.
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Displaymode
+          description: 'The display mode of the standardization. For V1, this is called `standardizationMode`. The options are: `auto`, `spatial`, `sections`.'
+        splitMode:
+          $ref: '#/components/schemas/SplitMode'
+          title: Splitmode
+          description: 'The split mode of the standardization. The options are: `auto`, `never`, `all`.'
+        effortLevel:
+          $ref: '#/components/schemas/EffortLevel'
+          title: Effortlevel
+          description: 'The effort level of the standardization. The options are: `standard`, `high`.'
+        standardizeTimeout:
+          type: integer
+          title: Standardizetimeout
+          description: The timeout in seconds for the standardization operation for webhook error reporting
+        pages:
+          additionalProperties:
+            items:
+              type: integer
+            type: array
+          type: object
+          title: Pages
+          description: Optional per-class page restriction, keyed by classId. Keys must be a subset of `classToSchema` keys. Values are non-empty lists of 0-indexed page numbers with no duplicates. Any classId not present in this dict standardizes the full document. Out-of-range pages are silently filtered out at execution time.
+          examples:
+          - classId1:
+            - 0
+            - 1
+      type: object
+      required:
+      - classToSchema
+      title: ClassifyStandardizeStep
+    WorkflowV2RunInputResult:
+      properties:
+        inputLabel:
+          type: string
+          title: Inputlabel
+          description: Input node label this document was bound to.
+        documentId:
+          type: string
+          title: Documentid
+          description: Resolved document id.
+        uploadJobId:
+          type: string
+          title: Uploadjobid
+          description: Parse job id for a fresh upload; null when referencing an existing doc.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          description: Per-input processing status.
+      type: object
+      required:
+      - inputLabel
+      - documentId
+      - status
+      title: WorkflowV2RunInputResult
+    InputDocument:
+      properties:
+        file:
+          $ref: '#/components/schemas/File'
+          description: File object containing the input document in base64 encoding.
+        url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Document URL
+          description: URL pointing to the location of the input file.
+          examples:
+          - https://example.com/document.pdf
+        filename:
+          type: string
+          title: Filename
+          description: Name of the file, not including the file extension.
+        fileExtension:
+          $ref: '#/components/schemas/FileExtension'
+          title: File Extension
+          description: Extension of the file.
+        fileType:
+          $ref: '#/components/schemas/FileType'
+          title: File Type
+          description: Type of the file. If not provided, it will be determined from the file contents.
+      type: object
+      title: Input Document
+    WorkflowV2RunRequest:
+      properties:
+        inputs:
+          items:
+            $ref: '#/components/schemas/WorkflowV2RunInput'
+          type: array
+          title: Inputs
+          description: One entry per document. Every workflow input must receive at least one document; single-document inputs accept exactly one, stack inputs accept one or more (repeat the inputLabel). When the workflow has a single input, inputLabel can be omitted and all entries are assigned to it.
+        timeout:
+          type: integer
+          title: Timeout
+          description: Timeout in seconds for this workflow run.
+      type: object
+      required:
+      - inputs
+      title: WorkflowV2RunRequest
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer
