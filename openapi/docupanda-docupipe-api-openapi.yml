@@ -1,0 +1,34 @@
+openapi: 3.2.0
+info:
+  title: Docu Pipe API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: DocuPipe
+paths:
+  /:
+    get:
+      summary: Root
+      operationId: root
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - DocuPipe
+components:
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer

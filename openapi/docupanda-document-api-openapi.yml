@@ -1,0 +1,2072 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Document API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Document
+paths:
+  /document:
+    post:
+      tags:
+      - Document
+      summary: Submit a Document for Processing
+      description: 'Use this endpoint to submit a document to DocuPipe for processing. You can upload a local file or provide a URL to a remote file. Upon submission, receive a unique `documentId` which you may use to retrieve the document''s results, or apply subsequent workflows on it.
+
+
+        Max document size is 3000 pages and 3000 MB. Max metadata size is 10KB.
+
+
+        <Accordion title="Advanced Options" icon="fa-info-circle">You may also provide a `workflowId` to apply a pre-defined workflow to the document.</Accordion>'
+      operationId: post_document
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDocumentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDocumentResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Request Entity Too Large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /document/upload/presigned-url:
+    post:
+      tags:
+      - Document
+      summary: Create Presigned Upload URL
+      description: Create a short-lived presigned S3 PUT URL for browser uploads. Use the returned `contentType` header when uploading to `putUrl`, then submit `getUrl` to the document processing endpoint.
+      operationId: create_presigned_upload_url
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresignedUploadRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUploadResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /document/{document_id}/proposed-schemas:
+    get:
+      summary: Get Schema Proposals
+      operationId: get_proposed_schemas
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Document Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProposedSchemas'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Get schema proposals for a document by providing the document's ID. The schema proposals are generated by the AI based on the document's content.
+      tags:
+      - Document
+  /document/{document_id}:
+    get:
+      summary: Retrieve a Processed Document
+      operationId: get_document
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Document Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Access the analysis results of your submitted document using this endpoint. The `status` field indicates the document's current processing stage, and the `result` field provides the extracted plain text for AI comprehension, as well as more granular structured information such as bounding boxes for detected tables and text blocks.
+      tags:
+      - Document
+    delete:
+      summary: Delete a Document
+      description: Delete a document that has been previously submitted to DocuPipe for processing.
+      operationId: delete_document
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Document Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Document
+  /document/{document_id}/detailed:
+    get:
+      summary: Retrieve Detailed Processing Result
+      operationId: get_document_detailed
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Document Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDetailedDocumentParsing'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Access the fine grained document parsing result. This representation includes individual word locations on the page, as well as per-page handwriting detection. Available for PDF, image, Word, and HTML documents. Not available for table (xlsx/csv), text, or JSON documents.
+      tags:
+      - Document
+  /document/{document_id}/download/original-url:
+    get:
+      summary: Download Original URL
+      description: 'Generate and retrieve a presigned URL for accessing a document file by its ID. The URL is valid for a limited time (e.g., 1 hour) and allows secure access to the document stored on DocuPipe. outputFormat options: ''original'' (default) — returns the main file stored on DocuPipe. For documents that were converted during upload (HTML, Word, TIFF, WebP, XFA), this returns the converted version (PDF/PNG). ''pdf'' — same as original, but for image documents it additionally converts the image to PDF. ''uploaded'' — returns the actual file that was originally uploaded, before any conversion. Falls back to ''original'' behavior for older documents or documents where no conversion occurred.'
+      operationId: download_original_url
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Document Id
+      - name: hours
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of hours the URL should be valid for
+          default: 6
+          title: Hours
+        description: Number of hours the URL should be valid for
+      - name: format
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/OutputFormat'
+          description: Output format of the document
+          default: pdf
+        description: Output format of the document
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal Server Error
+      tags:
+      - Document
+  /document/{document_id}/download/ocr-url:
+    get:
+      summary: Download OCR URL
+      description: Generate an OCR PDF by providing a document ID. This will add the OCR text into a layer on top of the PDF, allowing you to search the PDF by the OCR text. Returns a presigned URL to download the OCR PDF. This URL is valid for a limited time (e.g., 1 hour) and allows secure access to the OCR PDF stored on DocuPipe. Note that this endpoint only works for documents with PDF file types.
+      operationId: download_ocr_url
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Document Id
+      - name: hours
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: Number of hours the URL should be valid for
+          default: 6
+          title: Hours
+        description: Number of hours the URL should be valid for
+      - name: skip_cache
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Force regeneration of the OCR PDF
+          default: false
+          title: Skip Cache
+        description: Force regeneration of the OCR PDF
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal Server Error
+      tags:
+      - Document
+  /document/{document_id}/download/public-url:
+    get:
+      summary: Download Public URL
+      description: Generate a permanent public URL for a document by providing a document ID. This URL never expires and can be shared with anyone. The document is copied to a public S3 bucket and subsequent calls will return the same URL.
+      operationId: download_public_url
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Document Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicUrlResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal Server Error
+      tags:
+      - Document
+  /document/download/bulk-original-url:
+    post:
+      tags:
+      - Document
+      summary: Bulk Download Original Documents
+      description: Download multiple documents as their original files in a single zip archive. Provide a list of document IDs and receive a presigned URL to download a zip file containing all the original files. Maximum 100 documents per request. The download URL expires after 24 hours.
+      operationId: bulk_original_download
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkOriginalDownloadRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /document/download/bulk-ocr-url:
+    post:
+      tags:
+      - Document
+      summary: Bulk Download OCR PDFs
+      description: Download multiple documents as OCR PDFs in a single zip archive. Provide a list of document IDs and receive a presigned URL to download a zip file containing all the OCR PDFs. Maximum 100 documents per request. The download URL expires after 24 hours. Only PDF and image documents are supported.
+      operationId: bulk_ocr_download
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkOcrDownloadRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /documents:
+    get:
+      summary: List Documents
+      operationId: list_documents
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: dataset
+        in: query
+        required: false
+        schema:
+          type: string
+          description: The dataset to filter documents by
+          title: Dataset
+        description: The dataset to filter documents by
+      - name: from_timestamp
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Inclusive document creation timestamp lower bound, in ISO 8601 format
+          title: From Timestamp
+        description: Inclusive document creation timestamp lower bound, in ISO 8601 format
+      - name: to_timestamp
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Inclusive document creation timestamp upper bound, in ISO 8601 format
+          title: To Timestamp
+        description: Inclusive document creation timestamp upper bound, in ISO 8601 format
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The maximum number of documents to return. Maximum is 20000
+          default: 20
+          title: Limit
+        description: The maximum number of documents to return. Maximum is 20000
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The number of documents to skip (to paginate through the dataset)
+          default: 0
+          title: Offset
+        description: The number of documents to skip (to paginate through the dataset)
+      - name: exclude_payload
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Whether to exclude the result payload from the response
+          default: true
+          title: Exclude Payload
+        description: Whether to exclude the result payload from the response
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+                title: Response List Documents Documents Get
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: List all documents that have been submitted to DocuPipe for processing. You can filter the results by providing a dataset name.
+      tags:
+      - Document
+    delete:
+      summary: Delete Multiple Documents
+      description: Delete multiple documents that have been previously submitted to DocuPipe for processing. You can provide a list of document IDs to delete multiple documents at once.
+      operationId: delete_documents
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteDocumentsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Document
+  /documents/search:
+    get:
+      summary: Search Documents
+      description: Search documents by filename or document ID using case-insensitive partial matching. You can optionally filter results by dataset name.
+      operationId: search_documents
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Search query to match against filename or document ID
+          title: Query
+        description: Search query to match against filename or document ID
+      - name: dataset
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Optional dataset filter
+          title: Dataset
+        description: Optional dataset filter
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Maximum number of results to return (1-500)
+          default: 100
+          title: Limit
+        description: Maximum number of results to return (1-500)
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of results to skip for pagination
+          default: 0
+          title: Offset
+        description: Number of results to skip for pagination
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+                title: Response Search Documents Documents Search Get
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Document
+  /dataset-names:
+    get:
+      tags:
+      - Document
+      summary: List Dataset Names
+      description: List all dataset names for the documents you have submitted so far
+      operationId: list_datasets
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDatasetsResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /documents/update-dataset:
+    post:
+      tags:
+      - Document
+      summary: Update Dataset
+      description: Update the dataset of a list of documents by providing a list of document IDs and the new dataset name. This operation will update the dataset of all documents and standardizations associated with those documents.
+      operationId: update_documents_dataset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDatasetRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateDatasetResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /documents/update-metadata:
+    post:
+      tags:
+      - Document
+      summary: Update Document Metadata
+      description: Replace the user-supplied metadata dict on one or more existing documents. The provided metadata fully replaces any existing metadata on each document. Pass an empty object to clear it. Metadata must be at most 10KB when JSON-serialized. Updates propagate to associated standardizations and reviews.
+      operationId: update_documents_metadata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMetadataRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateMetadataResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Request Entity Too Large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /document/split:
+    post:
+      tags:
+      - Document
+      summary: Split a Document
+      description: Split a document into multiple documents intelligently using AI. If no splitting is needed, no new documents will be created. Otherwise, the new sub-documents will be automatically generated.
+      operationId: post_split_document
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SplitJobRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSplitResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /documents/merge:
+    post:
+      tags:
+      - Document
+      summary: Merge Documents
+      description: Merge multiple documents into a single PDF document.
+      operationId: post_merge
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MergeJobRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostMergeResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /documents/summary:
+    get:
+      summary: Get Document Count
+      description: Get a count of your documents, including the total number of documents, as well as the list of unique datasets
+      operationId: get_document_summary
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: from_timestamp
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Inclusive document creation timestamp lower bound, in ISO 8601 format
+          title: From Timestamp
+        description: Inclusive document creation timestamp lower bound, in ISO 8601 format
+      - name: to_timestamp
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Inclusive document creation timestamp upper bound, in ISO 8601 format
+          title: To Timestamp
+        description: Inclusive document creation timestamp upper bound, in ISO 8601 format
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentSummary'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Document
+components:
+  schemas:
+    Document:
+      properties:
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset to which the document belongs.
+        classified:
+          type: boolean
+          title: Classified
+          description: Whether the document has been classified.
+          default: false
+        classIds:
+          items:
+            type: string
+          type: array
+          title: Class IDs
+          description: List of class IDs assigned to the document. If classified is False, this will be None.
+        filename:
+          type: string
+          title: Document filename
+          description: Name of the document file.
+        fileType:
+          $ref: '#/components/schemas/FileType'
+          title: File Type
+          description: Type of the document file.
+        fileExtension:
+          $ref: '#/components/schemas/FileExtension'
+          title: File Extension
+          description: Extension of the document file.
+        originalFileExtension:
+          $ref: '#/components/schemas/FileExtension'
+          title: Original File Extension
+          description: extension of the originally uploaded file, before any conversion (e.g. html, docx). none if no conversion occurred.
+        fileSizeMb:
+          type: number
+          title: File Size
+          description: Size of the stored document file in MB.
+        result:
+          $ref: '#/components/schemas/ParsingResults'
+          title: Analysis Result
+          description: Result of the document analysis if completed.
+        numPages:
+          type: integer
+          title: Number of Pages
+          description: Number of pages in the document.
+        language:
+          type: string
+          title: Language
+          description: Dominant language of the document.
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Metadata associated with the document. This is a user-defined dictionary that can have any properties.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the document processing (deprecated, will be removed in future versions).
+        parentDocumentId:
+          type: string
+          title: Parent Document ID
+          description: Unique identifier of the parent document, if this document was created by splitting another document.
+        parentDocumentPages:
+          items:
+            type: integer
+          type: array
+          title: Parent Document Pages
+          description: List of page numbers from the parent document that make up this document (zero indexed).
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of the document creation.
+      type: object
+      required:
+      - documentId
+      title: Document
+      description: Public-facing representation of DocuPipeDocument.
+    AnalyzedPage:
+      properties:
+        sections:
+          items:
+            $ref: '#/components/schemas/Section'
+          type: array
+          title: Sections
+          description: A list of parsed sections in the page.
+          default: []
+        text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Text
+          description: The text content of the page - a concatenation of the text in all sections.
+        pageNum:
+          type: integer
+          title: Page Number
+          description: The number of this page in document (zero indexed).
+          default: 0
+        orientation:
+          $ref: '#/components/schemas/Orientation'
+          description: Orientation of the page.
+          default: normal
+      type: object
+      title: AnalyzedPage
+      description: Public-facing representation of DocuPipeAnalyzedPage.
+    DocuPandaSchema:
+      properties:
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema.
+        userId:
+          type: string
+          title: User ID
+          description: Unique identifier of the user who submitted the schema.
+        chatId:
+          type: string
+          title: Chat ID
+          description: ID of the create-schema chat session that generated this draft schema.
+        sourceChatId:
+          type: string
+          title: Source Chat ID
+          description: ID of the chat session that originally created this schema.
+        origin:
+          type: string
+          title: Origin
+          description: Where this schema was created, such as architect_schema_studio, dashboard_create_schema, api, or import.
+        sourceDocumentId:
+          type: string
+          title: Source Document ID
+          description: Document ID used as the primary sample when this schema was created.
+        sourceDocumentName:
+          type: string
+          title: Source Document Name
+          description: Document name used as the primary sample when this schema was created.
+        fieldPreview:
+          items:
+            type: string
+          type: array
+          title: Field Preview
+          description: Short list of schema field names for picker/list rows.
+        schemaName:
+          type: string
+          title: Schema Name
+          description: Name of the schema.
+          default: unnamed
+        jsonSchema:
+          additionalProperties: true
+          type: object
+          title: Schema
+          description: A valid JSON schema
+        guidelines:
+          type: string
+          title: Guidelines
+          description: Guidelines for the schema.
+        version:
+          type: number
+          title: Version
+          description: DocuPipe API version used to process the schema.
+          default: 181.2
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the schema creation.
+        draft:
+          type: boolean
+          title: Draft
+          description: Whether the schema is a draft.
+          default: false
+      type: object
+      required:
+      - userId
+      title: DocuPandaSchema
+    GetDatasetsResponse:
+      properties:
+        datasetNames:
+          items:
+            type: string
+          type: array
+          title: Dataset Names
+          description: List of dataset names
+      type: object
+      required:
+      - datasetNames
+      title: GetDatasetsResponse
+    BulkOriginalDownloadRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs to download as original files.
+      type: object
+      required:
+      - documentIds
+      title: BulkOriginalDownloadRequest
+    DisplayMode:
+      type: string
+      enum:
+      - auto
+      - spatial
+      - sections
+      - image
+      title: DisplayMode
+    PublicDetailedDocumentParsing:
+      properties:
+        documentId:
+          type: string
+          title: Documentid
+          description: Unique identifier for the document
+        pages:
+          items:
+            $ref: '#/components/schemas/DocuPandaPagePublic'
+          type: array
+          title: Pages
+          description: List of parsed pages with detailed information on word level location
+        language:
+          type: string
+          title: Language
+          description: Language of the document, e.g. en, fr, etc.
+        handwriting:
+          type: boolean
+          title: Handwriting
+          description: True if the document contains handwriting
+        plaintext:
+          type: string
+          title: Plaintext
+          description: A textual representation of the entire document. This representation preserves the spatial arrangement of information in the document. It is designed to be both human-readable and LLM-redable. You can use this representation to prompt your own AI engines and build complex workflows around it.
+      type: object
+      required:
+      - documentId
+      - pages
+      - language
+      - handwriting
+      title: PublicDetailedDocumentParsing
+    StandardizeStepOutput:
+      properties:
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+          description: List of standardization IDs that result from the standardize step.
+        standardizationJobIds:
+          items:
+            type: string
+          type: array
+          title: Job IDs
+          description: List of job IDs for the standardization jobs that will run.
+      type: object
+      required:
+      - standardizationIds
+      - standardizationJobIds
+      title: StandardizeStepOutput
+    DeletionResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion was successful or not.
+      type: object
+      required:
+      - success
+      title: DeletionResponse
+    PresignedUrlResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - url
+      title: PresignedUrlResponse
+    ProcessingStatus:
+      type: string
+      enum:
+      - processing
+      - completed
+      - error
+      title: ProcessingStatus
+    DeleteDocumentsRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs to be deleted.
+      type: object
+      required:
+      - documentIds
+      title: DeleteDocumentsRequest
+    DocumentSummary:
+      properties:
+        totalDocuments:
+          type: integer
+          title: Total Documents
+          description: Total number of documents.
+        datasets:
+          items:
+            type: string
+          type: array
+          title: Datasets
+          description: List of dataset names.
+      type: object
+      required:
+      - totalDocuments
+      - datasets
+      title: DocumentSummary
+    Section:
+      properties:
+        type:
+          $ref: '#/components/schemas/SectionType'
+          title: Type
+          description: The type of the section (text, table, image)
+        text:
+          type: string
+          title: Text
+          description: The text content of the section
+        bbox:
+          items:
+            type: number
+          type: array
+          title: Bounding Box
+          description: Bounding box of the section in the format [x1, y1, x2, y2], in percentage units [0, 1] within the page
+        header:
+          $ref: '#/components/schemas/HeaderType'
+          title: Header Type
+          description: 'For text sections, the type of header: paragraph (default), h1 - h6'
+        tableList:
+          items:
+            items:
+              type: string
+            type: array
+          type: array
+          title: Table List
+          description: For table sections, a list of lists representing the table. The outer list represents rows, the inner lists represent column values in those rows. The first row is the header.If there is no header, the first row is a list of empty strings.
+      type: object
+      required:
+      - type
+      - text
+      - bbox
+      title: Section
+    PublicUrlResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+          description: Permanent public URL for the document
+      type: object
+      required:
+      - url
+      title: PublicUrlResponse
+    ProcessingMethod:
+      type: string
+      enum:
+      - asImage
+      - removeWatermark
+      title: ProcessingMethod
+    SplitVersion:
+      type: number
+      enum:
+      - 1
+      - 1.1
+      title: SplitVersion
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WorkflowResponse:
+      properties:
+        workflowId:
+          type: string
+          title: Workflow ID
+          description: Unique identifier of the workflow.
+        standardizeStep:
+          $ref: '#/components/schemas/StandardizeStepOutput'
+          title: Standardize Step Output
+          description: Output of the standardize step, if applicable.
+        splitStandardizeStep:
+          $ref: '#/components/schemas/SplitStandardizeStepOutput'
+          title: Split and Standardize Step Output
+          description: Output of the split and standardize step, if applicable.
+        splitClassifyStandardizeStep:
+          $ref: '#/components/schemas/SplitClassifyStandardizeStepOutput'
+          title: Split, Classify, and Standardize Step Output
+          description: Output of the split, classify, and standardize step, if applicable.
+        standardizeReviewStep:
+          $ref: '#/components/schemas/StandardizeReviewStepOutput'
+          title: Standardize and Review Step Output
+          description: Output of the standardize and review step, if applicable.
+        classifyStandardizeStep:
+          $ref: '#/components/schemas/ClassifyStandardizeStepOutput'
+          title: Classify and Standardize Step Output
+          description: Output of the classify and standardize step, if applicable.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the workflow failed.
+      type: object
+      required:
+      - workflowId
+      title: WorkflowResponse
+    SectionType:
+      type: string
+      enum:
+      - text
+      - table
+      - image
+      title: SectionType
+    Orientation:
+      type: string
+      enum:
+      - normal
+      - clockwise
+      - counter_clockwise
+      - upside_down
+      title: Orientation
+    PostMergeResponse:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier for the submitted job.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of when the job was submitted.
+        success:
+          type: boolean
+          title: Success
+          description: Whether the job was successfully submitted.
+          default: true
+      type: object
+      required:
+      - jobId
+      title: PostMergeResponse
+    PresignedUploadResponse:
+      properties:
+        putUrl:
+          type: string
+          title: Puturl
+          description: Short-lived presigned S3 PUT URL
+        getUrl:
+          type: string
+          title: Geturl
+          description: Short-lived presigned S3 GET URL for submitting the uploaded file to DocuPipe
+        contentType:
+          type: string
+          title: Contenttype
+          description: Content-Type that must be sent with the PUT request
+      type: object
+      required:
+      - putUrl
+      - getUrl
+      - contentType
+      title: PresignedUploadResponse
+    BulkOcrDownloadRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs to download as OCR PDFs.
+      type: object
+      required:
+      - documentIds
+      title: BulkOcrDownloadRequest
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+    InsufficientCreditsError:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Explanation about the exhausted credits
+      type: object
+      required:
+      - detail
+      title: InsufficientCreditsError
+    PostSplitResponse:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier for the submitted job.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of when the job was submitted.
+        success:
+          type: boolean
+          title: Success
+          description: Whether the job was successfully submitted.
+          default: true
+      type: object
+      required:
+      - jobId
+      title: PostSplitResponse
+      description: "Async response for a split job\n    "
+    SplitClassifyStandardizeStepOutput:
+      properties:
+        splitJobId:
+          type: string
+          title: Split Job ID
+          description: Job ID for the split job that runs before classification and standardization.
+        classificationJobIdsByDocument:
+          additionalProperties:
+            type: string
+          type: object
+          title: Classification Job IDs by Document
+          description: Mapping of document IDs to the classification job IDs created for each document.
+        classToStandardizationJobIdsByDocument:
+          additionalProperties:
+            additionalProperties:
+              type: string
+            type: object
+          type: object
+          title: Class to Standardization Job IDs by Document
+          description: Mapping of document IDs to class-to-job-ID dictionaries for the standardization jobs that may run for each class.
+        classToStandardizationIdsByDocument:
+          additionalProperties:
+            additionalProperties:
+              type: string
+            type: object
+          type: object
+          title: Class to Standardization IDs by Document
+          description: Mapping of document IDs to class-to-standardization-ID dictionaries for the standardizations that may run for each class.
+        classToStandardizeBatchJobId:
+          additionalProperties:
+            type: string
+          type: object
+          title: Class to Standardize Batch Job ID
+          description: Mapping of class IDs to their corresponding batch job IDs for polling.
+      type: object
+      required:
+      - splitJobId
+      title: SplitClassifyStandardizeStepOutput
+    UpdateDatasetResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the dataset update was successful.
+          default: true
+      type: object
+      title: UpdateDatasetResponse
+    PostDocumentRequest:
+      properties:
+        document:
+          $ref: '#/components/schemas/InputDocument'
+          description: The document to be analyzed, provided either as a file or via a URL.
+          examples:
+          - document:
+              file:
+                contents: SGVsbG8sIFdvcmxkIQ==
+              url: https://example.com/document.pdf
+        pages:
+          items:
+            type: integer
+          type: array
+          title: Pages
+          description: List of page numbers to be parsed (zero indexed). If not provided, all pages will be parsed.
+          default: []
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset to which you want to assign this document. It can be any string. This is useful to group your documents
+          default: unassigned
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Optional metadata to associate with the document.
+        parseVersion:
+          type: number
+          title: Version
+          description: Version of parsing. Available versions are 1, 2, 3
+          default: 3
+        processingMethod:
+          $ref: '#/components/schemas/ProcessingMethod'
+          title: Processing Method
+          description: 'Method to use for processing the document. The options are: asImage (treats native PDFs as images), or removeWatermark (removes watermarks from PDFs before processing). Note that removeWatermark is experimental.'
+        timeout:
+          type: integer
+          title: Timeout
+          description: The timeout in seconds for the job for webhook error reporting
+        workflowId:
+          type: string
+          title: Workflow ID
+          description: '*Advanced Feature*
+
+            Unique identifier of the workflow to be applied to the doucment once it is processed. See `POST /workflow/onSubmitDocument` for more details.'
+      type: object
+      required:
+      - document
+      title: PostDocumentRequest
+    FileExtension:
+      type: string
+      enum:
+      - pdf
+      - png
+      - jpeg
+      - webp
+      - tiff
+      - txt
+      - json
+      - xml
+      - html
+      - doc
+      - docx
+      - csv
+      - xlsx
+      - xls
+      - eml
+      title: FileExtension
+    FileType:
+      type: string
+      enum:
+      - pdf
+      - image
+      - text
+      - json
+      - html
+      - word
+      - table
+      title: FileType
+    StandardizeReviewStepOutput:
+      properties:
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+          description: List of standardization IDs that result from the standardize and review step.
+        standardizationJobIds:
+          items:
+            type: string
+          type: array
+          title: Standardization Job IDs
+          description: List of job IDs for the standardization jobs that will run.
+        reviewIds:
+          items:
+            type: string
+          type: array
+          title: Review IDs
+          description: List of review IDs that will be created for each standardization.
+        reviewJobIds:
+          items:
+            type: string
+          type: array
+          title: Review Job IDs
+          description: List of job IDs for the review jobs that will run.
+      type: object
+      required:
+      - standardizationIds
+      - standardizationJobIds
+      - reviewIds
+      - reviewJobIds
+      title: StandardizeReviewStepOutput
+    SplitStandardizeStepOutput:
+      properties:
+        splitJobId:
+          type: string
+          title: Split Job ID
+          description: Job ID for the split job that runs before standardization.
+        standardizationJobIdsByDocument:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+          title: Standardization Job IDs by Document
+          description: Mapping of new document IDs to the standardization job IDs created for each document.
+        standardizationIdsByDocument:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+          title: Standardization IDs by Document
+          description: Mapping of new document IDs to the standardization IDs created for each document.
+        standardizeBatchJobIds:
+          items:
+            type: string
+          type: array
+          title: Standardize Batch Job IDs
+          description: List of batch job IDs (one per schema) that wrap the standardization jobs for polling.
+      type: object
+      required:
+      - splitJobId
+      title: SplitStandardizeStepOutput
+    UpdateMetadataRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs whose metadata should be updated.
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Replacement metadata dict for the given documents. This fully replaces any existing metadata on each document. Pass an empty object ({}) to clear metadata. Max 10KB when JSON-serialized.
+      type: object
+      required:
+      - documentIds
+      - metadata
+      title: UpdateMetadataRequest
+    ProposedSchemas:
+      properties:
+        schemas:
+          items:
+            $ref: '#/components/schemas/DocuPandaSchema'
+          type: array
+          title: Schemas
+        documentDescription:
+          type: string
+          title: Documentdescription
+      type: object
+      required:
+      - schemas
+      - documentDescription
+      title: ProposedSchemas
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    File:
+      properties:
+        contents:
+          type: string
+          contentMediaType: application/octet-stream
+          title: File Contents
+          description: Binary string representing the content of the file in base64 encoding.
+      type: object
+      required:
+      - contents
+      title: File
+    HeaderType:
+      type: string
+      enum:
+      - paragraph
+      - h1
+      - h2
+      - h3
+      - h4
+      - h5
+      - h6
+      title: HeaderType
+    Element:
+      properties:
+        type:
+          type: string
+          title: Type
+        text:
+          type: string
+          title: Text
+        bbox:
+          items:
+            type: number
+          type: array
+          title: Bbox
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+      type: object
+      required:
+      - type
+      - bbox
+      - metadata
+      title: Element
+    SplitJobRequest:
+      properties:
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document to be split.
+        instructions:
+          type: string
+          title: Instructions
+          description: Instructions for how the splitting should be done (optional).
+        dataset:
+          type: string
+          title: Dataset
+          description: Dataset to assign to the newly generated documents.
+        filenamePrefix:
+          type: string
+          title: Filename Prefix
+          description: Prefix to use for the filenames of the newly generated documents.
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+          description: '*Advanced Feature*
+
+            Mode of display to run. The options are:
+
+            `auto`: AI decides how to display the document (default)
+
+            `spatial`: Display text spatially, as it appears in the document
+
+            `sections`: Display text from top to bottom as sections, with tables appearing as markdown
+
+            `image`: Display as an image.'
+          default: auto
+        splitVersion:
+          $ref: '#/components/schemas/SplitVersion'
+          title: Split Version
+          description: 'Version of the split behavior. Supported values: 1.0, 1.1.'
+          default: 1.1
+      type: object
+      required:
+      - documentId
+      title: SplitJobRequest
+    UpdateDatasetRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of document IDs to update.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset to which you want to assign these documents.
+      type: object
+      required:
+      - documentIds
+      - dataset
+      title: UpdateDatasetRequest
+    MergeJobRequest:
+      properties:
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+          description: List of unique identifiers of the documents to be merged. The order of IDs determines the order of documents in the merged output. Must contain at least two document IDs.
+        filename:
+          type: string
+          title: Filename
+          description: Filename of the newly generated document after merging.
+        dataset:
+          type: string
+          title: Dataset
+          description: Dataset to assign to the newly generated document.
+      type: object
+      required:
+      - documentIds
+      - filename
+      title: MergeJobRequest
+    DocuPandaPagePublic:
+      properties:
+        words:
+          items:
+            $ref: '#/components/schemas/Element'
+          type: array
+          title: Words
+          description: List of words on the page.
+        selections:
+          items:
+            $ref: '#/components/schemas/Element'
+          type: array
+          title: Selections
+          description: List of selection marks on the page (checkboxes)
+        orientation:
+          $ref: '#/components/schemas/Orientation'
+          description: Orientation of the page.
+        angle:
+          type: number
+          title: Angle
+          description: Angle of the page.
+        tables:
+          items:
+            $ref: '#/components/schemas/Element'
+          type: array
+          title: Tables
+          description: List of tables on the page. Note that table contents and words overlap - they're not a disjoint set
+        figures:
+          items:
+            $ref: '#/components/schemas/Element'
+          type: array
+          title: Figures
+          description: List of figures/images detected on the page, with bounding box coordinates
+          default: []
+        signatures:
+          items:
+            $ref: '#/components/schemas/Element'
+          type: array
+          title: Signatures
+          description: List of signatures on the page. This is only supported with our economy parser mode, reach out to docupipe support if you're interested in this feature
+          default: []
+        handwriting:
+          type: boolean
+          title: Handwriting
+          description: True if the page contains handwriting
+          default: false
+      type: object
+      required:
+      - words
+      - selections
+      - tables
+      title: DocuPandaPagePublic
+    ClassifyStandardizeStepOutput:
+      properties:
+        classificationJobId:
+          type: string
+          title: Classification Job ID
+          description: Job ID for the classification job.
+        classToStandardizationIds:
+          additionalProperties: true
+          type: object
+          title: Class to Standardization IDs
+          description: Dictionary mapping class IDs to the standardization IDs that will be created for that class if the document is classified as that class.
+        classToStandardizationJobIds:
+          additionalProperties: true
+          type: object
+          title: Class to Standardization Job IDs
+          description: Dictionary mapping class IDs to the job IDs for the standardization jobs that will run for that class if the document is classified as that class.
+      type: object
+      required:
+      - classificationJobId
+      - classToStandardizationIds
+      - classToStandardizationJobIds
+      title: ClassifyStandardizeStepOutput
+    UpdateMetadataResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the metadata update was successful.
+          default: true
+      type: object
+      title: UpdateMetadataResponse
+    ParsingResults:
+      properties:
+        pages:
+          items:
+            $ref: '#/components/schemas/AnalyzedPage'
+          type: array
+          title: Pages
+          description: A list of parsed pages in the document.
+          default: []
+        numPages:
+          type: integer
+          title: Number of Pages
+          description: The number of pages in the document.
+          default: 0
+        text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Text
+          description: The text content of the document.
+        language:
+          type: string
+          title: Language
+          description: The dominant language of the document.
+      type: object
+      title: ParsingResults
+    InputDocument:
+      properties:
+        file:
+          $ref: '#/components/schemas/File'
+          description: File object containing the input document in base64 encoding.
+        url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Document URL
+          description: URL pointing to the location of the input file.
+          examples:
+          - https://example.com/document.pdf
+        filename:
+          type: string
+          title: Filename
+          description: Name of the file, not including the file extension.
+        fileExtension:
+          $ref: '#/components/schemas/FileExtension'
+          title: File Extension
+          description: Extension of the file.
+        fileType:
+          $ref: '#/components/schemas/FileType'
+          title: File Type
+          description: Type of the file. If not provided, it will be determined from the file contents.
+      type: object
+      title: Input Document
+    OutputFormat:
+      type: string
+      enum:
+      - original
+      - pdf
+      - uploaded
+      title: OutputFormat
+    PostDocumentResponse:
+      properties:
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier for the submitted document.
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier for the Document Upload Job.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the document processing.
+        workflowResponse:
+          $ref: '#/components/schemas/WorkflowResponse'
+          title: Workflow Response
+          description: '*Advanced Feature*
+
+            If you supplied a workfld In the input, the response will contain all the information to retrieve the outcome of the workflow.'
+        workflowV2RunJobId:
+          type: string
+          title: Workflow V2 Run Job ID
+          description: '*Advanced Feature*
+
+            If the supplied workflowId is a single-input v2 (Architect) workflow, this is the WorkflowV2Job id for the run kicked off on the uploaded document. Poll GET /job/{job_id} for outputs.'
+      type: object
+      required:
+      - documentId
+      - jobId
+      - status
+      title: PostDocumentResponse
+    PresignedUploadRequest:
+      properties:
+        key:
+          type: string
+          title: Key
+          description: Object key to reserve for this browser upload
+        fileExtension:
+          type: string
+          title: Fileextension
+          description: File extension or MIME subtype for the uploaded file
+      type: object
+      required:
+      - key
+      - fileExtension
+      title: PresignedUploadRequest
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer

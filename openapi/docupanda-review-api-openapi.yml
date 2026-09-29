@@ -1,0 +1,548 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Review API
+  version: '1.0'
+  x-source-url: https://docs.docupipe.ai/openapi/openapi.json
+  x-documentation-url: https://docs.docupipe.ai/
+  x-last-validated: '2026-08-10'
+  x-provenance: first-party — retrieved from the provider's own documentation host
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Review
+paths:
+  /review/batch:
+    post:
+      tags:
+      - Review
+      summary: Generate a Visual Review
+      description: This endpoint is used to generate a visual review of the standardization results. For every value in the standardization payload, we generate a confidence score and a a list of locations, where a location is page number and x1,y1,x2,y2 bounding box coordinate on that page, designating the top left and lower right corner of the bounding box. This indicates where in the doucment the value was found.
+      operationId: post_review_batch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StandardizationReviewRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchReviewResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /review:
+    get:
+      summary: Retrieve review by standardization ID
+      operationId: get_standardization_review
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: review_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Review Id
+      - name: standardization_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Standardization Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: This endpoint is used to retrieve a review object by its associated standardization ID.
+      tags:
+      - Review
+  /review/{review_id}:
+    get:
+      summary: Retrieve a Review by ID
+      description: This endpoint is used to retrieve a review object its unique ID
+      operationId: get_review_by_id
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: review_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Review Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Review
+  /review/{review_id}/presigned-url:
+    get:
+      summary: Generate a Presigned URL for a Review
+      description: This endpoint generates a presigned URL containing a signature and expiration time for accessing or acting on a review.
+      operationId: get_presigned_url
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: review_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Review Id
+      - name: expiry_hours
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+          title: Expiry in Hours
+          description: How many hours the presigned URL should remain valid. If omitted, the link will never expire.
+        description: How many hours the presigned URL should remain valid. If omitted, the link will never expire.
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewPresignedUrlResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Review
+  /review/{review_id}/update:
+    post:
+      summary: Update a Review
+      description: This endpoint is used to update a review object with new data or status.
+      operationId: update_review
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: review_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Review Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReviewRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateReviewResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Review
+  /reviews:
+    get:
+      summary: List Reviews
+      operationId: list_reviews
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: include_data
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Whether to include the data payload in the response
+          default: false
+          title: Include Data
+        description: Whether to include the data payload in the response
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The maximum number of reviews to return. Maximum is 1000
+          default: 20
+          title: Limit
+        description: The maximum number of reviews to return. Maximum is 1000
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: The number of reviews to skip (to paginate through the data)
+          default: 0
+          title: Offset
+        description: The number of reviews to skip (to paginate through the data)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+                title: Response List Reviews Reviews Get
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: This endpoint is used to list all review objects.
+      tags:
+      - Review
+    delete:
+      summary: Delete Reviews
+      operationId: delete_reviews
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteReviewsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: This endpoint is used to delete multiple review object. You can pass a length 1 list of review IDs to delete a single review.
+      tags:
+      - Review
+components:
+  schemas:
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+    Review:
+      properties:
+        standardizationId:
+          type: string
+          title: Standardization ID
+          description: Unique identifier of the standardization object.
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        data:
+          additionalProperties: true
+          type: object
+          title: Reviewed Payload
+          description: "An exact copy of the original standardization JSON object, except every value is replaced with a dictionary with the following values:\n- **value**: The original value\n- **review**:\n   - **page**: The page number on which the value was found\n   - **confidence**: The confidence score of the value extraction\n   - **boundingBox**: The bounding box of the value on the page. These will be normalized coordinates 0..1 for the page size, in the format x1y1x2y2:\n      - **x1**: The x-coordinate of the top left start of the bounding box\n      - **y1**: The y-coordinate of the top left start of the bounding box\n      - **x2**: The width of the bottom right of the bounding box\n      - **y2**: The height of the bottom right of the bounding box\n"
+        schemaId:
+          type: string
+          title: Schema ID
+          description: Unique identifier of the schema used for standardization.
+        schemaName:
+          type: string
+          title: Schema Name
+          description: Name of the schema used for standardization.
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job that created the standardization.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset to which the document belongs
+        filename:
+          type: string
+          title: Filename
+          description: Name of the file that was standardized.
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+          description: Display mode actually used during standardization.
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of the standardization job.
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Metadata associated with the document that originated this standardization. This just echoes any metadata you have previously posted on document creation.
+        fieldMetadata:
+          additionalProperties: true
+          type: object
+          title: Field Metadata
+          description: Per-field extraction metadata mapping dot-paths to page numbers and confidence levels.
+        reviewId:
+          type: string
+          title: Review ID
+          description: Unique identifier of the review object.
+        reviewState:
+          $ref: '#/components/schemas/ReviewStatusEnum'
+          title: Review State
+          description: State of the review. Can be 'unverified', 'verified' or 'rejected'. Unverified means the review is AI-generated and has not been reviewed by a human. Verified means the review has been reviewed by a human and approved. Rejected means the review has been reviewed by a human and marked as incorrect.
+          default: unverified
+      type: object
+      required:
+      - standardizationId
+      - documentId
+      title: Review
+    StandardizationReviewRequest:
+      properties:
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization ID
+          description: Unique identifier of the standardization object.
+        reviewInstructions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Review Instructions
+          description: Instructions for the review process. You may optionally specify which fields you want to localize, and give the AI tips to improve review performance
+        highGranularity:
+          type: boolean
+          title: High Granularity
+          description: When enabled, the review will locate individual sub-fields within compound items (e.g. each field within a line item). This provides more precise bounding boxes but costs 4 credits/page instead of 2.
+          default: false
+      type: object
+      required:
+      - standardizationIds
+      title: StandardizationReviewRequest
+      description: "Request to standardize a document\n    "
+    UpdateReviewRequest:
+      properties:
+        data:
+          additionalProperties: true
+          type: object
+          title: Data
+          description: The data to update the review with. This should be a dictionary with the same structure as the review object. If omitted, the data will not be updated.
+        reviewStatus:
+          $ref: '#/components/schemas/ReviewStatusEnum'
+          title: Review Status
+          description: Use this field to indicate whether the posted object is verified to be correct, incorrect, or not yet fully verified.
+      type: object
+      required:
+      - reviewStatus
+      title: UpdateReviewRequest
+    ReviewPresignedUrlResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - url
+      title: ReviewPresignedUrlResponse
+    ReviewStatusEnum:
+      type: string
+      enum:
+      - unverified
+      - verified
+      - rejected
+      title: ReviewStatusEnum
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DeleteReviewsRequest:
+      properties:
+        reviewIds:
+          items:
+            type: string
+          type: array
+          title: Review IDs
+          description: Unique identifiers of the review objects to be deleted.
+      type: object
+      required:
+      - reviewIds
+      title: DeleteReviewsRequest
+      description: "Request for the delete review endpoint\n    "
+    DisplayMode:
+      type: string
+      enum:
+      - auto
+      - spatial
+      - sections
+      - image
+      title: DisplayMode
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DeletionResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion was successful or not.
+      type: object
+      required:
+      - success
+      title: DeletionResponse
+    BatchReviewResponse:
+      properties:
+        jobIds:
+          items:
+            type: string
+          type: array
+          title: Job IDs
+          description: Unique identifiers of the jobs.
+        reviewIds:
+          items:
+            type: string
+          type: array
+          title: Review IDs
+          description: Unique identifiers of the review objects which will be generated.
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+          description: Unique identifiers of the standardization objects under review.
+      type: object
+      required:
+      - jobIds
+      - reviewIds
+      - standardizationIds
+      title: BatchReviewResponse
+    UpdateReviewResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the review update was successful.
+          default: true
+        reviewId:
+          type: string
+          title: Review ID
+          description: Unique identifier of the review object.
+      type: object
+      required:
+      - reviewId
+      title: UpdateReviewResponse
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer
