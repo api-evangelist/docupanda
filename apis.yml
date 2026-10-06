@@ -5,7 +5,7 @@ x-docs-platform-confidence: high
 x-docs-platform-checked: 2026-09-25
 apis:
 - aid: docupanda:docupanda-documents-api
-  name: DocuPanda Documents API
+  name: DocuPipe Documents API
   tags:
   - Artificial Intelligence
   - Document Extraction
@@ -26,11 +26,11 @@ apis:
   - url: https://docs.docupipe.ai/llms.txt
     type: APIReference
   description: Submit, retrieve, list, search, split, merge, bulk-download, and delete documents.
-    DocuPanda parses files into searchable PDFs and structured page-level text, tables, and bounding
+    DocuPipe parses files into searchable PDFs and structured page-level text, tables, and bounding
     boxes. Supports handwriting, checkboxes, tables, 60+ languages, presigned download URLs for the
     original file, OCR PDF, and a permanent public URL.
 - aid: docupanda:docupanda-schemas-api
-  name: DocuPanda Schemas API
+  name: DocuPipe Schemas API
   tags:
   - Artificial Intelligence
   - Document Extraction
@@ -46,9 +46,9 @@ apis:
     type: Documentation
   description: Create, edit, copy, delete, and list extraction schemas, plus AI auto-generate a schema
     from sample documents and retrieve schema proposals per document. Schemas define the structured
-    JSON shape DocuPanda will produce when standardizing documents.
+    JSON shape DocuPipe will produce when standardizing documents.
 - aid: docupanda:docupanda-standardizations-api
-  name: DocuPanda Standardizations API
+  name: DocuPipe Standardizations API
   tags:
   - Artificial Intelligence
   - Document Extraction
@@ -67,7 +67,7 @@ apis:
     merged Excel; query results in natural language; and match standardizations against candidate
     lists.
 - aid: docupanda:docupanda-classifications-api
-  name: DocuPanda Classifications API
+  name: DocuPipe Classifications API
   tags:
   - Artificial Intelligence
   - Classification
@@ -85,7 +85,7 @@ apis:
     taxonomy (add, edit, delete, list, copy classes across workspaces) and route documents to the
     right downstream schema or workflow based on the assigned class.
 - aid: docupanda:docupanda-analysis-api
-  name: DocuPanda Analysis API
+  name: DocuPipe Analysis API
   tags:
   - Artificial Intelligence
   - Analysis
@@ -103,7 +103,7 @@ apis:
     the resulting analysis by id. Useful for one-off Q&A, summaries, or red-flag checks that do not
     require a fixed extraction schema.
 - aid: docupanda:docupanda-reviews-api
-  name: DocuPanda Reviews API
+  name: DocuPipe Reviews API
   tags:
   - Artificial Intelligence
   - Document Extraction
@@ -121,7 +121,7 @@ apis:
     sourced in the original document. List, update, share via presigned URL, and delete reviews.
     Underpins human-in-the-loop QA on production extractions.
 - aid: docupanda:docupanda-workflows-api
-  name: DocuPanda Workflows API
+  name: DocuPipe Workflows API
   tags:
   - Artificial Intelligence
   - Document Extraction
@@ -139,7 +139,7 @@ apis:
     standardization, and review automatically when a new document is uploaded. List, update, and
     delete workflows.
 - aid: docupanda:docupanda-jobs-api
-  name: DocuPanda Jobs API
+  name: DocuPipe Jobs API
   tags:
   - Artificial Intelligence
   - Document Extraction
@@ -155,11 +155,11 @@ apis:
   properties:
   - url: https://docs.docupipe.ai/reference/getting-started-with-docupipe
     type: Documentation
-  description: Inspect every job DocuPanda runs on your behalf with the credit cost it consumed.
+  description: Inspect every job DocuPipe runs on your behalf with the credit cost it consumed.
     Retrieve a job by id, list jobs, bulk-delete jobs, and pull a summary count with credit breakdown
     for FinOps reporting.
 - aid: docupanda:docupanda-webhooks-api
-  name: DocuPanda Webhooks API
+  name: DocuPipe Webhooks API
   tags:
   - Artificial Intelligence
   - Document Extraction
@@ -179,7 +179,7 @@ apis:
     documents finish processing, classifications complete, or standardizations are ready. Includes a
     portal-link endpoint that hands users a managed Svix-style subscription portal.
 - aid: docupanda:docupanda-account-api
-  name: DocuPanda Account API
+  name: DocuPipe Account API
   tags:
   - Artificial Intelligence
   - Account
@@ -195,7 +195,7 @@ apis:
     type: Documentation
   description: Fetch the current account profile including remaining credits, plan tier, and
     workspace context. Pair with the Jobs API to build internal usage dashboards.
-name: DocuPanda
+name: DocuPipe
 tags:
 - Artificial Intelligence
 - Document Extraction
@@ -247,7 +247,7 @@ common:
   url: https://www.docupipe.ai/
 - type: Portal
   url: https://www.docupanda.io
-  name: DocuPanda (legacy domain, redirects to DocuPipe)
+  name: DocuPipe (legacy domain, redirects to DocuPipe)
 - type: Documentation
   url: https://docs.docupipe.ai/
 - type: APIReference
@@ -271,8 +271,6 @@ common:
   url: https://www.docupipe.ai/blog
 - type: Security
   url: https://www.docupipe.ai/security
-- type: TrustCenter
-  url: https://docupipe.com/security
 - type: Compliance
   url: https://www.docupipe.ai/security
   name: SOC 2 Type 2, ISO 27001, HIPAA, GDPR
@@ -284,10 +282,18 @@ common:
   url: https://github.com/DocuPanda
 - type: SDKs
   url: https://github.com/DocuPanda/docupanda-python-api
-  name: DocuPanda Python SDK
+  name: DocuPipe Python SDK (docupanda-python-api, published under the earlier DocuPanda organization)
+- type: GitHubOrganization
+  url: https://github.com/DocuPipe
 - type: Tools
-  url: https://github.com/DocuPanda/docupanda-desktop
-  name: DocuPanda Desktop (upload/download client)
+  url: https://github.com/DocuPipe/docupipe-desktop
+  name: DocuPipe Desktop (upload/download client)
+- type: Benchmarks
+  url: https://www.docupipe.ai/benchmarks/docubench
+  name: DocuBench - schema-based extraction benchmark across 72 public documents
+- type: GitHubRepository
+  url: https://github.com/DocuPipe/DocuBench
+  name: DocuBench source, labels, schemas and scorer (MIT)
 - type: Pricing
   url: https://www.docupipe.ai/pricing
   data:
@@ -363,15 +369,15 @@ common:
 - type: Integrations
   data:
   - name: Make
-    description: Native Make app — DocuPanda actions and triggers for the no-code automation platform with 2,000+ connected apps.
+    description: Native Make app — DocuPipe actions and triggers for the no-code automation platform with 2,000+ connected apps.
   - name: Workato
-    description: DocuPanda Document Understanding connector for the Workato enterprise iPaaS.
+    description: DocuPipe Document Understanding connector for the Workato enterprise iPaaS.
   - name: n8n
     description: DocuPipe for n8n — extract documents inside open-source n8n workflows.
   - name: Microsoft Power Automate
-    description: DocuPanda connector for Microsoft Power Automate.
+    description: DocuPipe connector for Microsoft Power Automate.
   - name: Boost.space
-    description: DocuPanda integration on the Boost.space platform.
+    description: DocuPipe integration on the Boost.space platform.
 - type: Features
   data:
   - Document extraction across PDFs, images, Office docs, handwriting, tables, and checkboxes
@@ -412,17 +418,31 @@ common:
   - name: Global Operations
     description: 60+ language support for multinational document pipelines.
 created: '2026-05-25'
-modified: '2026-05-25'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 position: Consuming
-description: DocuPanda (now also branded DocuPipe, operated by Hoss Inc.) is an AI-powered document
+description: DocuPipe (formerly DocuPanda, operated by Hoss Inc.) is an AI-powered document
   intelligence API that converts unstructured documents — invoices, leases, medical records, claims,
-  contracts, bills of lading, receipts, and more — into reliable structured JSON. The platform pairs
-  an OCR + parsing pipeline with custom extraction schemas, an agentic standardization engine,
-  classification, workflows, visual review, and webhooks. Over one billion pages processed, SOC 2
-  Type 2 and ISO 27001 certified, HIPAA BAA available, and deployable in cloud, VPC, or on-premises.
+  contracts, bills of lading, receipts, and more — into structured JSON. The platform pairs an OCR +
+  parsing pipeline with custom extraction schemas, an agentic standardization engine, classification,
+  workflows, visual review, and webhooks. It publishes DocuBench, an open benchmark for schema-based
+  extraction across 72 documents. DocuPipe lists SOC 2 Type 2 and ISO 27001, offers a HIPAA BAA, and
+  deploys in cloud, VPC, or on-premises.
 maintainers:
 - FN: Kin Lane
   email: info@apievangelist.com
   X: apievangelist
   url: https://apievangelist.com
+x-correction-request:
+  requested: '2026-10-06'
+  source:
+  - _messages/2026-10/2026-10-06-fastmail-38607-listing-update-docupanda-is-now-docupipe.md
+  request: 'Nitai Dean (nitai@docupipe.ai), 2026-10-06: renamed from DocuPanda to DocuPipe. Name DocuPipe; website www.docupipe.ai (docupanda.io
+    redirects); API docs https://docs.docupipe.ai/reference/getting-started-with-docupipe; add the DocuBench benchmark
+    https://www.docupipe.ai/benchmarks/docubench if it fits.'
+  applied: '2026-10-06'
+  applied_note: 'Verified live 2026-10-06: docupanda.io and www.docupanda.io 301 to https://www.docupipe.ai/ (200); docs reference 200
+    (invented sibling 404); DocuBench 200 (72 documents, results as of 2026-07-31; source github.com/DocuPipe/DocuBench). Provider and
+    all API names now DocuPipe; slug and aids stay docupanda so existing pages and links do not move. Added Benchmarks, GitHubOrganization
+    (DocuPipe) and DocuBench repository pointers; desktop client now points at DocuPipe/docupipe-desktop; removed a TrustCenter pointer
+    to docupipe.com/security, which does not resolve. Website and API docs pointers were already on docupipe.ai.'
