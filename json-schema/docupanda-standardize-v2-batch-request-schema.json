@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/docupanda/main/json-schema/docupanda-standardize-v2-batch-request-schema.json",
+  "title": "StandardizeV2BatchRequest",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizeV2BatchRequest",
+  "properties": {
+    "documentIds": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "title": "Document IDs",
+      "description": "List of document IDs to be standardized, up to 100 per batch."
+    },
+    "schemaId": {
+      "type": "string",
+      "title": "Schema ID",
+      "description": "Unique identifier of the schema to be used for standardization - if not provided, one will be inferred."
+    },
+    "guidelines": {
+      "type": "string",
+      "title": "Guidelines",
+      "description": "Guidelines to apply to the schema when standardizing. If this is provided, it will override the schema guidelines."
+    },
+    "useMetadata": {
+      "type": "boolean",
+      "title": "Use Metadata",
+      "description": "Whether to use metadata during standardization.",
+      "default": false
+    },
+    "displayMode": {
+      "$ref": "#/$defs/DisplayMode",
+      "title": "Display Mode",
+      "description": "*Advanced Feature*\nMode of display to run. The options are:\n`auto`: AI decides how to display the document (default)\n`spatial`: Display text spatially, as it appears in the document\n`sections`: Display text from top to bottom as sections, with tables appearing as markdown\n`image`: Display as an image, accompanied by section view",
+      "default": "auto"
+    },
+    "splitMode": {
+      "$ref": "#/$defs/SplitMode",
+      "title": "Split Mode",
+      "description": "*Advanced Feature*\nMode of splitting to run. Splitting is used to extract array fields efficiently. The options are:\n`auto`: AI decides how to split the document (default)\n`never`: Never split the document (this could lead to errors or poor performance for large documents)\n`all`: Split the document into individual pages",
+      "default": "auto"
+    },
+    "effortLevel": {
+      "$ref": "#/$defs/EffortLevel",
+      "title": "Effort Level",
+      "description": "*Advanced Feature*\nLevel of effort to run. The options are:\n`standard`: Standard effort level (default)\n`high`: High effort level, for more difficult documents",
+      "default": "standard"
+    },
+    "stdVersion": {
+      "$ref": "#/$defs/StdVersionV2",
+      "title": "Standardization Version",
+      "description": "Version of the standardization job. Options: 2.0, 2.1, 2.2 (default, stable), 2.3 (experimental, higher quality but may have runtime instability).",
+      "default": 2.2
+    },
+    "pages": {
+      "items": {
+        "items": {
+          "type": "integer"
+        },
+        "type": "array"
+      },
+      "type": "array",
+      "title": "Target Page Ranges",
+      "description": "*Advanced Feature*\nFor every document, list the zero indexed page numbers to standardize. If omitted, the entire document is standardized. For XLS/XLSX files, each number selects a worksheet by its zero indexed position. Page targeting is ignored for CSV, TXT, XML, and JSON files, which are always standardized in full."
+    },
+    "transformationIds": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "title": "Transformation IDs",
+      "description": "Transformations to apply, in order, to each finished standardization. The result is stored as transformedData next to the original data, and each run costs 1 credit."
+    },
+    "timeout": {
+      "type": "integer",
+      "title": "Timeout",
+      "description": "The job timeout (in seconds) for webhook error reporting"
+    }
+  },
+  "type": "object",
+  "required": [
+    "documentIds"
+  ],
+  "$defs": {
+    "DisplayMode": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "spatial",
+        "sections",
+        "image"
+      ],
+      "title": "DisplayMode"
+    },
+    "EffortLevel": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "high",
+        "extended"
+      ],
+      "title": "EffortLevel"
+    },
+    "SplitMode": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "all",
+        "never"
+      ],
+      "title": "SplitMode"
+    },
+    "StdVersionV2": {
+      "type": "number",
+      "enum": [
+        2,
+        2.1,
+        2.2,
+        2.3
+      ],
+      "title": "StdVersionV2"
+    }
+  }
+}

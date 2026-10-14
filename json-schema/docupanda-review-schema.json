@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/docupanda/main/json-schema/docupanda-review-schema.json",
+  "title": "Review",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/docupanda-docupipe-openapi.yml#/components/schemas/Review",
+  "properties": {
+    "standardizationId": {
+      "type": "string",
+      "title": "Standardization ID",
+      "description": "Unique identifier of the standardization object."
+    },
+    "documentId": {
+      "type": "string",
+      "title": "Document ID",
+      "description": "Unique identifier of the document."
+    },
+    "data": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Reviewed Payload",
+      "description": "An exact copy of the original standardization JSON object, except every value is replaced with a dictionary with the following values:\n- **value**: The original value\n- **review**:\n   - **page**: The page number on which the value was found\n   - **confidence**: The confidence score of the value extraction\n   - **boundingBox**: The bounding box of the value on the page. These will be normalized coordinates 0..1 for the page size, in the format x1y1x2y2:\n      - **x1**: The x-coordinate of the top left start of the bounding box\n      - **y1**: The y-coordinate of the top left start of the bounding box\n      - **x2**: The width of the bottom right of the bounding box\n      - **y2**: The height of the bottom right of the bounding box\n"
+    },
+    "schemaId": {
+      "type": "string",
+      "title": "Schema ID",
+      "description": "Unique identifier of the schema used for standardization."
+    },
+    "schemaName": {
+      "type": "string",
+      "title": "Schema Name",
+      "description": "Name of the schema used for standardization."
+    },
+    "jobId": {
+      "type": "string",
+      "title": "Job ID",
+      "description": "Unique identifier of the job that created the standardization."
+    },
+    "dataset": {
+      "type": "string",
+      "title": "Dataset",
+      "description": "Name of the dataset to which the document belongs"
+    },
+    "filename": {
+      "type": "string",
+      "title": "Filename",
+      "description": "Name of the file that was standardized."
+    },
+    "displayMode": {
+      "$ref": "#/$defs/DisplayMode",
+      "title": "Display Mode",
+      "description": "Display mode actually used during standardization."
+    },
+    "timestamp": {
+      "type": "string",
+      "title": "Timestamp",
+      "description": "Timestamp of the standardization job."
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Metadata",
+      "description": "Metadata associated with the document that originated this standardization. This just echoes any metadata you have previously posted on document creation."
+    },
+    "fieldMetadata": {
+      "additionalProperties": {
+        "$ref": "#/$defs/FieldMetadata"
+      },
+      "type": "object",
+      "title": "Field Metadata",
+      "description": "Per-field extraction metadata, keyed by dot-path into the extracted data (e.g. 'lineItems.3.amount'). Gives the page, the location on it, and how reliably that location could be determined."
+    },
+    "transformedData": {
+      "title": "Transformed Data",
+      "description": "Output of the transformation chain applied to this standardization, if any. Unlike data, this need not conform to the schema."
+    },
+    "transformationIds": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "title": "Transformation IDs",
+      "description": "Ordered transformations that produced transformedData."
+    },
+    "transformationReceipt": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Transformation Receipt",
+      "description": "Hashes identifying the input, code, context and output of the applied transformation chain."
+    },
+    "reviewId": {
+      "type": "string",
+      "title": "Review ID",
+      "description": "Unique identifier of the review object."
+    },
+    "reviewState": {
+      "$ref": "#/$defs/ReviewStatusEnum",
+      "title": "Review State",
+      "description": "State of the review. Can be 'unverified', 'verified' or 'rejected'. Unverified means the review is AI-generated and has not been reviewed by a human. Verified means the review has been reviewed by a human and approved. Rejected means the review has been reviewed by a human and marked as incorrect.",
+      "default": "unverified"
+    }
+  },
+  "type": "object",
+  "required": [
+    "standardizationId",
+    "documentId"
+  ],
+  "$defs": {
+    "DisplayMode": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "spatial",
+        "sections",
+        "image"
+      ],
+      "title": "DisplayMode"
+    },
+    "FieldMetadata": {
+      "properties": {
+        "page": {
+          "type": "integer",
+          "title": "Page",
+          "description": "1-indexed page of the document this value was extracted from."
+        },
+        "confidence": {
+          "type": "string",
+          "title": "Confidence",
+          "description": "Confidence in the extracted value and its location on the page: 'high', 'medium' or 'low'."
+        },
+        "boundingBoxes": {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "type": "array",
+          "title": "Bounding Boxes",
+          "description": "Where this value sits on the page, as [x1, y1, x2, y2] normalized to 0-1 of page width and height, with the origin at the top left."
+        }
+      },
+      "type": "object",
+      "title": "FieldMetadata",
+      "description": "Public-facing per-field extraction metadata. Anything not declared here stays internal: the stored record\nalso carries how each box was located and why its confidence is what it is, which is our diagnostics rather\nthan something a caller should build on."
+    },
+    "ReviewStatusEnum": {
+      "type": "string",
+      "enum": [
+        "unverified",
+        "verified",
+        "rejected"
+      ],
+      "title": "ReviewStatusEnum"
+    }
+  }
+}

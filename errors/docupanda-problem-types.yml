@@ -1,0 +1,69 @@
+generated: '2026-10-14'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/docupanda-docupipe-openapi.yml
+format: custom
+envelope:
+  media_type: application/json
+  schema: ErrorResponse
+coverage:
+  operations: 90
+  statuses_declared: 8
+problems:
+- status: 400
+  title: Bad Request
+  description: Bad Request
+  operations: 42
+  media_types:
+  - application/json
+  schema: ErrorResponse
+- status: 402
+  title: Payment Required
+  description: Payment Required
+  operations: 18
+  media_types:
+  - application/json
+  schema: InsufficientCreditsError
+- status: 404
+  title: Not Found
+  description: Not Found
+  operations: 57
+  media_types:
+  - application/json
+  schema: ErrorResponse
+- status: 408
+  title: Request Timeout
+  description: Request Timeout
+  operations: 1
+  media_types:
+  - application/json
+  schema: ErrorResponse
+- status: 409
+  title: Conflict
+  description: Conflict
+  operations: 1
+  media_types:
+  - application/json
+  schema: ErrorResponse
+- status: 413
+  title: Content Too Large
+  description: Request Entity Too Large
+  operations: 3
+  media_types:
+  - application/json
+  schema: ErrorResponse
+- status: 422
+  title: Unprocessable Content
+  description: Validation Error
+  operations: 82
+  media_types:
+  - application/json
+  schema: HTTPValidationError
+- status: 500
+  title: Internal Server Error
+  description: Internal Server Error
+  operations: 14
+  media_types:
+  - application/json
+  schema: ErrorResponse

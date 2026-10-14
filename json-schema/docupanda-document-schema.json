@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/docupanda/main/json-schema/docupanda-document-schema.json",
+  "title": "Document",
+  "description": "Public-facing representation of DocuPipeDocument.",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/docupanda-docupipe-openapi.yml#/components/schemas/Document",
+  "properties": {
+    "documentId": {
+      "type": "string",
+      "title": "Document ID",
+      "description": "Unique identifier of the document."
+    },
+    "dataset": {
+      "type": "string",
+      "title": "Dataset",
+      "description": "Name of the dataset to which the document belongs."
+    },
+    "classified": {
+      "type": "boolean",
+      "title": "Classified",
+      "description": "Whether the document has been classified.",
+      "default": false
+    },
+    "classIds": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "title": "Class IDs",
+      "description": "List of class IDs assigned to the document. If classified is False, this will be None."
+    },
+    "filename": {
+      "type": "string",
+      "title": "Document filename",
+      "description": "Name of the document file."
+    },
+    "fileType": {
+      "$ref": "#/$defs/FileType",
+      "title": "File Type",
+      "description": "Type of the document file."
+    },
+    "fileExtension": {
+      "$ref": "#/$defs/FileExtension",
+      "title": "File Extension",
+      "description": "Extension of the document file."
+    },
+    "originalFileExtension": {
+      "$ref": "#/$defs/FileExtension",
+      "title": "Original File Extension",
+      "description": "extension of the originally uploaded file, before any conversion (e.g. html, docx). none if no conversion occurred."
+    },
+    "fileSizeMb": {
+      "type": "number",
+      "title": "File Size",
+      "description": "Size of the stored document file in MB."
+    },
+    "result": {
+      "$ref": "#/$defs/ParsingResults",
+      "title": "Analysis Result",
+      "description": "Result of the document analysis if completed."
+    },
+    "numPages": {
+      "type": "integer",
+      "title": "Number of Pages",
+      "description": "Number of pages in the document."
+    },
+    "language": {
+      "type": "string",
+      "title": "Language",
+      "description": "Dominant language of the document."
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Metadata",
+      "description": "Metadata associated with the document. This is a user-defined dictionary that can have any properties."
+    },
+    "status": {
+      "$ref": "#/$defs/ProcessingStatus",
+      "title": "Processing Status",
+      "description": "Current status of the document processing (deprecated, will be removed in future versions)."
+    },
+    "parentDocumentId": {
+      "type": "string",
+      "title": "Parent Document ID",
+      "description": "Unique identifier of the parent document, if this document was created by splitting another document."
+    },
+    "parentDocumentPages": {
+      "items": {
+        "type": "integer"
+      },
+      "type": "array",
+      "title": "Parent Document Pages",
+      "description": "List of page numbers from the parent document that make up this document (zero indexed)."
+    },
+    "timestamp": {
+      "type": "string",
+      "title": "Timestamp",
+      "description": "Timestamp of the document creation."
+    },
+    "transformedData": {
+      "title": "Transformed Data",
+      "description": "Output of the transformation chain applied to this structured document (csv, xlsx, xls, json or xml), if any. Returned when fetching a single document; null in document lists."
+    },
+    "transformationIds": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "title": "Transformation IDs",
+      "description": "Ordered transformations that produced transformedData."
+    },
+    "transformationReceipt": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Transformation Receipt",
+      "description": "Hashes identifying the input, code, context and output of the applied transformation chain."
+    }
+  },
+  "type": "object",
+  "required": [
+    "documentId"
+  ],
+  "$defs": {
+    "AnalyzedPage": {
+      "properties": {
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/Section"
+          },
+          "type": "array",
+          "title": "Sections",
+          "description": "A list of parsed sections in the page.",
+          "default": []
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text",
+          "description": "The text content of the page - a concatenation of the text in all sections."
+        },
+        "pageNum": {
+          "type": "integer",
+          "title": "Page Number",
+          "description": "The number of this page in document (zero indexed).",
+          "default": 0
+        },
+        "orientation": {
+          "$ref": "#/$defs/Orientation",
+          "description": "Orientation of the page.",
+          "default": "normal"
+        }
+      },
+      "type": "object",
+      "title": "AnalyzedPage",
+      "description": "Public-facing representation of DocuPipeAnalyzedPage."
+    },
+    "FileExtension": {
+      "type": "string",
+      "enum": [
+        "pdf",
+        "png",
+        "jpeg",
+        "webp",
+        "tiff",
+        "jp2",
+        "txt",
+        "json",
+        "xml",
+        "html",
+        "doc",
+        "docx",
+        "csv",
+        "xlsx",
+        "xls",
+        "eml"
+      ],
+      "title": "FileExtension"
+    },
+    "FileType": {
+      "type": "string",
+      "enum": [
+        "pdf",
+        "image",
+        "text",
+        "json",
+        "html",
+        "word",
+        "table"
+      ],
+      "title": "FileType"
+    },
+    "HeaderType": {
+      "type": "string",
+      "enum": [
+        "paragraph",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6"
+      ],
+      "title": "HeaderType"
+    },
+    "Orientation": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "clockwise",
+        "counter_clockwise",
+        "upside_down"
+      ],
+      "title": "Orientation"
+    },
+    "ParsingResults": {
+      "properties": {
+        "pages": {
+          "items": {
+            "$ref": "#/$defs/AnalyzedPage"
+          },
+          "type": "array",
+          "title": "Pages",
+          "description": "A list of parsed pages in the document.",
+          "default": []
+        },
+        "numPages": {
+          "type": "integer",
+          "title": "Number of Pages",
+          "description": "The number of pages in the document.",
+          "default": 0
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text",
+          "description": "The text content of the document."
+        },
+        "language": {
+          "type": "string",
+          "title": "Language",
+          "description": "The dominant language of the document."
+        }
+      },
+      "type": "object",
+      "title": "ParsingResults"
+    },
+    "ProcessingStatus": {
+      "type": "string",
+      "enum": [
+        "processing",
+        "completed",
+        "error"
+      ],
+      "title": "ProcessingStatus"
+    },
+    "Section": {
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/SectionType",
+          "title": "Type",
+          "description": "The type of the section (text, table, image)"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The text content of the section"
+        },
+        "bbox": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array",
+          "title": "Bounding Box",
+          "description": "Bounding box of the section in the format [x1, y1, x2, y2], in percentage units [0, 1] within the page"
+        },
+        "header": {
+          "$ref": "#/$defs/HeaderType",
+          "title": "Header Type",
+          "description": "For text sections, the type of header: paragraph (default), h1 - h6"
+        },
+        "tableList": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "array",
+          "title": "Table List",
+          "description": "For table sections, a list of lists representing the table. The outer list represents rows, the inner lists represent column values in those rows. The first row is the header.If there is no header, the first row is a list of empty strings."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type",
+        "text",
+        "bbox"
+      ],
+      "title": "Section"
+    },
+    "SectionType": {
+      "type": "string",
+      "enum": [
+        "text",
+        "table",
+        "image"
+      ],
+      "title": "SectionType"
+    }
+  }
+}

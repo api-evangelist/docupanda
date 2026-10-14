@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/docupanda/main/json-schema/docupanda-job-standardize-schema.json",
+  "title": "JobStandardize",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/docupanda-docupipe-openapi.yml#/components/schemas/JobStandardize",
+  "properties": {
+    "jobId": {
+      "type": "string",
+      "title": "Job ID",
+      "description": "Unique identifier of the job."
+    },
+    "jobType": {
+      "type": "string",
+      "title": "Jobtype",
+      "default": "standardize"
+    },
+    "documentId": {
+      "type": "string",
+      "title": "Document ID",
+      "description": "Unique identifier of the document."
+    },
+    "filename": {
+      "type": "string",
+      "title": "Filename",
+      "description": "Name of the document the job ran on."
+    },
+    "dataset": {
+      "type": "string",
+      "title": "Dataset",
+      "description": "Name of the dataset the document belongs to."
+    },
+    "credits": {
+      "type": "number",
+      "title": "Credits",
+      "description": "Number of credits used by the operation."
+    },
+    "status": {
+      "$ref": "#/$defs/ProcessingStatus",
+      "title": "Processing Status",
+      "description": "Current status of the job."
+    },
+    "errorMessage": {
+      "type": "string",
+      "title": "Error Message",
+      "description": "Error message if the job failed."
+    },
+    "processingTime": {
+      "type": "number",
+      "title": "Processing Time",
+      "description": "Processing time in seconds."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Timestamp",
+      "description": "Timestamp of the job creation."
+    },
+    "progress": {
+      "type": "integer",
+      "title": "Progress",
+      "description": "Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs."
+    },
+    "standardizationId": {
+      "type": "string",
+      "title": "Standardization ID"
+    },
+    "schemaId": {
+      "type": "string",
+      "title": "Schema ID"
+    },
+    "useMetadata": {
+      "type": "boolean",
+      "title": "Use Metadata"
+    },
+    "standardizationMode": {
+      "$ref": "#/$defs/StdMode",
+      "title": "Standardization Mode"
+    },
+    "displayMode": {
+      "$ref": "#/$defs/DisplayMode",
+      "title": "Display Mode"
+    },
+    "splitMode": {
+      "$ref": "#/$defs/SplitMode",
+      "title": "Split Mode"
+    },
+    "effortLevel": {
+      "$ref": "#/$defs/EffortLevel",
+      "title": "Effort Level"
+    },
+    "releaseVersion": {
+      "type": "number",
+      "title": "Release Version"
+    },
+    "stdVersion": {
+      "type": "number",
+      "title": "Standardization Version"
+    },
+    "citations": {
+      "type": "boolean",
+      "title": "Citations",
+      "description": "Whether every value was cited to its place on the page (bounding boxes + confidence) with a Review object created. Null on jobs created before citations existed."
+    },
+    "guidelines": {
+      "type": "string",
+      "title": "Guidelines"
+    },
+    "pages": {
+      "items": {
+        "type": "integer"
+      },
+      "type": "array",
+      "title": "Pages",
+      "description": "List of zero-indexed page numbers the standardization was restricted to. If null, the standardization ran against the full document."
+    },
+    "transformationJobId": {
+      "type": "string",
+      "title": "Transformation Job ID",
+      "description": "Set when transformations were requested with this standardization. The standardization completes first; poll this job for the transformed result."
+    },
+    "transformationErrorMessage": {
+      "type": "string",
+      "title": "Transformation Error Message",
+      "description": "Set when the requested transformations could not be started. The standardization itself still succeeded."
+    }
+  },
+  "type": "object",
+  "required": [
+    "jobId",
+    "status",
+    "standardizationId",
+    "schemaId"
+  ],
+  "$defs": {
+    "DisplayMode": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "spatial",
+        "sections",
+        "image"
+      ],
+      "title": "DisplayMode"
+    },
+    "EffortLevel": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "high",
+        "extended"
+      ],
+      "title": "EffortLevel"
+    },
+    "ProcessingStatus": {
+      "type": "string",
+      "enum": [
+        "processing",
+        "completed",
+        "error"
+      ],
+      "title": "ProcessingStatus"
+    },
+    "SplitMode": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "all",
+        "never"
+      ],
+      "title": "SplitMode"
+    },
+    "StdMode": {
+      "type": "string",
+      "enum": [
+        "default",
+        "sectionBased",
+        "spatial"
+      ],
+      "title": "StdMode"
+    }
+  }
+}

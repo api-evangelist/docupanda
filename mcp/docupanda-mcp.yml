@@ -1,0 +1,213 @@
+generated: '2026-10-14'
+method: derived
+generator: derive-mcp-candidate.py
+source:
+- openapi/docupanda-docupipe-openapi.yml
+status: candidate
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+note: No MCP server was found. No probe result in the dossier. Candidate tools below are derived from the 90 operation(s) in the provider's own
+  OpenAPI (40 listed); they describe what a server WOULD expose, not one that exists.
+tools:
+- name: get_account
+  operationId: get_account
+  method: GET
+  path: /account
+  description: Get Account Information
+- name: list_analyses
+  operationId: list_analyses
+  method: GET
+  path: /analyses
+  description: List Analyses
+- name: delete_analyses
+  operationId: delete_analyses
+  method: DELETE
+  path: /analyses
+  description: Delete Multiple Analyses
+- name: get_analysis
+  operationId: get_analysis
+  method: GET
+  path: /analysis/{analysis_id}
+  description: Retrieve Analysis
+- name: post_analyze_data
+  operationId: post_analyze_data
+  method: POST
+  path: /analyze/data
+  description: Analyze Data
+- name: post_analyze_document
+  operationId: post_analyze_document
+  method: POST
+  path: /analyze/document
+  description: Analyze Document
+- name: post_add_class
+  operationId: post_add_class
+  method: POST
+  path: /class
+  description: Add a Class
+- name: post_edit_class
+  operationId: post_edit_class
+  method: POST
+  path: /class/edit
+  description: Edit a Class
+- name: delete_class
+  operationId: delete_class
+  method: DELETE
+  path: /class/{class_id}
+  description: Delete a Class
+- name: list_classes
+  operationId: list_classes
+  method: GET
+  path: /classes
+  description: List Classes
+- name: post_classify_batch
+  operationId: post_classify_batch
+  method: POST
+  path: /classify/batch
+  description: Classify Documents
+- name: post_copy_classification
+  operationId: post_copy_classification
+  method: POST
+  path: /copy/classification
+  description: Copy a Class to Another Workspace
+- name: list_datasets
+  operationId: list_datasets
+  method: GET
+  path: /dataset-names
+  description: List Dataset Names
+- name: post_document
+  operationId: post_document
+  method: POST
+  path: /document
+  description: Submit a Document for Processing
+- name: bulk_ocr_download
+  operationId: bulk_ocr_download
+  method: POST
+  path: /document/download/bulk-ocr-url
+  description: Bulk Download OCR PDFs
+- name: bulk_original_download
+  operationId: bulk_original_download
+  method: POST
+  path: /document/download/bulk-original-url
+  description: Bulk Download Original Documents
+- name: post_split_document
+  operationId: post_split_document
+  method: POST
+  path: /document/split
+  description: Split a Document
+- name: create_presigned_upload_url
+  operationId: create_presigned_upload_url
+  method: POST
+  path: /document/upload/presigned-url
+  description: Create Presigned Upload URL
+- name: get_document
+  operationId: get_document
+  method: GET
+  path: /document/{document_id}
+  description: Retrieve a Processed Document
+- name: delete_document
+  operationId: delete_document
+  method: DELETE
+  path: /document/{document_id}
+  description: Delete a Document
+- name: get_document_detailed
+  operationId: get_document_detailed
+  method: GET
+  path: /document/{document_id}/detailed
+  description: Retrieve Detailed Processing Result
+- name: download_ocr_url
+  operationId: download_ocr_url
+  method: GET
+  path: /document/{document_id}/download/ocr-url
+  description: Download OCR URL
+- name: download_original_url
+  operationId: download_original_url
+  method: GET
+  path: /document/{document_id}/download/original-url
+  description: Download Original URL
+- name: download_public_url
+  operationId: download_public_url
+  method: GET
+  path: /document/{document_id}/download/public-url
+  description: Download Public URL
+- name: get_proposed_schemas
+  operationId: get_proposed_schemas
+  method: GET
+  path: /document/{document_id}/proposed-schemas
+  description: Get Schema Proposals
+- name: list_documents
+  operationId: list_documents
+  method: GET
+  path: /documents
+  description: List Documents
+- name: delete_documents
+  operationId: delete_documents
+  method: DELETE
+  path: /documents
+  description: Delete Multiple Documents
+- name: post_merge
+  operationId: post_merge
+  method: POST
+  path: /documents/merge
+  description: Merge Documents
+- name: search_documents
+  operationId: search_documents
+  method: GET
+  path: /documents/search
+  description: Search Documents
+- name: get_document_summary
+  operationId: get_document_summary
+  method: GET
+  path: /documents/summary
+  description: Get Document Count
+- name: update_documents_dataset
+  operationId: update_documents_dataset
+  method: POST
+  path: /documents/update-dataset
+  description: Update Dataset
+- name: update_documents_metadata
+  operationId: update_documents_metadata
+  method: POST
+  path: /documents/update-metadata
+  description: Update Document Metadata
+- name: match_standardization
+  operationId: match_standardization
+  method: POST
+  path: /enterprise/matching
+  description: Match a standardization to a list of candidates
+- name: list_extractions
+  operationId: list_extractions
+  method: GET
+  path: /extractions
+  description: List Extractions
+- name: get_job
+  operationId: get_job
+  method: GET
+  path: /job/{job_id}
+  description: Retrieve a Job
+- name: delete_jobs
+  operationId: delete_jobs
+  method: DELETE
+  path: /jobs
+  description: Delete Jobs
+- name: list_jobs
+  operationId: list_jobs
+  method: GET
+  path: /jobs
+  description: List Jobs
+- name: get_job_summary
+  operationId: get_job_summary
+  method: GET
+  path: /jobs/summary
+  description: Get Job Count
+- name: wait_for_jobs
+  operationId: wait_for_jobs
+  method: POST
+  path: /jobs/wait
+  description: Wait For Jobs
+- name: post_query
+  operationId: post_query
+  method: POST
+  path: /query
+  description: Query Standardizations

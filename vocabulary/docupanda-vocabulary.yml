@@ -1,0 +1,418 @@
+generated: '2026-10-14'
+method: derived
+generator: derive-vocabulary.py
+source: openapi/docupanda-docupipe-openapi.yml
+vocabulary:
+  name: DocuPipe Domain Vocabulary
+  description: 'Terms declared by DocuPipe''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-14'
+  terms:
+  - term: ClassifyStandardizeStepOutput
+    definition: 'Object declared by the contract with fields: classificationJobId, classToStandardizationIds, classToStandardizationJobIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/ClassifyStandardizeStepOutput
+  - term: ErrorResponse
+    definition: 'Object declared by the contract with fields: detail.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/ErrorResponse
+  - term: File
+    definition: 'Object declared by the contract with fields: contents.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/File
+  - term: FileExtension
+    definition: 'Enumeration declared by the contract with values: pdf, png, jpeg, webp, tiff, jp2, txt, json, xml, html, doc, docx. (4 more)'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/FileExtension
+  - term: FileType
+    definition: 'Enumeration declared by the contract with values: pdf, image, text, json, html, word, table.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/FileType
+  - term: HTTPValidationError
+    definition: 'Object declared by the contract with fields: detail.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/HTTPValidationError
+  - term: Input Document
+    definition: 'Object declared by the contract with fields: file, url, filename, fileExtension, fileType.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/InputDocument
+  - term: InsufficientCreditsError
+    definition: 'Object declared by the contract with fields: detail.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/InsufficientCreditsError
+  - term: PostDocumentRequest
+    definition: 'Object declared by the contract with fields: document, pages, dataset, metadata, parseVersion, processingMethod, timeout, workflowId.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PostDocumentRequest
+  - term: PostDocumentResponse
+    definition: 'Object declared by the contract with fields: documentId, jobId, status, workflowResponse, workflowV2RunJobId.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PostDocumentResponse
+  - term: ProcessingMethod
+    definition: 'Enumeration declared by the contract with values: asImage, removeWatermark.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/ProcessingMethod
+  - term: ProcessingStatus
+    definition: 'Enumeration declared by the contract with values: processing, completed, error.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/ProcessingStatus
+  - term: SplitClassifyStandardizeStepOutput
+    definition: 'Object declared by the contract with fields: splitJobId, classificationJobIdsByDocument, classToStandardizationJobIdsByDocument,
+      classToStandardizationIdsByDocument, classToStandardizeBatchJobId.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/SplitClassifyStandardizeStepOutput
+  - term: SplitStandardizeStepOutput
+    definition: 'Object declared by the contract with fields: splitJobId, standardizationJobIdsByDocument, standardizationIdsByDocument, standardizeBatchJobIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/SplitStandardizeStepOutput
+  - term: StandardizeReviewStepOutput
+    definition: 'Object declared by the contract with fields: standardizationIds, standardizationJobIds, reviewIds, reviewJobIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizeReviewStepOutput
+  - term: StandardizeStepOutput
+    definition: 'Object declared by the contract with fields: standardizationIds, standardizationJobIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizeStepOutput
+  - term: ValidationError
+    definition: 'Object declared by the contract with fields: loc, msg, type, input, ctx.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/ValidationError
+  - term: WorkflowResponse
+    definition: 'Object declared by the contract with fields: workflowId, standardizeStep, splitStandardizeStep, splitClassifyStandardizeStep,
+      standardizeReviewStep, classifyStandardizeStep, errorMessage.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/WorkflowResponse
+  - term: AnalyzedPage
+    definition: Public-facing representation of DocuPipeAnalyzedPage.
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/AnalyzedPage
+  - term: Document
+    definition: Public-facing representation of DocuPipeDocument.
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/Document
+  - term: HeaderType
+    definition: 'Enumeration declared by the contract with values: paragraph, h1, h2, h3, h4, h5, h6.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/HeaderType
+  - term: Orientation
+    definition: 'Enumeration declared by the contract with values: normal, clockwise, counter_clockwise, upside_down.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/Orientation
+  - term: ParsingResults
+    definition: 'Object declared by the contract with fields: pages, numPages, text, language.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/ParsingResults
+  - term: Section
+    definition: 'Object declared by the contract with fields: type, text, bbox, header, tableList.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/Section
+  - term: SectionType
+    definition: 'Enumeration declared by the contract with values: text, table, image.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/SectionType
+  - term: DocuPandaSchema
+    definition: 'Object declared by the contract with fields: schemaId, userId, chatId, sourceChatId, origin, sourceDocumentId, sourceDocumentName,
+      fieldPreview, schemaName, jsonSchema, guidelines, version. (3 more)'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/DocuPandaSchema
+  - term: ProposedSchemas
+    definition: 'Object declared by the contract with fields: schemas, documentDescription.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/ProposedSchemas
+  - term: DocuPandaPagePublic
+    definition: 'Object declared by the contract with fields: words, selections, orientation, angle, tables, figures, signatures, handwriting.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/DocuPandaPagePublic
+  - term: Element
+    definition: 'Object declared by the contract with fields: type, text, bbox, metadata.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/Element
+  - term: PublicDetailedDocumentParsing
+    definition: 'Object declared by the contract with fields: documentId, pages, language, handwriting, plaintext.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PublicDetailedDocumentParsing
+  - term: OutputFormat
+    definition: 'Enumeration declared by the contract with values: original, pdf, uploaded.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/OutputFormat
+  - term: PresignedUrlResponse
+    definition: 'Object declared by the contract with fields: url.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PresignedUrlResponse
+  - term: PublicUrlResponse
+    definition: 'Object declared by the contract with fields: url.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PublicUrlResponse
+  - term: BulkOriginalDownloadRequest
+    definition: 'Object declared by the contract with fields: documentIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/BulkOriginalDownloadRequest
+  - term: BulkOcrDownloadRequest
+    definition: 'Object declared by the contract with fields: documentIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/BulkOcrDownloadRequest
+  - term: GetDatasetsResponse
+    definition: 'Object declared by the contract with fields: datasetNames.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/GetDatasetsResponse
+  - term: UpdateDatasetRequest
+    definition: 'Object declared by the contract with fields: documentIds, dataset.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/UpdateDatasetRequest
+  - term: UpdateDatasetResponse
+    definition: 'Object declared by the contract with fields: success.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/UpdateDatasetResponse
+  - term: DisplayMode
+    definition: 'Enumeration declared by the contract with values: auto, spatial, sections, image.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/DisplayMode
+  - term: PostSplitResponse
+    definition: Async response for a split job
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PostSplitResponse
+  - term: SplitJobRequest
+    definition: 'Object declared by the contract with fields: documentId, instructions, dataset, filenamePrefix, displayMode, splitVersion.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/SplitJobRequest
+  - term: SplitVersion
+    definition: 'Enumeration declared by the contract with values: 1, 1.1, 1.2.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/SplitVersion
+  - term: MergeJobRequest
+    definition: 'Object declared by the contract with fields: documentIds, filename, dataset.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/MergeJobRequest
+  - term: PostMergeResponse
+    definition: 'Object declared by the contract with fields: jobId, timestamp, success.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PostMergeResponse
+  - term: DocumentSummary
+    definition: 'Object declared by the contract with fields: totalDocuments, datasets.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/DocumentSummary
+  - term: DeletionResponse
+    definition: 'Object declared by the contract with fields: success.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/DeletionResponse
+  - term: DeleteDocumentsRequest
+    definition: 'Object declared by the contract with fields: documentIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/DeleteDocumentsRequest
+  - term: PresignedUploadRequest
+    definition: 'Object declared by the contract with fields: key, fileExtension.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PresignedUploadRequest
+  - term: PresignedUploadResponse
+    definition: 'Object declared by the contract with fields: putUrl, getUrl, contentType.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PresignedUploadResponse
+  - term: UpdateMetadataRequest
+    definition: 'Object declared by the contract with fields: documentIds, metadata.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/UpdateMetadataRequest
+  - term: UpdateMetadataResponse
+    definition: 'Object declared by the contract with fields: success.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/UpdateMetadataResponse
+  - term: AutoGenerateSchemaRequest
+    definition: 'Object declared by the contract with fields: schemaName, documentIds, dataset, instructions, guidelines, standardizeUsingSchema,
+      standardizationMode, schemaVersion.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/AutoGenerateSchemaRequest
+  - term: AutoGenerateSchemaResponse
+    definition: 'Object declared by the contract with fields: jobId, status, schemaId, schemaName, standardizationIds, standardizationJobIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/AutoGenerateSchemaResponse
+  - term: AutogenSchemaVersion
+    definition: 'Enumeration declared by the contract with values: 1, 1.1, 1.2.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/AutogenSchemaVersion
+  - term: StdMode
+    definition: 'Enumeration declared by the contract with values: default, sectionBased, spatial.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StdMode
+  - term: Schema
+    definition: Public-facing representation of DocuPipeSchema.
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/Schema
+  - term: CopySchemaRequest
+    definition: 'Object declared by the contract with fields: schemaId, targetWorkspaceApiKey.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/CopySchemaRequest
+  - term: AddUpdateSchemaResponse
+    definition: 'Object declared by the contract with fields: success, schemaId, jobId, timestamp.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/AddUpdateSchemaResponse
+  - term: PostSchemaRequest
+    definition: 'Object declared by the contract with fields: schemaName, jsonSchema, guidelines.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/PostSchemaRequest
+  - term: EditSchemaRequest
+    definition: 'Object declared by the contract with fields: schemaId, schemaName, description, guidelines.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/EditSchemaRequest
+  - term: EditSchemaResponse
+    definition: 'Object declared by the contract with fields: success.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/EditSchemaResponse
+  - term: SchemaSummary
+    definition: 'Object declared by the contract with fields: totalSchemas.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/SchemaSummary
+  - term: EffortLevelV3
+    definition: 'Enumeration declared by the contract with values: standard, high.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/EffortLevelV3
+  - term: StandardizeV3Request
+    definition: 'Object declared by the contract with fields: documentId, schemaId, guidelines, useMetadata, pages, stdVersion, effortLevel, citations,
+      transformationIds, timeout.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizeV3Request
+  - term: StandardizeV3Response
+    definition: 'Object declared by the contract with fields: jobId, standardizationId, status, documentId, pageCount, schemaId.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizeV3Response
+  - term: StdVersionV3
+    definition: 'Enumeration declared by the contract with values: 3, 3.1, 3.2.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StdVersionV3
+  - term: EffortLevel
+    definition: 'Enumeration declared by the contract with values: standard, high, extended.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/EffortLevel
+  - term: SplitMode
+    definition: 'Enumeration declared by the contract with values: auto, all, never.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/SplitMode
+  - term: StandardizeBatchResponse
+    definition: 'Object declared by the contract with fields: jobId, status, timestamp, documentCount, pageCount, standardizationJobIds, standardizationIds,
+      details.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizeBatchResponse
+  - term: StandardizeV2BatchRequest
+    definition: 'Object declared by the contract with fields: documentIds, schemaId, guidelines, useMetadata, displayMode, splitMode, effortLevel,
+      stdVersion, pages, transformationIds, timeout.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizeV2BatchRequest
+  - term: StdVersionV2
+    definition: 'Enumeration declared by the contract with values: 2, 2.1, 2.2, 2.3.'
+    tags:
+    - Enumeration
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StdVersionV2
+  - term: FieldMetadata
+    definition: 'Public-facing per-field extraction metadata. Anything not declared here stays internal: the stored record also carries how each
+      box was located and why its confidence is what it is, which is our diagnostics rather than something a caller should build on.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/FieldMetadata
+  - term: Standardization
+    definition: Public-facing representation of DocuPipeStandardization.
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/Standardization
+  - term: StandardizationXml
+    definition: Public-facing representation of DocuPipeStandardization with its XML result.
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizationXml
+  - term: StandardizationSummary
+    definition: 'Object declared by the contract with fields: totalStandardizations, schemaNames.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/StandardizationSummary
+  - term: QueryRequest
+    definition: 'Object declared by the contract with fields: schemaId, query, dataset, limit.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/QueryRequest
+  - term: QueryResponse
+    definition: 'Object declared by the contract with fields: standardizations, queryFeedback.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/QueryResponse
+  - term: BulkXmlDownloadRequest
+    definition: 'Object declared by the contract with fields: standardizationIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/BulkXmlDownloadRequest
+  - term: BulkExcelDownloadRequest
+    definition: 'Object declared by the contract with fields: standardizationIds.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/BulkExcelDownloadRequest
+  - term: MatchCandidate
+    definition: 'Object declared by the contract with fields: id, record.'
+    tags:
+    - Object
+    source: openapi/docupanda-docupipe-openapi.yml#/components/schemas/MatchCandidate

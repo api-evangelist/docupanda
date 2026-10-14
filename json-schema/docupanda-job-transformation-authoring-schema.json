@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/docupanda/main/json-schema/docupanda-job-transformation-authoring-schema.json",
+  "title": "JobTransformationAuthoring",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/docupanda-docupipe-openapi.yml#/components/schemas/JobTransformationAuthoring",
+  "properties": {
+    "jobId": {
+      "type": "string",
+      "title": "Job ID",
+      "description": "Unique identifier of the job."
+    },
+    "jobType": {
+      "type": "string",
+      "title": "Jobtype",
+      "default": "transformation-authoring"
+    },
+    "documentId": {
+      "type": "string",
+      "title": "Sample Document ID",
+      "description": "The sample structured document, if one was given."
+    },
+    "filename": {
+      "type": "string",
+      "title": "Filename",
+      "description": "Name of the document the job ran on."
+    },
+    "dataset": {
+      "type": "string",
+      "title": "Dataset",
+      "description": "Name of the dataset the document belongs to."
+    },
+    "credits": {
+      "type": "number",
+      "title": "Credits",
+      "description": "Number of credits used by the operation."
+    },
+    "status": {
+      "$ref": "#/$defs/ProcessingStatus",
+      "title": "Processing Status",
+      "description": "Current status of the job."
+    },
+    "errorMessage": {
+      "type": "string",
+      "title": "Error Message",
+      "description": "Error message if the job failed."
+    },
+    "processingTime": {
+      "type": "number",
+      "title": "Processing Time",
+      "description": "Processing time in seconds."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Timestamp",
+      "description": "Timestamp of the job creation."
+    },
+    "progress": {
+      "type": "integer",
+      "title": "Progress",
+      "description": "Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs."
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "description": "What the transformation should do, as requested."
+    },
+    "basedOnTransformationId": {
+      "type": "string",
+      "title": "Based On Transformation ID",
+      "description": "The transformation being changed, when this request changes one."
+    },
+    "standardizationId": {
+      "type": "string",
+      "title": "Sample Standardization ID",
+      "description": "The sample standardization, if one was given."
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "writing",
+        "testing",
+        "reviewing"
+      ],
+      "title": "Stage",
+      "description": "What the job is doing while it runs: writing the code, testing it on the sample, or reviewing it."
+    },
+    "attempts": {
+      "type": "integer",
+      "title": "Attempts",
+      "description": "How many times the code has been written so far; above 1 means an earlier attempt failed testing.",
+      "default": 0
+    },
+    "maxAttempts": {
+      "type": "integer",
+      "title": "Max Attempts",
+      "description": "The most attempts the job makes before giving up."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "rejected"
+      ],
+      "title": "Outcome",
+      "description": "Set when the job completes: approved (the transformation was saved) or rejected."
+    },
+    "transformationId": {
+      "type": "string",
+      "title": "Transformation ID",
+      "description": "The saved transformation's ID, set only when approved."
+    },
+    "name": {
+      "type": "string",
+      "title": "Name",
+      "description": "The transformation's name."
+    },
+    "code": {
+      "type": "string",
+      "title": "Code",
+      "description": "The Python code that was reviewed."
+    },
+    "explanation": {
+      "type": "string",
+      "title": "Explanation",
+      "description": "What the code does, in plain words."
+    },
+    "preview": {
+      "title": "Preview",
+      "description": "The code's output on the sample, when a sample was given and the output fits."
+    },
+    "previewTruncated": {
+      "type": "boolean",
+      "title": "Preview Truncated",
+      "description": "True when the output on the sample was too large to include.",
+      "default": false
+    },
+    "verifications": {
+      "items": {
+        "$ref": "#/$defs/JobTransformationReview"
+      },
+      "type": "array",
+      "title": "Review",
+      "description": "The review's verdicts and reasons."
+    }
+  },
+  "type": "object",
+  "required": [
+    "jobId",
+    "status",
+    "description"
+  ],
+  "$defs": {
+    "JobTransformationReview": {
+      "properties": {
+        "approved": {
+          "type": "boolean",
+          "title": "Approved",
+          "description": "Whether the review approved the code."
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason",
+          "description": "The review's reasoning, in plain words."
+        }
+      },
+      "type": "object",
+      "required": [
+        "approved",
+        "reason"
+      ],
+      "title": "JobTransformationReview"
+    },
+    "ProcessingStatus": {
+      "type": "string",
+      "enum": [
+        "processing",
+        "completed",
+        "error"
+      ],
+      "title": "ProcessingStatus"
+    }
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/docupanda/main/json-schema/docupanda-get-account-response-schema.json",
+  "title": "GetAccountResponse",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/docupanda-docupipe-openapi.yml#/components/schemas/GetAccountResponse",
+  "properties": {
+    "planName": {
+      "type": "string",
+      "title": "Planname",
+      "description": "The name of the current plan associated with your account"
+    },
+    "pricingRegime": {
+      "$ref": "#/$defs/PricingRegime",
+      "description": "The billing-resolved pricing regime for the account: 'overage' or 'topoff'"
+    },
+    "remainingCredits": {
+      "type": "number",
+      "title": "Remainingcredits",
+      "description": "The number of remaining credits in your account under your current plan. Consuming these credits will result in no charge"
+    },
+    "overageCredits": {
+      "type": "number",
+      "title": "Overagecredits",
+      "description": "The number of overage credits in your account. These credits will be charged on your billing cycle."
+    },
+    "renewalDate": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Renewaldate",
+      "description": "The date on which your current plan will renew"
+    },
+    "retentionDays": {
+      "type": "integer",
+      "title": "Retentiondays",
+      "description": "The number of days that your data will be retained. If null, your data has unlimited retention."
+    },
+    "storageRegion": {
+      "$ref": "#/$defs/StorageRegion",
+      "title": "Storageregion",
+      "description": "The storage region used for new documents uploaded to the account."
+    },
+    "overageEnabled": {
+      "type": "boolean",
+      "title": "Overageenabled",
+      "description": "Whether or not overage billing is enabled for your account",
+      "default": true
+    },
+    "inOverage": {
+      "type": "boolean",
+      "title": "Inoverage",
+      "description": "Whether the account has consumed more than its plan allocation and is currently accruing overage charges",
+      "default": false
+    },
+    "delinquent": {
+      "type": "boolean",
+      "title": "Delinquent",
+      "description": "Whether the account's most recent Stripe charge failed and the subscription is past-due",
+      "default": false
+    },
+    "upcomingInvoice": {
+      "$ref": "#/$defs/UpcomingInvoice",
+      "title": "Upcominginvoice",
+      "description": "Details of the upcoming invoice, including the total amount and the date it will be charged"
+    },
+    "planCosts": {
+      "$ref": "#/$defs/PlanCosts",
+      "title": "Plancosts",
+      "description": "The cost per credit for your account, if applicable"
+    },
+    "billingMethod": {
+      "$ref": "#/$defs/BillingMethod",
+      "description": "The billing method for your account: 'free' (no billing), 'direct' (Stripe), or 'aws_marketplace'",
+      "default": "free"
+    },
+    "awsContractDetails": {
+      "$ref": "#/$defs/AwsContractDetails",
+      "title": "Awscontractdetails",
+      "description": "Details about AWS Marketplace contract, only present for AWS Marketplace subscribers"
+    },
+    "onpremCreditPool": {
+      "$ref": "#/$defs/OnPremCreditPool",
+      "title": "Onpremcreditpool",
+      "description": "The single shared credit pool for an on-prem deployment. Only populated on on-prem deployments and only when the caller is a super admin."
+    },
+    "featureFlags": {
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "type": "object",
+      "title": "Featureflags",
+      "description": "Feature flags that apply to this workspace, resolved from the workspace owner rather than the calling member, so every member of a workspace gets the same experience."
+    }
+  },
+  "type": "object",
+  "required": [
+    "planName",
+    "pricingRegime",
+    "remainingCredits",
+    "overageCredits",
+    "renewalDate"
+  ],
+  "$defs": {
+    "AwsContractDetails": {
+      "properties": {
+        "customerId": {
+          "type": "string",
+          "title": "Customerid",
+          "description": "the aws marketplace customer identifier"
+        },
+        "productCode": {
+          "type": "string",
+          "title": "Productcode",
+          "description": "the aws marketplace product code"
+        },
+        "entitledCredits": {
+          "type": "integer",
+          "title": "Entitledcredits",
+          "description": "the number of credits entitled per billing period"
+        },
+        "contractEndDate": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Contractenddate",
+          "description": "when the current contract/entitlement expires"
+        },
+        "linkedAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Linkedat",
+          "description": "when the aws marketplace subscription was linked"
+        },
+        "subscriptionStatus": {
+          "type": "string",
+          "title": "Subscriptionstatus",
+          "description": "subscription status: active, pending_cancellation, etc."
+        }
+      },
+      "type": "object",
+      "required": [
+        "customerId",
+        "productCode",
+        "entitledCredits"
+      ],
+      "title": "AwsContractDetails",
+      "description": "details about an aws marketplace subscription contract"
+    },
+    "BillingMethod": {
+      "type": "string",
+      "enum": [
+        "free",
+        "direct",
+        "aws_marketplace"
+      ],
+      "title": "BillingMethod"
+    },
+    "OnPremCreditPool": {
+      "properties": {
+        "totalCredits": {
+          "type": "integer",
+          "title": "Totalcredits",
+          "description": "The contracted cap seeded at install time."
+        },
+        "creditsRemaining": {
+          "type": "integer",
+          "title": "Creditsremaining",
+          "description": "Credits still available before the deployment hits 402."
+        },
+        "lastUpdatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Lastupdatedat",
+          "description": "Last time the credits doc was modified by a decrement or admin action."
+        }
+      },
+      "type": "object",
+      "required": [
+        "totalCredits",
+        "creditsRemaining"
+      ],
+      "title": "OnPremCreditPool",
+      "description": "on-prem deployments share a single contracted credit pool seeded at install time.\nevery credit-consuming API call decrements creditsRemaining atomically. visible only\nto super admins on /account."
+    },
+    "PlanCosts": {
+      "properties": {
+        "perCreditAmount": {
+          "type": "number",
+          "title": "Percreditamount",
+          "description": "PAYG price per credit (USD)"
+        },
+        "recurringAmount": {
+          "type": "number",
+          "title": "Recurringamount",
+          "description": "Total recurring charge (USD)"
+        },
+        "recurringFrequency": {
+          "type": "string",
+          "title": "Recurringfrequency",
+          "description": "\"monthly\" | \"annual\" | None"
+        }
+      },
+      "type": "object",
+      "required": [
+        "recurringAmount"
+      ],
+      "title": "PlanCosts"
+    },
+    "PricingRegime": {
+      "type": "string",
+      "enum": [
+        "overage",
+        "topoff"
+      ],
+      "title": "PricingRegime"
+    },
+    "StorageRegion": {
+      "type": "string",
+      "enum": [
+        "us",
+        "europe",
+        "canada",
+        "australia"
+      ],
+      "title": "StorageRegion"
+    },
+    "UpcomingInvoice": {
+      "properties": {
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "The currency of the upcoming invoice. Currently this is always USD",
+          "default": "USD"
+        },
+        "amountRemaining": {
+          "type": "string",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Amountremaining",
+          "description": "The amount remaining to be charged on the upcoming invoice"
+        },
+        "amountPaid": {
+          "type": "string",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Amountpaid",
+          "description": "The amount that has already been paid on the upcoming invoice"
+        },
+        "total": {
+          "type": "string",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Total",
+          "description": "The total amount that will be charged on the upcoming invoice"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Enddate",
+          "description": "The date on which the upcoming invoice will be charged"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Startdate",
+          "description": "The start date of the billing cycle for the upcoming invoice"
+        }
+      },
+      "type": "object",
+      "required": [
+        "amountRemaining",
+        "amountPaid",
+        "total",
+        "endDate",
+        "startDate"
+      ],
+      "title": "UpcomingInvoice"
+    }
+  }
+}

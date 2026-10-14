@@ -1,0 +1,930 @@
+{
+  "@context": {
+    "@vocab": "https://docupipe.ai/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "docupanda": "https://docupipe.ai/schema#",
+    "ClassifyStandardizeStepOutput": "docupanda:ClassifyStandardizeStepOutput",
+    "classificationJobId": {
+      "@id": "docupanda:classificationJobId",
+      "@type": "xsd:string"
+    },
+    "classToStandardizationIds": {
+      "@id": "docupanda:classToStandardizationIds"
+    },
+    "classToStandardizationJobIds": {
+      "@id": "docupanda:classToStandardizationJobIds"
+    },
+    "ErrorResponse": "docupanda:ErrorResponse",
+    "detail": {
+      "@id": "docupanda:detail",
+      "@container": "@list"
+    },
+    "File": "docupanda:File",
+    "contents": {
+      "@id": "docupanda:contents",
+      "@type": "xsd:string"
+    },
+    "FileExtension": "docupanda:FileExtension",
+    "FileType": "docupanda:FileType",
+    "HTTPValidationError": "docupanda:HTTPValidationError",
+    "InputDocument": "docupanda:InputDocument",
+    "file": {
+      "@id": "docupanda:file",
+      "@type": "@id"
+    },
+    "url": {
+      "@id": "docupanda:url",
+      "@type": "@id"
+    },
+    "filename": {
+      "@id": "docupanda:filename",
+      "@type": "xsd:string"
+    },
+    "fileExtension": {
+      "@id": "docupanda:fileExtension",
+      "@type": "@id"
+    },
+    "fileType": {
+      "@id": "docupanda:fileType",
+      "@type": "@id"
+    },
+    "InsufficientCreditsError": "docupanda:InsufficientCreditsError",
+    "PostDocumentRequest": "docupanda:PostDocumentRequest",
+    "document": {
+      "@id": "docupanda:document",
+      "@type": "@id"
+    },
+    "pages": {
+      "@id": "docupanda:pages",
+      "@container": "@list"
+    },
+    "dataset": {
+      "@id": "docupanda:dataset",
+      "@type": "xsd:string"
+    },
+    "metadata": {
+      "@id": "docupanda:metadata"
+    },
+    "parseVersion": {
+      "@id": "docupanda:parseVersion",
+      "@type": "xsd:decimal"
+    },
+    "processingMethod": {
+      "@id": "docupanda:processingMethod",
+      "@type": "@id"
+    },
+    "timeout": {
+      "@id": "docupanda:timeout",
+      "@type": "xsd:integer"
+    },
+    "workflowId": {
+      "@id": "docupanda:workflowId",
+      "@type": "xsd:string"
+    },
+    "PostDocumentResponse": "docupanda:PostDocumentResponse",
+    "documentId": {
+      "@id": "docupanda:documentId",
+      "@type": "xsd:string"
+    },
+    "jobId": {
+      "@id": "docupanda:jobId",
+      "@type": "xsd:string"
+    },
+    "status": {
+      "@id": "docupanda:status",
+      "@type": "@id"
+    },
+    "workflowResponse": {
+      "@id": "docupanda:workflowResponse",
+      "@type": "@id"
+    },
+    "workflowV2RunJobId": {
+      "@id": "docupanda:workflowV2RunJobId",
+      "@type": "xsd:string"
+    },
+    "ProcessingMethod": "docupanda:ProcessingMethod",
+    "ProcessingStatus": "docupanda:ProcessingStatus",
+    "SplitClassifyStandardizeStepOutput": "docupanda:SplitClassifyStandardizeStepOutput",
+    "splitJobId": {
+      "@id": "docupanda:splitJobId",
+      "@type": "xsd:string"
+    },
+    "classificationJobIdsByDocument": {
+      "@id": "docupanda:classificationJobIdsByDocument"
+    },
+    "classToStandardizationJobIdsByDocument": {
+      "@id": "docupanda:classToStandardizationJobIdsByDocument"
+    },
+    "classToStandardizationIdsByDocument": {
+      "@id": "docupanda:classToStandardizationIdsByDocument"
+    },
+    "classToStandardizeBatchJobId": {
+      "@id": "docupanda:classToStandardizeBatchJobId"
+    },
+    "SplitStandardizeStepOutput": "docupanda:SplitStandardizeStepOutput",
+    "standardizationJobIdsByDocument": {
+      "@id": "docupanda:standardizationJobIdsByDocument"
+    },
+    "standardizationIdsByDocument": {
+      "@id": "docupanda:standardizationIdsByDocument"
+    },
+    "standardizeBatchJobIds": {
+      "@id": "docupanda:standardizeBatchJobIds",
+      "@container": "@list"
+    },
+    "StandardizeReviewStepOutput": "docupanda:StandardizeReviewStepOutput",
+    "standardizationIds": {
+      "@id": "docupanda:standardizationIds",
+      "@container": "@list"
+    },
+    "standardizationJobIds": {
+      "@id": "docupanda:standardizationJobIds",
+      "@container": "@list"
+    },
+    "reviewIds": {
+      "@id": "docupanda:reviewIds",
+      "@container": "@list"
+    },
+    "reviewJobIds": {
+      "@id": "docupanda:reviewJobIds",
+      "@container": "@list"
+    },
+    "StandardizeStepOutput": "docupanda:StandardizeStepOutput",
+    "ValidationError": "docupanda:ValidationError",
+    "loc": {
+      "@id": "docupanda:loc",
+      "@container": "@list"
+    },
+    "msg": {
+      "@id": "docupanda:msg",
+      "@type": "xsd:string"
+    },
+    "type": {
+      "@id": "docupanda:type",
+      "@type": "xsd:string"
+    },
+    "input": {
+      "@id": "docupanda:input"
+    },
+    "ctx": {
+      "@id": "docupanda:ctx"
+    },
+    "WorkflowResponse": "docupanda:WorkflowResponse",
+    "standardizeStep": {
+      "@id": "docupanda:standardizeStep",
+      "@type": "@id"
+    },
+    "splitStandardizeStep": {
+      "@id": "docupanda:splitStandardizeStep",
+      "@type": "@id"
+    },
+    "splitClassifyStandardizeStep": {
+      "@id": "docupanda:splitClassifyStandardizeStep",
+      "@type": "@id"
+    },
+    "standardizeReviewStep": {
+      "@id": "docupanda:standardizeReviewStep",
+      "@type": "@id"
+    },
+    "classifyStandardizeStep": {
+      "@id": "docupanda:classifyStandardizeStep",
+      "@type": "@id"
+    },
+    "errorMessage": {
+      "@id": "docupanda:errorMessage",
+      "@type": "xsd:string"
+    },
+    "AnalyzedPage": "docupanda:AnalyzedPage",
+    "sections": {
+      "@id": "docupanda:sections",
+      "@container": "@list"
+    },
+    "text": {
+      "@id": "docupanda:text"
+    },
+    "pageNum": {
+      "@id": "docupanda:pageNum",
+      "@type": "xsd:integer"
+    },
+    "orientation": {
+      "@id": "docupanda:orientation",
+      "@type": "@id"
+    },
+    "Document": "docupanda:Document",
+    "classified": {
+      "@id": "docupanda:classified",
+      "@type": "xsd:boolean"
+    },
+    "classIds": {
+      "@id": "docupanda:classIds",
+      "@container": "@list"
+    },
+    "originalFileExtension": {
+      "@id": "docupanda:originalFileExtension",
+      "@type": "@id"
+    },
+    "fileSizeMb": {
+      "@id": "docupanda:fileSizeMb",
+      "@type": "xsd:decimal"
+    },
+    "result": {
+      "@id": "docupanda:result",
+      "@type": "@id"
+    },
+    "numPages": {
+      "@id": "docupanda:numPages",
+      "@type": "xsd:integer"
+    },
+    "language": {
+      "@id": "docupanda:language",
+      "@type": "xsd:string"
+    },
+    "parentDocumentId": {
+      "@id": "docupanda:parentDocumentId",
+      "@type": "xsd:string"
+    },
+    "parentDocumentPages": {
+      "@id": "docupanda:parentDocumentPages",
+      "@container": "@list"
+    },
+    "timestamp": {
+      "@id": "docupanda:timestamp",
+      "@type": "xsd:string"
+    },
+    "transformedData": {
+      "@id": "docupanda:transformedData"
+    },
+    "transformationIds": {
+      "@id": "docupanda:transformationIds",
+      "@container": "@list"
+    },
+    "transformationReceipt": {
+      "@id": "docupanda:transformationReceipt"
+    },
+    "HeaderType": "docupanda:HeaderType",
+    "Orientation": "docupanda:Orientation",
+    "ParsingResults": "docupanda:ParsingResults",
+    "Section": "docupanda:Section",
+    "bbox": {
+      "@id": "docupanda:bbox",
+      "@container": "@list"
+    },
+    "header": {
+      "@id": "docupanda:header",
+      "@type": "@id"
+    },
+    "tableList": {
+      "@id": "docupanda:tableList",
+      "@container": "@list"
+    },
+    "SectionType": "docupanda:SectionType",
+    "DocuPandaSchema": "docupanda:DocuPandaSchema",
+    "schemaId": {
+      "@id": "docupanda:schemaId",
+      "@type": "xsd:string"
+    },
+    "userId": {
+      "@id": "docupanda:userId",
+      "@type": "xsd:string"
+    },
+    "chatId": {
+      "@id": "docupanda:chatId",
+      "@type": "xsd:string"
+    },
+    "sourceChatId": {
+      "@id": "docupanda:sourceChatId",
+      "@type": "xsd:string"
+    },
+    "origin": {
+      "@id": "docupanda:origin",
+      "@type": "xsd:string"
+    },
+    "sourceDocumentId": {
+      "@id": "docupanda:sourceDocumentId",
+      "@type": "xsd:string"
+    },
+    "sourceDocumentName": {
+      "@id": "docupanda:sourceDocumentName",
+      "@type": "xsd:string"
+    },
+    "fieldPreview": {
+      "@id": "docupanda:fieldPreview",
+      "@container": "@list"
+    },
+    "schemaName": {
+      "@id": "docupanda:schemaName",
+      "@type": "xsd:string"
+    },
+    "jsonSchema": {
+      "@id": "docupanda:jsonSchema"
+    },
+    "guidelines": {
+      "@id": "docupanda:guidelines",
+      "@type": "xsd:string"
+    },
+    "version": {
+      "@id": "docupanda:version",
+      "@type": "xsd:decimal"
+    },
+    "draft": {
+      "@id": "docupanda:draft",
+      "@type": "xsd:boolean"
+    },
+    "excelLayout": {
+      "@id": "docupanda:excelLayout"
+    },
+    "ProposedSchemas": "docupanda:ProposedSchemas",
+    "schemas": {
+      "@id": "docupanda:schemas",
+      "@container": "@list"
+    },
+    "documentDescription": {
+      "@id": "docupanda:documentDescription",
+      "@type": "xsd:string"
+    },
+    "DocuPandaPagePublic": "docupanda:DocuPandaPagePublic",
+    "words": {
+      "@id": "docupanda:words",
+      "@container": "@list"
+    },
+    "selections": {
+      "@id": "docupanda:selections",
+      "@container": "@list"
+    },
+    "angle": {
+      "@id": "docupanda:angle",
+      "@type": "xsd:decimal"
+    },
+    "tables": {
+      "@id": "docupanda:tables",
+      "@container": "@list"
+    },
+    "figures": {
+      "@id": "docupanda:figures",
+      "@container": "@list"
+    },
+    "signatures": {
+      "@id": "docupanda:signatures",
+      "@container": "@list"
+    },
+    "handwriting": {
+      "@id": "docupanda:handwriting",
+      "@type": "xsd:boolean"
+    },
+    "Element": "docupanda:Element",
+    "PublicDetailedDocumentParsing": "docupanda:PublicDetailedDocumentParsing",
+    "plaintext": {
+      "@id": "docupanda:plaintext",
+      "@type": "xsd:string"
+    },
+    "OutputFormat": "docupanda:OutputFormat",
+    "PresignedUrlResponse": "docupanda:PresignedUrlResponse",
+    "PublicUrlResponse": "docupanda:PublicUrlResponse",
+    "BulkOriginalDownloadRequest": "docupanda:BulkOriginalDownloadRequest",
+    "documentIds": {
+      "@id": "docupanda:documentIds",
+      "@container": "@list"
+    },
+    "BulkOcrDownloadRequest": "docupanda:BulkOcrDownloadRequest",
+    "GetDatasetsResponse": "docupanda:GetDatasetsResponse",
+    "datasetNames": {
+      "@id": "docupanda:datasetNames",
+      "@container": "@list"
+    },
+    "UpdateDatasetRequest": "docupanda:UpdateDatasetRequest",
+    "UpdateDatasetResponse": "docupanda:UpdateDatasetResponse",
+    "success": {
+      "@id": "docupanda:success",
+      "@type": "xsd:boolean"
+    },
+    "DisplayMode": "docupanda:DisplayMode",
+    "PostSplitResponse": "docupanda:PostSplitResponse",
+    "SplitJobRequest": "docupanda:SplitJobRequest",
+    "instructions": {
+      "@id": "docupanda:instructions",
+      "@type": "xsd:string"
+    },
+    "filenamePrefix": {
+      "@id": "docupanda:filenamePrefix",
+      "@type": "xsd:string"
+    },
+    "displayMode": {
+      "@id": "docupanda:displayMode",
+      "@type": "@id"
+    },
+    "splitVersion": {
+      "@id": "docupanda:splitVersion",
+      "@type": "@id"
+    },
+    "SplitVersion": "docupanda:SplitVersion",
+    "MergeJobRequest": "docupanda:MergeJobRequest",
+    "PostMergeResponse": "docupanda:PostMergeResponse",
+    "DocumentSummary": "docupanda:DocumentSummary",
+    "totalDocuments": {
+      "@id": "docupanda:totalDocuments",
+      "@type": "xsd:integer"
+    },
+    "datasets": {
+      "@id": "docupanda:datasets",
+      "@container": "@list"
+    },
+    "DeletionResponse": "docupanda:DeletionResponse",
+    "DeleteDocumentsRequest": "docupanda:DeleteDocumentsRequest",
+    "PresignedUploadRequest": "docupanda:PresignedUploadRequest",
+    "key": {
+      "@id": "docupanda:key",
+      "@type": "xsd:string"
+    },
+    "PresignedUploadResponse": "docupanda:PresignedUploadResponse",
+    "putUrl": {
+      "@id": "docupanda:putUrl",
+      "@type": "xsd:string"
+    },
+    "getUrl": {
+      "@id": "docupanda:getUrl",
+      "@type": "xsd:string"
+    },
+    "contentType": {
+      "@id": "docupanda:contentType",
+      "@type": "xsd:string"
+    },
+    "UpdateMetadataRequest": "docupanda:UpdateMetadataRequest",
+    "UpdateMetadataResponse": "docupanda:UpdateMetadataResponse",
+    "AutoGenerateSchemaRequest": "docupanda:AutoGenerateSchemaRequest",
+    "standardizeUsingSchema": {
+      "@id": "docupanda:standardizeUsingSchema",
+      "@type": "xsd:boolean"
+    },
+    "standardizationMode": {
+      "@id": "docupanda:standardizationMode",
+      "@type": "@id"
+    },
+    "schemaVersion": {
+      "@id": "docupanda:schemaVersion",
+      "@type": "@id"
+    },
+    "AutoGenerateSchemaResponse": "docupanda:AutoGenerateSchemaResponse",
+    "AutogenSchemaVersion": "docupanda:AutogenSchemaVersion",
+    "StdMode": "docupanda:StdMode",
+    "Schema": "docupanda:Schema",
+    "CopySchemaRequest": "docupanda:CopySchemaRequest",
+    "targetWorkspaceApiKey": {
+      "@id": "docupanda:targetWorkspaceApiKey",
+      "@type": "xsd:string"
+    },
+    "AddUpdateSchemaResponse": "docupanda:AddUpdateSchemaResponse",
+    "PostSchemaRequest": "docupanda:PostSchemaRequest",
+    "EditSchemaRequest": "docupanda:EditSchemaRequest",
+    "description": {
+      "@id": "docupanda:description",
+      "@type": "xsd:string"
+    },
+    "EditSchemaResponse": "docupanda:EditSchemaResponse",
+    "SchemaSummary": "docupanda:SchemaSummary",
+    "totalSchemas": {
+      "@id": "docupanda:totalSchemas",
+      "@type": "xsd:integer"
+    },
+    "EffortLevelV3": "docupanda:EffortLevelV3",
+    "StandardizeV3Request": "docupanda:StandardizeV3Request",
+    "useMetadata": {
+      "@id": "docupanda:useMetadata",
+      "@type": "xsd:boolean"
+    },
+    "stdVersion": {
+      "@id": "docupanda:stdVersion",
+      "@type": "@id"
+    },
+    "effortLevel": {
+      "@id": "docupanda:effortLevel",
+      "@type": "@id"
+    },
+    "citations": {
+      "@id": "docupanda:citations",
+      "@type": "xsd:boolean"
+    },
+    "StandardizeV3Response": "docupanda:StandardizeV3Response",
+    "standardizationId": {
+      "@id": "docupanda:standardizationId",
+      "@type": "xsd:string"
+    },
+    "pageCount": {
+      "@id": "docupanda:pageCount",
+      "@type": "xsd:integer"
+    },
+    "StdVersionV3": "docupanda:StdVersionV3",
+    "EffortLevel": "docupanda:EffortLevel",
+    "SplitMode": "docupanda:SplitMode",
+    "StandardizeBatchResponse": "docupanda:StandardizeBatchResponse",
+    "documentCount": {
+      "@id": "docupanda:documentCount",
+      "@type": "xsd:integer"
+    },
+    "details": {
+      "@id": "docupanda:details",
+      "@type": "xsd:string"
+    },
+    "StandardizeV2BatchRequest": "docupanda:StandardizeV2BatchRequest",
+    "splitMode": {
+      "@id": "docupanda:splitMode",
+      "@type": "@id"
+    },
+    "StdVersionV2": "docupanda:StdVersionV2",
+    "FieldMetadata": "docupanda:FieldMetadata",
+    "page": {
+      "@id": "docupanda:page",
+      "@type": "xsd:integer"
+    },
+    "confidence": {
+      "@id": "docupanda:confidence",
+      "@type": "xsd:string"
+    },
+    "boundingBoxes": {
+      "@id": "docupanda:boundingBoxes",
+      "@container": "@list"
+    },
+    "Standardization": "docupanda:Standardization",
+    "data": {
+      "@id": "docupanda:data"
+    },
+    "fieldMetadata": {
+      "@id": "docupanda:fieldMetadata"
+    },
+    "StandardizationXml": "docupanda:StandardizationXml",
+    "xml": {
+      "@id": "docupanda:xml",
+      "@type": "xsd:string"
+    },
+    "StandardizationSummary": "docupanda:StandardizationSummary",
+    "totalStandardizations": {
+      "@id": "docupanda:totalStandardizations",
+      "@type": "xsd:integer"
+    },
+    "schemaNames": {
+      "@id": "docupanda:schemaNames",
+      "@container": "@list"
+    },
+    "QueryRequest": "docupanda:QueryRequest",
+    "query": {
+      "@id": "docupanda:query",
+      "@type": "xsd:string"
+    },
+    "limit": {
+      "@id": "docupanda:limit",
+      "@type": "xsd:integer"
+    },
+    "QueryResponse": "docupanda:QueryResponse",
+    "standardizations": {
+      "@id": "docupanda:standardizations",
+      "@container": "@list"
+    },
+    "queryFeedback": {
+      "@id": "docupanda:queryFeedback"
+    },
+    "BulkXmlDownloadRequest": "docupanda:BulkXmlDownloadRequest",
+    "BulkExcelDownloadRequest": "docupanda:BulkExcelDownloadRequest",
+    "MatchCandidate": "docupanda:MatchCandidate",
+    "id": {
+      "@id": "docupanda:id",
+      "@type": "xsd:string"
+    },
+    "record": {
+      "@id": "docupanda:record"
+    },
+    "MatchingRequest": "docupanda:MatchingRequest",
+    "matchCandidates": {
+      "@id": "docupanda:matchCandidates",
+      "@container": "@list"
+    },
+    "MatchingResponse": "docupanda:MatchingResponse",
+    "reasoning": {
+      "@id": "docupanda:reasoning",
+      "@type": "xsd:string"
+    },
+    "matchingRecords": {
+      "@id": "docupanda:matchingRecords",
+      "@container": "@list"
+    },
+    "DeleteStandardizationsRequest": "docupanda:DeleteStandardizationsRequest",
+    "MergedExcelDownloadRequest": "docupanda:MergedExcelDownloadRequest",
+    "maxWaitSeconds": {
+      "@id": "docupanda:maxWaitSeconds",
+      "@type": "xsd:integer"
+    },
+    "addSourceCol": {
+      "@id": "docupanda:addSourceCol",
+      "@type": "xsd:boolean"
+    },
+    "StandardizationText": "docupanda:StandardizationText",
+    "Extraction": "docupanda:Extraction",
+    "extractionId": {
+      "@id": "docupanda:extractionId",
+      "@type": "xsd:string"
+    },
+    "extractionType": {
+      "@id": "docupanda:extractionType",
+      "@type": "xsd:string"
+    },
+    "sourceStandardizationIds": {
+      "@id": "docupanda:sourceStandardizationIds",
+      "@container": "@list"
+    },
+    "MergeStandardizationsRequest": "docupanda:MergeStandardizationsRequest",
+    "MergeStandardizationsResponse": "docupanda:MergeStandardizationsResponse",
+    "sourceSchemaIds": {
+      "@id": "docupanda:sourceSchemaIds",
+      "@container": "@list"
+    },
+    "itemCount": {
+      "@id": "docupanda:itemCount",
+      "@type": "xsd:integer"
+    },
+    "credits": {
+      "@id": "docupanda:credits",
+      "@type": "xsd:integer"
+    },
+    "ConversionStage": "docupanda:ConversionStage",
+    "ConvertExcelRequest": "docupanda:ConvertExcelRequest",
+    "ConvertExcelResponse": "docupanda:ConvertExcelResponse",
+    "conversionId": {
+      "@id": "docupanda:conversionId",
+      "@type": "xsd:string"
+    },
+    "ConvertExcelResult": "docupanda:ConvertExcelResult",
+    "excelUrl": {
+      "@id": "docupanda:excelUrl",
+      "@type": "xsd:string"
+    },
+    "excelUrlExpiresAt": {
+      "@id": "docupanda:excelUrlExpiresAt",
+      "@type": "xsd:string"
+    },
+    "preview": {
+      "@id": "docupanda:preview"
+    },
+    "warnings": {
+      "@id": "docupanda:warnings",
+      "@container": "@list"
+    },
+    "DeleteJobsRequest": "docupanda:DeleteJobsRequest",
+    "jobIds": {
+      "@id": "docupanda:jobIds",
+      "@container": "@list"
+    },
+    "Job": "docupanda:Job",
+    "jobType": {
+      "@id": "docupanda:jobType",
+      "@type": "xsd:string"
+    },
+    "processingTime": {
+      "@id": "docupanda:processingTime",
+      "@type": "xsd:decimal"
+    },
+    "progress": {
+      "@id": "docupanda:progress",
+      "@type": "xsd:integer"
+    },
+    "ClassifyVersion": "docupanda:ClassifyVersion",
+    "JobAnalyzeData": "docupanda:JobAnalyzeData",
+    "analysisId": {
+      "@id": "docupanda:analysisId",
+      "@type": "xsd:string"
+    },
+    "questions": {
+      "@id": "docupanda:questions",
+      "@container": "@list"
+    },
+    "JobAnalyzeDocument": "docupanda:JobAnalyzeDocument",
+    "JobArchitectSession": "docupanda:JobArchitectSession",
+    "JobAutogenerateSchema": "docupanda:JobAutogenerateSchema",
+    "JobClassify": "docupanda:JobClassify",
+    "includeUnknown": {
+      "@id": "docupanda:includeUnknown",
+      "@type": "xsd:boolean"
+    },
+    "multiClass": {
+      "@id": "docupanda:multiClass",
+      "@type": "xsd:boolean"
+    },
+    "classifyVersion": {
+      "@id": "docupanda:classifyVersion",
+      "@type": "@id"
+    },
+    "assignedClassIds": {
+      "@id": "docupanda:assignedClassIds",
+      "@container": "@list"
+    },
+    "assignedClassNames": {
+      "@id": "docupanda:assignedClassNames",
+      "@container": "@list"
+    },
+    "JobClassifyBatch": "docupanda:JobClassifyBatch",
+    "classifyJobIds": {
+      "@id": "docupanda:classifyJobIds",
+      "@container": "@list"
+    },
+    "JobCreateSchema": "docupanda:JobCreateSchema",
+    "JobDocumentUpload": "docupanda:JobDocumentUpload",
+    "pagesParsed": {
+      "@id": "docupanda:pagesParsed",
+      "@container": "@list"
+    },
+    "JobDuplicateSchema": "docupanda:JobDuplicateSchema",
+    "JobImproveSchema": "docupanda:JobImproveSchema",
+    "JobImproveSchemaGenerate": "docupanda:JobImproveSchemaGenerate",
+    "newSchemaId": {
+      "@id": "docupanda:newSchemaId",
+      "@type": "xsd:string"
+    },
+    "JobMatching": "docupanda:JobMatching",
+    "client": {
+      "@id": "docupanda:client",
+      "@type": "xsd:string"
+    },
+    "JobMerge": "docupanda:JobMerge",
+    "newDocumentId": {
+      "@id": "docupanda:newDocumentId",
+      "@type": "xsd:string"
+    },
+    "JobQuery": "docupanda:JobQuery",
+    "feedback": {
+      "@id": "docupanda:feedback",
+      "@type": "xsd:string"
+    },
+    "matchedStandardizationIds": {
+      "@id": "docupanda:matchedStandardizationIds",
+      "@container": "@list"
+    },
+    "matchedDocumentIds": {
+      "@id": "docupanda:matchedDocumentIds",
+      "@container": "@list"
+    },
+    "JobReasoning": "docupanda:JobReasoning",
+    "inputStandardizationIds": {
+      "@id": "docupanda:inputStandardizationIds",
+      "@container": "@list"
+    },
+    "quality": {
+      "@id": "docupanda:quality",
+      "@type": "xsd:string"
+    },
+    "JobRedact": "docupanda:JobRedact",
+    "redactionId": {
+      "@id": "docupanda:redactionId",
+      "@type": "xsd:string"
+    },
+    "redactedDocumentId": {
+      "@id": "docupanda:redactedDocumentId",
+      "@type": "xsd:string"
+    },
+    "redactedDocumentParseJobId": {
+      "@id": "docupanda:redactedDocumentParseJobId",
+      "@type": "xsd:string"
+    },
+    "numRedactions": {
+      "@id": "docupanda:numRedactions",
+      "@type": "xsd:integer"
+    },
+    "JobReview": "docupanda:JobReview",
+    "reviewId": {
+      "@id": "docupanda:reviewId",
+      "@type": "xsd:string"
+    },
+    "reviewInstructions": {
+      "@id": "docupanda:reviewInstructions",
+      "@type": "xsd:string"
+    },
+    "JobSplit": "docupanda:JobSplit",
+    "numNewDocuments": {
+      "@id": "docupanda:numNewDocuments",
+      "@type": "xsd:integer"
+    },
+    "newDocumentIds": {
+      "@id": "docupanda:newDocumentIds",
+      "@container": "@list"
+    },
+    "JobStandardize": "docupanda:JobStandardize",
+    "releaseVersion": {
+      "@id": "docupanda:releaseVersion",
+      "@type": "xsd:decimal"
+    },
+    "transformationJobId": {
+      "@id": "docupanda:transformationJobId",
+      "@type": "xsd:string"
+    },
+    "transformationErrorMessage": {
+      "@id": "docupanda:transformationErrorMessage",
+      "@type": "xsd:string"
+    },
+    "JobStandardizeBatch": "docupanda:JobStandardizeBatch",
+    "JobTransformation": "docupanda:JobTransformation",
+    "source": {
+      "@id": "docupanda:source",
+      "@type": "xsd:string"
+    },
+    "applied": {
+      "@id": "docupanda:applied",
+      "@type": "xsd:boolean"
+    },
+    "JobTransformationAuthoring": "docupanda:JobTransformationAuthoring",
+    "basedOnTransformationId": {
+      "@id": "docupanda:basedOnTransformationId",
+      "@type": "xsd:string"
+    },
+    "stage": {
+      "@id": "docupanda:stage",
+      "@type": "xsd:string"
+    },
+    "attempts": {
+      "@id": "docupanda:attempts",
+      "@type": "xsd:integer"
+    },
+    "maxAttempts": {
+      "@id": "docupanda:maxAttempts",
+      "@type": "xsd:integer"
+    },
+    "outcome": {
+      "@id": "docupanda:outcome",
+      "@type": "xsd:string"
+    },
+    "transformationId": {
+      "@id": "docupanda:transformationId",
+      "@type": "xsd:string"
+    },
+    "name": {
+      "@id": "docupanda:name",
+      "@type": "xsd:string"
+    },
+    "code": {
+      "@id": "docupanda:code",
+      "@type": "xsd:string"
+    },
+    "explanation": {
+      "@id": "docupanda:explanation",
+      "@type": "xsd:string"
+    },
+    "previewTruncated": {
+      "@id": "docupanda:previewTruncated",
+      "@type": "xsd:boolean"
+    },
+    "verifications": {
+      "@id": "docupanda:verifications",
+      "@container": "@list"
+    },
+    "JobTransformationReview": "docupanda:JobTransformationReview",
+    "approved": {
+      "@id": "docupanda:approved",
+      "@type": "xsd:boolean"
+    },
+    "reason": {
+      "@id": "docupanda:reason",
+      "@type": "xsd:string"
+    },
+    "JobWorkflowV2Run": "docupanda:JobWorkflowV2Run",
+    "inputDocumentIds": {
+      "@id": "docupanda:inputDocumentIds",
+      "@container": "@list"
+    },
+    "uploadJobIds": {
+      "@id": "docupanda:uploadJobIds",
+      "@container": "@list"
+    },
+    "childJobIds": {
+      "@id": "docupanda:childJobIds",
+      "@container": "@list"
+    },
+    "totalChildCredits": {
+      "@id": "docupanda:totalChildCredits",
+      "@type": "xsd:decimal"
+    },
+    "nodeResults": {
+      "@id": "docupanda:nodeResults"
+    },
+    "outputs": {
+      "@id": "docupanda:outputs",
+      "@container": "@list"
+    },
+    "WorkflowV2BlockResult": "docupanda:WorkflowV2BlockResult",
+    "blockId": {
+      "@id": "docupanda:blockId",
+      "@type": "xsd:string"
+    },
+    "summary": {
+      "@id": "docupanda:summary",
+      "@type": "xsd:string"
+    },
+    "stale": {
+      "@id": "docupanda:stale",
+      "@type": "xsd:boolean"
+    }
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "DocuPipe API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects DocuPipe's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-14) from openapi/docupanda-docupipe-openapi.yml.",
+  "dcterms:created": "2026-10-14",
+  "dcterms:source": [
+    "openapi/docupanda-docupipe-openapi.yml"
+  ]
+}

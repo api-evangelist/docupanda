@@ -1,0 +1,94 @@
+generated: '2026-10-14'
+method: searched
+source:
+- https://zapier.com/apps/docupipe/integrations
+checked:
+- https://composio.dev/toolkits/docupanda
+- https://monid.ai/tools/docupanda
+- https://n8n.io/integrations/docupanda/
+- https://zapier.com/apps/docupanda/integrations
+- https://zapier.com/apps/docupipe/integrations
+summary: null
+marketplace_apps:
+- marketplace: zapier
+  channel: ipaas-listing
+  app: docupipe
+  url: https://zapier.com/apps/docupipe/integrations
+  external_url: https://www.docupipe.ai/
+  partner_tier: BRONZE
+  triggers:
+  - key: document_processed
+    label: Document Processed
+  - key: standardization_complete
+    label: Extraction Complete
+  actions:
+  - key: classify_document
+    label: Classify Document
+  - key: extract_data
+    label: Extract Data From Document
+  - key: get_document
+    label: Get Document
+  - key: get_extraction
+    label: Get Extraction Result
+  - key: upload_and_extract
+    label: Upload and Extract Data
+  - key: upload_document
+    label: Upload Document
+  searches: []
+edges:
+- partner_name: Google Forms
+  partner: google-forms
+  partner_match: domain+name-among-holders
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  relationship: ipaas-bridge
+  evidence: https://zapier.com/apps/docupipe/integrations/google-forms
+  direction: third-party
+  category: Forms & Surveys
+  partner_url: http://google.com/
+- partner_name: Dropbox
+  partner: dropbox
+  partner_match: domain+name-among-holders
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  relationship: ipaas-bridge
+  evidence: https://zapier.com/apps/docupipe/integrations/dropbox
+  direction: third-party
+  category: File Management & Storage
+  partner_url: https://dropbox.com/
+- partner_name: RingCentral
+  partner: ringcentral
+  partner_match: domain+name-among-holders
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  relationship: ipaas-bridge
+  evidence: https://zapier.com/apps/docupipe/integrations/ringcentral
+  direction: third-party
+  category: Phone & SMS
+  partner_url: http://www.ringcentral.com/
+templates:
+- title: Extract document data from new inbound email attachments with DocuPipe and store in Google Sheets rows
+  url: https://zapier.com/apps/gmail/integrations/google-sheets/255707876/extract-document-data-from-new-inbound-email-attachments-with-docupipe-and-store-in-google-sheets-rows
+  apps:
+  - gmail
+  - docupipe
+  - google-sheets
+- title: Extract document data from new inbound emails with DocuPipe and store in Airtable
+  url: https://zapier.com/apps/airtable/integrations/email/255707878/extract-document-data-from-new-inbound-emails-with-docupipe-and-store-in-airtable
+  apps:
+  - email
+  - docupipe
+  - airtable
+- title: Extract data from new Dropbox files with DocuPipe and post Slack channel messages
+  url: https://zapier.com/apps/dropbox/integrations/slack/255709381/extract-data-from-new-dropbox-files-with-docupipe-and-post-slack-channel-messages
+  apps:
+  - dropbox
+  - docupipe
+  - slack
+template_total: 3

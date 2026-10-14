@@ -1,0 +1,21 @@
+generated: '2026-10-14'
+method: derived
+source: openapi/docupanda-docupipe-openapi.yml
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: APIKeyHeader
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  sources:
+  - openapi/docupanda-docupipe-openapi.yml
+- name: HTTPBearer
+  type: http
+  scheme: bearer
+  sources:
+  - openapi/docupanda-docupipe-openapi.yml

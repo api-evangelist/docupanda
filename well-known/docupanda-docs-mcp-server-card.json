@@ -1,0 +1,1 @@
+{"$schema":"https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json","name":"com.readme/docupipe","version":"1.0","title":"DocuPipe","description":"MCP server for DocuPipe. Lets AI agents explore this project's API reference and documentation.","remotes":[{"type":"streamable-http","url":"https://docs.docupipe.ai/mcp"}]}
