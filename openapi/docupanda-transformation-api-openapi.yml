@@ -1,0 +1,718 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Transformation API
+  version: '1.0'
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Transformation
+paths:
+  /transformation:
+    post:
+      tags:
+      - Transformation
+      summary: Create a Transformation
+      description: 'Create a transformation: a rule that runs on extraction results, such as reformatting names, converting units, or adding a field calculated from other fields. Describe the rule in plain words and we write the Python code, or pass your own `code`. To change an existing transformation, pass `basedOnTransformationId` with either a description of the change or the edited `code`; the change is saved as a new transformation and the original is kept. Optionally pass one sample (`standardizationId`, or `documentId` of a CSV, Excel, JSON or XML document) to test the code on. The code is reviewed against the description before it is saved. This starts a job; poll `GET /job/{job_id}` for the result: when the job completes, `outcome` is `approved` (the transformation is saved and `transformationId` is set) or `rejected`, with the code, an explanation, the review''s verdicts and reasons, and the output on your sample in `preview`. Costs 3 credits once the request is approved or rejected. Your own code that fails the code checks (returned here as a 400) or the run on your sample is not charged.'
+      operationId: create_transformation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransformationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTransformationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /transformation/apply:
+    post:
+      tags:
+      - Transformation
+      summary: Apply Transformations
+      description: Run one or more saved transformations, in the order given, on an existing standardization or on a structured document (CSV, Excel, JSON or XML). Pass exactly one of `standardizationId` or `documentId`. Each transformation receives the previous one's output. The result is returned and stored on the standardization or document; the original data is never changed. To run transformations as part of a new extraction, pass `transformationIds` to `POST /v3/standardize` instead. Costs 1 credit per call, however many transformations are chained.
+      operationId: apply_transformations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyTransformationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplyTransformationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /transformation/document-result/{document_id}:
+    get:
+      summary: Retrieve a Document's Transformed Result
+      operationId: get_document_transformation_result
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Document Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransformationResultResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Retrieve the latest transformed result stored on a structured document (CSV, Excel, JSON or XML), with the transformations that produced it. Returns 404 if no transformation has been applied to it.
+      tags:
+      - Transformation
+  /transformation/result/{standardization_id}:
+    get:
+      summary: Retrieve a Standardization's Transformed Result
+      operationId: get_transformation_result
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: standardization_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Standardization Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransformationResultResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Retrieve the latest transformed result stored on a standardization, with the transformations that produced it. Returns 404 if no transformation has been applied to it.
+      tags:
+      - Transformation
+  /transformation/{transformation_id}:
+    get:
+      summary: Retrieve a Transformation
+      operationId: get_transformation
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: transformation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Transformation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransformationSummary'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: Retrieve one of your saved transformations by its ID, with its code and review.
+      tags:
+      - Transformation
+  /transformations:
+    get:
+      tags:
+      - Transformation
+      summary: List Transformations
+      description: List your saved transformations, newest first, with their code. A changed version carries `basedOnTransformationId`, the transformation it was edited from.
+      operationId: list_transformations
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTransformationsResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    InsufficientCreditsError:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Explanation about the exhausted credits
+      type: object
+      required:
+      - detail
+      title: InsufficientCreditsError
+    TransformationReceipt:
+      properties:
+        transformations:
+          items:
+            $ref: '#/components/schemas/TransformationReceiptEntry'
+          type: array
+          title: Transformations
+        inputHash:
+          type: string
+          title: Inputhash
+        contextHash:
+          type: string
+          title: Contexthash
+        outputHash:
+          type: string
+          title: Outputhash
+      type: object
+      required:
+      - transformations
+      - inputHash
+      - contextHash
+      - outputHash
+      title: TransformationReceipt
+    ProcessingStatus:
+      type: string
+      enum:
+      - processing
+      - completed
+      - error
+      title: ProcessingStatus
+    TransformationVerification:
+      properties:
+        approved:
+          type: boolean
+          title: Approved
+          description: whether the review approved the code
+        reason:
+          type: string
+          title: Reason
+          description: the review's reasoning, in plain words
+      type: object
+      required:
+      - approved
+      - reason
+      title: TransformationVerification
+    ApplyTransformationResponse:
+      properties:
+        jobId:
+          type: string
+          title: Jobid
+        source:
+          type: string
+          enum:
+          - standardization
+          - document
+          title: Source
+        standardizationId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Standardizationid
+        documentId:
+          type: string
+          title: Documentid
+        data:
+          title: Data
+        steps:
+          items:
+            $ref: '#/components/schemas/TransformationStep'
+          type: array
+          title: Steps
+        receipt:
+          $ref: '#/components/schemas/TransformationReceipt'
+      type: object
+      required:
+      - jobId
+      - source
+      - standardizationId
+      - documentId
+      - data
+      - steps
+      - receipt
+      title: ApplyTransformationResponse
+    TransformationResultResponse:
+      properties:
+        jobId:
+          type: string
+          title: Jobid
+        source:
+          type: string
+          enum:
+          - standardization
+          - document
+          title: Source
+        standardizationId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Standardizationid
+        documentId:
+          type: string
+          title: Documentid
+        data:
+          title: Data
+        steps:
+          items:
+            $ref: '#/components/schemas/TransformationStep'
+          type: array
+          title: Steps
+        receipt:
+          $ref: '#/components/schemas/TransformationReceipt'
+        schemaId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Schemaid
+        transformationIds:
+          items:
+            type: string
+          type: array
+          title: Transformationids
+        dataset:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dataset
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filename
+        timestamp:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Timestamp
+      type: object
+      required:
+      - jobId
+      - source
+      - standardizationId
+      - documentId
+      - data
+      - steps
+      - receipt
+      - schemaId
+      - transformationIds
+      - dataset
+      - filename
+      - timestamp
+      title: TransformationResultResponse
+    ListTransformationsResponse:
+      properties:
+        transformations:
+          items:
+            $ref: '#/components/schemas/TransformationSummary'
+          type: array
+          title: Transformations
+      type: object
+      required:
+      - transformations
+      title: ListTransformationsResponse
+    ApplyTransformationRequest:
+      properties:
+        standardizationId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Standardizationid
+          description: standardization to transform
+        documentId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Documentid
+          description: structured document (csv, xlsx, xls, json or xml) to transform
+        transformationIds:
+          items:
+            type: string
+          type: array
+          title: Transformationids
+          description: ordered transformation ids
+      type: object
+      required:
+      - transformationIds
+      title: ApplyTransformationRequest
+    TransformationSummary:
+      properties:
+        transformationId:
+          type: string
+          title: Transformationid
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        code:
+          type: string
+          title: Code
+        origin:
+          type: string
+          enum:
+          - script
+          - ai
+          - user
+          title: Origin
+        basedOnTransformationId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Basedontransformationid
+        authoringJobId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authoringjobid
+          description: the job that created this transformation; its preview is the saved example
+        createdAt:
+          type: string
+          title: Createdat
+        verifications:
+          items:
+            $ref: '#/components/schemas/TransformationVerification'
+          type: array
+          title: Verifications
+      type: object
+      required:
+      - transformationId
+      - name
+      - description
+      - code
+      - origin
+      - basedOnTransformationId
+      - createdAt
+      - verifications
+      title: TransformationSummary
+    CreateTransformationRequest:
+      properties:
+        description:
+          type: string
+          title: Description
+          description: what the transformation should do, in plain words; with basedOnTransformationId and no code, the change to make
+        code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Code
+          description: python source defining transform(data, context); when given, it is reviewed instead of written for you
+        basedOnTransformationId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Basedontransformationid
+          description: an existing transformation to change; saved as a new transformation, the original is kept
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+          description: short name; written for you when omitted, and required with code unless kept from basedOnTransformationId
+        standardizationId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Standardizationid
+          description: optional sample standardization to test the code on
+        documentId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Documentid
+          description: optional sample structured document to test the code on
+      type: object
+      required:
+      - description
+      title: CreateTransformationRequest
+    CreateTransformationResponse:
+      properties:
+        jobId:
+          type: string
+          title: Jobid
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+      type: object
+      required:
+      - jobId
+      - status
+      title: CreateTransformationResponse
+    TransformationStep:
+      properties:
+        transformationId:
+          type: string
+          title: Transformationid
+        name:
+          type: string
+          title: Name
+        elapsedMs:
+          type: number
+          title: Elapsedms
+      type: object
+      required:
+      - transformationId
+      - name
+      - elapsedMs
+      title: TransformationStep
+    TransformationReceiptEntry:
+      properties:
+        transformationId:
+          type: string
+          title: Transformationid
+        sourceHash:
+          type: string
+          title: Sourcehash
+      type: object
+      required:
+      - transformationId
+      - sourceHash
+      title: TransformationReceiptEntry
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer
+x-provenance:
+  method: searched
+  source: https://docs.docupipe.ai/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.docupipe.ai/reference/apply_transformations.md
+  - https://docs.docupipe.ai/reference/bulk_excel_download.md
+  - https://docs.docupipe.ai/reference/bulk_ocr_download.md
+  - https://docs.docupipe.ai/reference/bulk_original_download.md
+  - https://docs.docupipe.ai/reference/bulk_xml_download.md
+  - https://docs.docupipe.ai/reference/create_presigned_upload_url.md
+  - https://docs.docupipe.ai/reference/create_transformation.md
+  - https://docs.docupipe.ai/reference/delete_analyses.md
+  - https://docs.docupipe.ai/reference/delete_class.md
+  - https://docs.docupipe.ai/reference/delete_document.md
+  - https://docs.docupipe.ai/reference/delete_documents.md
+  - https://docs.docupipe.ai/reference/delete_endpoint.md
+  - https://docs.docupipe.ai/reference/delete_jobs.md
+  - https://docs.docupipe.ai/reference/delete_reviews.md
+  - https://docs.docupipe.ai/reference/delete_schema.md
+  - https://docs.docupipe.ai/reference/delete_standardization.md
+  - https://docs.docupipe.ai/reference/delete_standardizations.md
+  - https://docs.docupipe.ai/reference/delete_workflow.md
+  - https://docs.docupipe.ai/reference/download_excel_url.md
+  - https://docs.docupipe.ai/reference/download_ocr_url.md
+  - https://docs.docupipe.ai/reference/download_original_url.md
+  - https://docs.docupipe.ai/reference/download_public_url.md
+  - https://docs.docupipe.ai/reference/generate_endpoint.md
+  - https://docs.docupipe.ai/reference/get_account.md
+  - https://docs.docupipe.ai/reference/get_analysis.md
+  - https://docs.docupipe.ai/reference/get_convert_excel.md
+  - https://docs.docupipe.ai/reference/get_document.md
+  - https://docs.docupipe.ai/reference/get_document_detailed.md
+  - https://docs.docupipe.ai/reference/get_document_summary.md
+  - https://docs.docupipe.ai/reference/get_document_transformation_result.md
+  - https://docs.docupipe.ai/reference/get_job.md
+  - https://docs.docupipe.ai/reference/get_job_summary.md
+  - https://docs.docupipe.ai/reference/get_portal_link.md
+  - https://docs.docupipe.ai/reference/get_presigned_url.md
+  - https://docs.docupipe.ai/reference/get_proposed_schemas.md
+  - https://docs.docupipe.ai/reference/get_review_by_id.md
+  - https://docs.docupipe.ai/reference/get_schema.md
+  - https://docs.docupipe.ai/reference/get_schema_summary.md
+  - https://docs.docupipe.ai/reference/get_standardization.md
+  - https://docs.docupipe.ai/reference/get_standardization_pdf.md
+  - https://docs.docupipe.ai/reference/get_standardization_review.md
+  - https://docs.docupipe.ai/reference/get_standardization_summary.md
+  - https://docs.docupipe.ai/reference/get_standardization_text.md
+  - https://docs.docupipe.ai/reference/get_standardization_xml.md
+  - https://docs.docupipe.ai/reference/get_transformation.md
+  - https://docs.docupipe.ai/reference/get_transformation_result.md
+  - https://docs.docupipe.ai/reference/get_webhook_endpoint.md
+  - https://docs.docupipe.ai/reference/list_analyses.md
+  - https://docs.docupipe.ai/reference/list_classes.md
+  - https://docs.docupipe.ai/reference/list_datasets.md
+  - https://docs.docupipe.ai/reference/list_documents.md
+  - https://docs.docupipe.ai/reference/list_extractions.md
+  - https://docs.docupipe.ai/reference/list_jobs.md
+  - https://docs.docupipe.ai/reference/list_reviews.md
+  - https://docs.docupipe.ai/reference/list_schemas.md
+  - https://docs.docupipe.ai/reference/list_standardizations.md
+  - https://docs.docupipe.ai/reference/list_transformations.md
+  - https://docs.docupipe.ai/reference/list_webhook_endpoints.md
+  - https://docs.docupipe.ai/reference/list_workflows.md
+  - https://docs.docupipe.ai/reference/match_standardization.md
+  - https://docs.docupipe.ai/reference/merged_excel_download.md
+  - https://docs.docupipe.ai/reference/post_add_class.md
+  - https://docs.docupipe.ai/reference/post_analyze_data.md
+  - https://docs.docupipe.ai/reference/post_analyze_document.md
+  - https://docs.docupipe.ai/reference/post_classify_batch.md
+  - https://docs.docupipe.ai/reference/post_convert_excel.md
+  - https://docs.docupipe.ai/reference/post_copy_classification.md
+  - https://docs.docupipe.ai/reference/post_copy_schema.md
+  - https://docs.docupipe.ai/reference/post_document.md
+  - https://docs.docupipe.ai/reference/post_edit_class.md
+  - https://docs.docupipe.ai/reference/post_edit_schema.md
+  - https://docs.docupipe.ai/reference/post_merge.md
+  - https://docs.docupipe.ai/reference/post_merge_standardizations.md
+  - https://docs.docupipe.ai/reference/post_query.md
+  - https://docs.docupipe.ai/reference/post_review_batch.md
+  - https://docs.docupipe.ai/reference/post_schema.md
+  - https://docs.docupipe.ai/reference/post_schema_autogenerate.md
+  - https://docs.docupipe.ai/reference/post_split_document.md
+  - https://docs.docupipe.ai/reference/post_standardize_batch_v2.md
+  - https://docs.docupipe.ai/reference/post_standardize_v3.md
+  - https://docs.docupipe.ai/reference/post_workflow_on_submit_document.md
+  - https://docs.docupipe.ai/reference/run_workflow_v2.md
+  - https://docs.docupipe.ai/reference/search_documents.md
+  - https://docs.docupipe.ai/reference/search_schemas.md
+  - https://docs.docupipe.ai/reference/search_standardizations.md
+  - https://docs.docupipe.ai/reference/update_documents_dataset.md
+  - https://docs.docupipe.ai/reference/update_documents_metadata.md
+  - https://docs.docupipe.ai/reference/update_review.md
+  - https://docs.docupipe.ai/reference/update_workflow.md
+  - https://docs.docupipe.ai/reference/wait_for_jobs.md
+  merge:
+    pages: 90
+    deduped: 553
+    conflicts_kept_first: 0

@@ -1,0 +1,393 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Account API
+  version: '1.0'
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Account
+paths:
+  /account:
+    get:
+      tags:
+      - Account
+      summary: Get Account Information
+      description: Get information about your account, including the plan name, pricing regime, number of remaining credits, the number of overage credits, and the details of the upcoming invoice.
+      operationId: get_account
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAccountResponse'
+        '402':
+          description: Payment Required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientCreditsError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+components:
+  schemas:
+    StorageRegion:
+      type: string
+      enum:
+      - us
+      - europe
+      - canada
+      - australia
+      title: StorageRegion
+    InsufficientCreditsError:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Explanation about the exhausted credits
+      type: object
+      required:
+      - detail
+      title: InsufficientCreditsError
+    AwsContractDetails:
+      properties:
+        customerId:
+          type: string
+          title: Customerid
+          description: the aws marketplace customer identifier
+        productCode:
+          type: string
+          title: Productcode
+          description: the aws marketplace product code
+        entitledCredits:
+          type: integer
+          title: Entitledcredits
+          description: the number of credits entitled per billing period
+        contractEndDate:
+          type: string
+          format: date-time
+          title: Contractenddate
+          description: when the current contract/entitlement expires
+        linkedAt:
+          type: string
+          format: date-time
+          title: Linkedat
+          description: when the aws marketplace subscription was linked
+        subscriptionStatus:
+          type: string
+          title: Subscriptionstatus
+          description: 'subscription status: active, pending_cancellation, etc.'
+      type: object
+      required:
+      - customerId
+      - productCode
+      - entitledCredits
+      title: AwsContractDetails
+      description: details about an aws marketplace subscription contract
+    BillingMethod:
+      type: string
+      enum:
+      - free
+      - direct
+      - aws_marketplace
+      title: BillingMethod
+    OnPremCreditPool:
+      properties:
+        totalCredits:
+          type: integer
+          title: Totalcredits
+          description: The contracted cap seeded at install time.
+        creditsRemaining:
+          type: integer
+          title: Creditsremaining
+          description: Credits still available before the deployment hits 402.
+        lastUpdatedAt:
+          type: string
+          format: date-time
+          title: Lastupdatedat
+          description: Last time the credits doc was modified by a decrement or admin action.
+      type: object
+      required:
+      - totalCredits
+      - creditsRemaining
+      title: OnPremCreditPool
+      description: 'on-prem deployments share a single contracted credit pool seeded at install time.
+
+        every credit-consuming API call decrements creditsRemaining atomically. visible only
+
+        to super admins on /account.'
+    PlanCosts:
+      properties:
+        perCreditAmount:
+          type: number
+          title: Percreditamount
+          description: PAYG price per credit (USD)
+        recurringAmount:
+          type: number
+          title: Recurringamount
+          description: Total recurring charge (USD)
+        recurringFrequency:
+          type: string
+          title: Recurringfrequency
+          description: '"monthly" | "annual" | None'
+      type: object
+      required:
+      - recurringAmount
+      title: PlanCosts
+    UpcomingInvoice:
+      properties:
+        currency:
+          type: string
+          title: Currency
+          description: The currency of the upcoming invoice. Currently this is always USD
+          default: USD
+        amountRemaining:
+          type: string
+          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Amountremaining
+          description: The amount remaining to be charged on the upcoming invoice
+        amountPaid:
+          type: string
+          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Amountpaid
+          description: The amount that has already been paid on the upcoming invoice
+        total:
+          type: string
+          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Total
+          description: The total amount that will be charged on the upcoming invoice
+        endDate:
+          type: string
+          format: date-time
+          title: Enddate
+          description: The date on which the upcoming invoice will be charged
+        startDate:
+          type: string
+          format: date-time
+          title: Startdate
+          description: The start date of the billing cycle for the upcoming invoice
+      type: object
+      required:
+      - amountRemaining
+      - amountPaid
+      - total
+      - endDate
+      - startDate
+      title: UpcomingInvoice
+    PricingRegime:
+      type: string
+      enum:
+      - overage
+      - topoff
+      title: PricingRegime
+    GetAccountResponse:
+      properties:
+        planName:
+          type: string
+          title: Planname
+          description: The name of the current plan associated with your account
+        pricingRegime:
+          $ref: '#/components/schemas/PricingRegime'
+          description: 'The billing-resolved pricing regime for the account: ''overage'' or ''topoff'''
+        remainingCredits:
+          type: number
+          title: Remainingcredits
+          description: The number of remaining credits in your account under your current plan. Consuming these credits will result in no charge
+        overageCredits:
+          type: number
+          title: Overagecredits
+          description: The number of overage credits in your account. These credits will be charged on your billing cycle.
+        renewalDate:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Renewaldate
+          description: The date on which your current plan will renew
+        retentionDays:
+          type: integer
+          title: Retentiondays
+          description: The number of days that your data will be retained. If null, your data has unlimited retention.
+        storageRegion:
+          $ref: '#/components/schemas/StorageRegion'
+          title: Storageregion
+          description: The storage region used for new documents uploaded to the account.
+        overageEnabled:
+          type: boolean
+          title: Overageenabled
+          description: Whether or not overage billing is enabled for your account
+          default: true
+        inOverage:
+          type: boolean
+          title: Inoverage
+          description: Whether the account has consumed more than its plan allocation and is currently accruing overage charges
+          default: false
+        delinquent:
+          type: boolean
+          title: Delinquent
+          description: Whether the account's most recent Stripe charge failed and the subscription is past-due
+          default: false
+        upcomingInvoice:
+          $ref: '#/components/schemas/UpcomingInvoice'
+          title: Upcominginvoice
+          description: Details of the upcoming invoice, including the total amount and the date it will be charged
+        planCosts:
+          $ref: '#/components/schemas/PlanCosts'
+          title: Plancosts
+          description: The cost per credit for your account, if applicable
+        billingMethod:
+          $ref: '#/components/schemas/BillingMethod'
+          description: 'The billing method for your account: ''free'' (no billing), ''direct'' (Stripe), or ''aws_marketplace'''
+          default: free
+        awsContractDetails:
+          $ref: '#/components/schemas/AwsContractDetails'
+          title: Awscontractdetails
+          description: Details about AWS Marketplace contract, only present for AWS Marketplace subscribers
+        onpremCreditPool:
+          $ref: '#/components/schemas/OnPremCreditPool'
+          title: Onpremcreditpool
+          description: The single shared credit pool for an on-prem deployment. Only populated on on-prem deployments and only when the caller is a super admin.
+        featureFlags:
+          additionalProperties:
+            type: boolean
+          type: object
+          title: Featureflags
+          description: Feature flags that apply to this workspace, resolved from the workspace owner rather than the calling member, so every member of a workspace gets the same experience.
+      type: object
+      required:
+      - planName
+      - pricingRegime
+      - remainingCredits
+      - overageCredits
+      - renewalDate
+      title: GetAccountResponse
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer
+x-provenance:
+  method: searched
+  source: https://docs.docupipe.ai/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.docupipe.ai/reference/apply_transformations.md
+  - https://docs.docupipe.ai/reference/bulk_excel_download.md
+  - https://docs.docupipe.ai/reference/bulk_ocr_download.md
+  - https://docs.docupipe.ai/reference/bulk_original_download.md
+  - https://docs.docupipe.ai/reference/bulk_xml_download.md
+  - https://docs.docupipe.ai/reference/create_presigned_upload_url.md
+  - https://docs.docupipe.ai/reference/create_transformation.md
+  - https://docs.docupipe.ai/reference/delete_analyses.md
+  - https://docs.docupipe.ai/reference/delete_class.md
+  - https://docs.docupipe.ai/reference/delete_document.md
+  - https://docs.docupipe.ai/reference/delete_documents.md
+  - https://docs.docupipe.ai/reference/delete_endpoint.md
+  - https://docs.docupipe.ai/reference/delete_jobs.md
+  - https://docs.docupipe.ai/reference/delete_reviews.md
+  - https://docs.docupipe.ai/reference/delete_schema.md
+  - https://docs.docupipe.ai/reference/delete_standardization.md
+  - https://docs.docupipe.ai/reference/delete_standardizations.md
+  - https://docs.docupipe.ai/reference/delete_workflow.md
+  - https://docs.docupipe.ai/reference/download_excel_url.md
+  - https://docs.docupipe.ai/reference/download_ocr_url.md
+  - https://docs.docupipe.ai/reference/download_original_url.md
+  - https://docs.docupipe.ai/reference/download_public_url.md
+  - https://docs.docupipe.ai/reference/generate_endpoint.md
+  - https://docs.docupipe.ai/reference/get_account.md
+  - https://docs.docupipe.ai/reference/get_analysis.md
+  - https://docs.docupipe.ai/reference/get_convert_excel.md
+  - https://docs.docupipe.ai/reference/get_document.md
+  - https://docs.docupipe.ai/reference/get_document_detailed.md
+  - https://docs.docupipe.ai/reference/get_document_summary.md
+  - https://docs.docupipe.ai/reference/get_document_transformation_result.md
+  - https://docs.docupipe.ai/reference/get_job.md
+  - https://docs.docupipe.ai/reference/get_job_summary.md
+  - https://docs.docupipe.ai/reference/get_portal_link.md
+  - https://docs.docupipe.ai/reference/get_presigned_url.md
+  - https://docs.docupipe.ai/reference/get_proposed_schemas.md
+  - https://docs.docupipe.ai/reference/get_review_by_id.md
+  - https://docs.docupipe.ai/reference/get_schema.md
+  - https://docs.docupipe.ai/reference/get_schema_summary.md
+  - https://docs.docupipe.ai/reference/get_standardization.md
+  - https://docs.docupipe.ai/reference/get_standardization_pdf.md
+  - https://docs.docupipe.ai/reference/get_standardization_review.md
+  - https://docs.docupipe.ai/reference/get_standardization_summary.md
+  - https://docs.docupipe.ai/reference/get_standardization_text.md
+  - https://docs.docupipe.ai/reference/get_standardization_xml.md
+  - https://docs.docupipe.ai/reference/get_transformation.md
+  - https://docs.docupipe.ai/reference/get_transformation_result.md
+  - https://docs.docupipe.ai/reference/get_webhook_endpoint.md
+  - https://docs.docupipe.ai/reference/list_analyses.md
+  - https://docs.docupipe.ai/reference/list_classes.md
+  - https://docs.docupipe.ai/reference/list_datasets.md
+  - https://docs.docupipe.ai/reference/list_documents.md
+  - https://docs.docupipe.ai/reference/list_extractions.md
+  - https://docs.docupipe.ai/reference/list_jobs.md
+  - https://docs.docupipe.ai/reference/list_reviews.md
+  - https://docs.docupipe.ai/reference/list_schemas.md
+  - https://docs.docupipe.ai/reference/list_standardizations.md
+  - https://docs.docupipe.ai/reference/list_transformations.md
+  - https://docs.docupipe.ai/reference/list_webhook_endpoints.md
+  - https://docs.docupipe.ai/reference/list_workflows.md
+  - https://docs.docupipe.ai/reference/match_standardization.md
+  - https://docs.docupipe.ai/reference/merged_excel_download.md
+  - https://docs.docupipe.ai/reference/post_add_class.md
+  - https://docs.docupipe.ai/reference/post_analyze_data.md
+  - https://docs.docupipe.ai/reference/post_analyze_document.md
+  - https://docs.docupipe.ai/reference/post_classify_batch.md
+  - https://docs.docupipe.ai/reference/post_convert_excel.md
+  - https://docs.docupipe.ai/reference/post_copy_classification.md
+  - https://docs.docupipe.ai/reference/post_copy_schema.md
+  - https://docs.docupipe.ai/reference/post_document.md
+  - https://docs.docupipe.ai/reference/post_edit_class.md
+  - https://docs.docupipe.ai/reference/post_edit_schema.md
+  - https://docs.docupipe.ai/reference/post_merge.md
+  - https://docs.docupipe.ai/reference/post_merge_standardizations.md
+  - https://docs.docupipe.ai/reference/post_query.md
+  - https://docs.docupipe.ai/reference/post_review_batch.md
+  - https://docs.docupipe.ai/reference/post_schema.md
+  - https://docs.docupipe.ai/reference/post_schema_autogenerate.md
+  - https://docs.docupipe.ai/reference/post_split_document.md
+  - https://docs.docupipe.ai/reference/post_standardize_batch_v2.md
+  - https://docs.docupipe.ai/reference/post_standardize_v3.md
+  - https://docs.docupipe.ai/reference/post_workflow_on_submit_document.md
+  - https://docs.docupipe.ai/reference/run_workflow_v2.md
+  - https://docs.docupipe.ai/reference/search_documents.md
+  - https://docs.docupipe.ai/reference/search_schemas.md
+  - https://docs.docupipe.ai/reference/search_standardizations.md
+  - https://docs.docupipe.ai/reference/update_documents_dataset.md
+  - https://docs.docupipe.ai/reference/update_documents_metadata.md
+  - https://docs.docupipe.ai/reference/update_review.md
+  - https://docs.docupipe.ai/reference/update_workflow.md
+  - https://docs.docupipe.ai/reference/wait_for_jobs.md
+  merge:
+    pages: 90
+    deduped: 553
+    conflicts_kept_first: 0

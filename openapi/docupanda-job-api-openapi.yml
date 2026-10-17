@@ -1,0 +1,2767 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Job API
+  version: '1.0'
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Job
+paths:
+  /job/{job_id}:
+    get:
+      summary: Retrieve a Job
+      operationId: get_job
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/JobDocumentUpload'
+                - $ref: '#/components/schemas/JobStandardize'
+                - $ref: '#/components/schemas/JobStandardizeBatch'
+                - $ref: '#/components/schemas/JobAnalyzeDocument'
+                - $ref: '#/components/schemas/JobAnalyzeData'
+                - $ref: '#/components/schemas/JobSplit'
+                - $ref: '#/components/schemas/JobMerge'
+                - $ref: '#/components/schemas/JobClassify'
+                - $ref: '#/components/schemas/JobClassifyBatch'
+                - $ref: '#/components/schemas/JobCreateSchema'
+                - $ref: '#/components/schemas/JobDuplicateSchema'
+                - $ref: '#/components/schemas/JobAutogenerateSchema'
+                - $ref: '#/components/schemas/JobImproveSchema'
+                - $ref: '#/components/schemas/JobImproveSchemaGenerate'
+                - $ref: '#/components/schemas/JobQuery'
+                - $ref: '#/components/schemas/JobReview'
+                - $ref: '#/components/schemas/JobRedact'
+                - $ref: '#/components/schemas/JobMatching'
+                - $ref: '#/components/schemas/JobReasoning'
+                - $ref: '#/components/schemas/JobTransformationAuthoring'
+                - $ref: '#/components/schemas/JobTransformation'
+                - $ref: '#/components/schemas/JobWorkflowV2Run'
+                - $ref: '#/components/schemas/JobArchitectSession'
+                title: Response Get Job Job  Job Id  Get
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal Server Error
+      description: Retrieve the details of a specific job by providing the job's ID. This will include the job's status, timestamp, and any other relevant information.
+      tags:
+      - Job
+  /jobs:
+    delete:
+      summary: Delete Jobs
+      description: Delete multiple jobs that have been submitted to DocuPipe for processing. You can provide a list of job IDs to delete multiple jobs at once. Since jobs are just a record of events, deleting them will just hide them from you - the actual records will still be stored in the database. For specific jobs that contain actual data, such as Analyze-Document, the data will be deleted.
+      operationId: delete_jobs
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteJobsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Job
+    get:
+      summary: List Jobs
+      operationId: list_jobs
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          type: string
+          title: End Date
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Status
+      - name: job_type
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Job Type
+      - name: schema_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Schema Id
+      - name: document_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Document Id
+      - name: new_document_id
+        in: query
+        required: false
+        schema:
+          type: string
+          title: New Document Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 20
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+                title: Response List Jobs Jobs Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      description: List all jobs that have been submitted to DocuPipe for processing. Every document upload, standardization, or credit-consuming event results in a job. This lets you audit your credit consumption. You can optionally filter the results by providing a date range in the format yyyy-mm-dd.
+      tags:
+      - Job
+  /jobs/summary:
+    get:
+      summary: Get Job Count
+      description: 'Get a count of your jobs broken down by Job Type. For each job type, you will see the number of jobs and number of credits consumed. The output includes 4 versions of the summary:
+
+        1. All time summary with deleted jobs
+
+        2. All time summary excluding deleted jobs
+
+        3. Count since start_date (defaults to previous billing date, includes deleted jobs)
+
+        4. Daily breakdown of credit usage, additionally broken down by job type. To receive this, set include_daily_usage to true.
+
+
+        You may pass start_date as an optional query parameter in ISO format (yyyy-mm-dd), and include_daily_usage as a boolean flag.'
+      operationId: get_job_summary
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: include_daily_usage
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Include Daily Usage
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobSummary'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Job
+  /jobs/wait:
+    post:
+      tags:
+      - Job
+      summary: Wait For Jobs
+      description: 'Block until every supplied job has finished, or until maxWaitSeconds elapses - whichever comes first.
+
+
+        This is a convenience for automations that would otherwise poll in a loop. Submit the job ids you are waiting on and the call returns as soon as they are all finished.
+
+
+        **A timeout is not an error.** If the jobs are still running when the wait elapses, the call still returns 200 with `allComplete: false` and the current status of each job - simply call again with the ids that are still processing.
+
+
+        `allComplete` is true once every job has reached a terminal state, whether completed or error. Check `anyError` to tell the two apart. Unknown job ids come back with a null status rather than failing the whole request.
+
+
+        This endpoint consumes no credits.'
+      operationId: wait_for_jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobWaitRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobWaitResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+components:
+  schemas:
+    Orientation:
+      type: string
+      enum:
+      - normal
+      - clockwise
+      - counter_clockwise
+      - upside_down
+      title: Orientation
+    DisplayMode:
+      type: string
+      enum:
+      - auto
+      - spatial
+      - sections
+      - image
+      title: DisplayMode
+    JobTransformation:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: transformation
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        source:
+          type: string
+          enum:
+          - standardization
+          - document
+          title: Source
+          description: Whether the transformations ran on a standardization or a document.
+          default: standardization
+        standardizationId:
+          type: string
+          title: Standardization ID
+          description: The standardization that was transformed.
+        transformationIds:
+          items:
+            type: string
+          type: array
+          title: Transformation IDs
+          description: The transformations run, in order.
+        applied:
+          type: boolean
+          title: Applied
+          description: Whether the transformations ran to completion. False when the transformation code raised an error.
+          default: false
+      type: object
+      required:
+      - jobId
+      - status
+      title: JobTransformation
+    JobRedact:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: redact
+        documentId:
+          type: string
+          title: Source Document ID
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        guidelines:
+          type: string
+          title: Guidelines
+        language:
+          type: string
+          title: Language
+        page:
+          type: integer
+          title: Page Number
+        redactionId:
+          type: string
+          title: Redaction ID
+        redactedDocumentId:
+          type: string
+          title: Redacted Document ID
+        redactedDocumentParseJobId:
+          type: string
+          title: Redacted Document Parse Job ID
+        numRedactions:
+          type: integer
+          title: Number of Redactions
+      type: object
+      required:
+      - jobId
+      - documentId
+      - status
+      title: JobRedact
+    JobSplit:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: split
+        documentId:
+          type: string
+          title: Document ID
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        numNewDocuments:
+          type: integer
+          title: Number of New Documents
+        newDocumentIds:
+          items:
+            type: string
+          type: array
+          title: New Document IDs
+        details:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Details
+        instructions:
+          type: string
+          title: Instructions
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+        splitVersion:
+          $ref: '#/components/schemas/SplitVersion'
+          title: Split Version
+          description: 'Version of the split behavior. Supported values: 1.0, 1.1, 1.2.'
+        filenamePrefix:
+          type: string
+          title: Filename Prefix
+      type: object
+      required:
+      - jobId
+      - documentId
+      - status
+      title: JobSplit
+    JobMatching:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: matching
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        standardizationId:
+          type: string
+          title: Standardization ID
+        matchCandidates:
+          items:
+            type: string
+          type: array
+          title: Matching Candidates
+        instructions:
+          type: string
+          title: Instructions
+        client:
+          type: string
+          title: Client
+      type: object
+      required:
+      - jobId
+      - status
+      - standardizationId
+      - matchCandidates
+      title: JobMatching
+    WorkflowV2StandardizationOutputItem:
+      properties:
+        documentId:
+          type: string
+          title: Documentid
+          description: Source document for this extraction.
+        standardizationId:
+          type: string
+          title: Standardizationid
+          description: Created standardization id.
+        data:
+          additionalProperties: true
+          type: object
+          title: Data
+          description: Extracted data when small enough to inline.
+        dataTooBig:
+          type: boolean
+          title: Datatoobig
+          description: True when the caller should fetch the standardization by id.
+      type: object
+      required:
+      - documentId
+      - standardizationId
+      title: WorkflowV2StandardizationOutputItem
+    JobImproveSchemaGenerate:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: improve-schema-generate
+        documentId:
+          type: string
+          title: Document ID
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        schemaId:
+          type: string
+          title: Schema ID
+        standardizationId:
+          type: string
+          title: Standardization ID
+        newSchemaId:
+          type: string
+          title: New Schema ID
+        instructions:
+          type: string
+          title: Instructions
+      type: object
+      required:
+      - jobId
+      - documentId
+      - status
+      - schemaId
+      - standardizationId
+      title: JobImproveSchemaGenerate
+    JobWaitStatus:
+      properties:
+        jobId:
+          type: string
+          title: Jobid
+          description: The job id.
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+          description: processing, completed or error. Null if the job was not found.
+        jobType:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Jobtype
+          description: The job type, when known.
+        errorMessage:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Errormessage
+          description: Populated when status is error.
+      type: object
+      required:
+      - jobId
+      title: JobWaitStatus
+    JobSummary:
+      properties:
+        summaryAllTime:
+          additionalProperties:
+            $ref: '#/components/schemas/JobTypeStats'
+          type: object
+          title: Summary All Time
+          description: Summary of the total number of jobs and credits used by job type (deleted jobs count as well).
+        summaryRecent:
+          additionalProperties:
+            $ref: '#/components/schemas/JobTypeStats'
+          type: object
+          title: Summary Recent
+          description: Summary of the recent (since last billing cycle) number of jobs and credits used by job type.
+        totalVisibleJobs:
+          type: integer
+          title: Total Visible Jobs
+          description: Total number of visible jobs (not deleted).
+        dailyUsage:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Daily Usage
+          description: Daily credit usage broken down by job type.
+      type: object
+      required:
+      - summaryAllTime
+      - summaryRecent
+      - totalVisibleJobs
+      title: JobSummary
+    ClassifyVersion:
+      type: number
+      enum:
+      - 1
+      - 1.1
+      title: ClassifyVersion
+    WorkflowV2BlockResult:
+      properties:
+        blockId:
+          type: string
+          title: Blockid
+          description: Node id this result belongs to.
+        status:
+          $ref: '#/components/schemas/WorkflowV2BlockStatus'
+          description: Last known run status for this node.
+        summary:
+          type: string
+          title: Summary
+          description: Short result summary for the run panel.
+        details:
+          items:
+            $ref: '#/components/schemas/WorkflowV2ResultDetail'
+          type: array
+          title: Details
+          description: Optional structured result preview rows.
+        stale:
+          type: boolean
+          title: Stale
+          description: Whether this result should be re-run before downstream results are trusted.
+      type: object
+      required:
+      - blockId
+      - status
+      - summary
+      title: WorkflowV2BlockResult
+    WorkflowV2RunOutput:
+      properties:
+        outputType:
+          type: string
+          enum:
+          - extraction
+          - redaction
+          - reasoning
+          title: Outputtype
+          description: Which payload field below is populated.
+        label:
+          type: string
+          title: Label
+          description: Output label/key from the output node.
+        nodeId:
+          type: string
+          title: Nodeid
+          description: Output node id.
+        extraction:
+          $ref: '#/components/schemas/WorkflowV2StandardizationOutput'
+          title: Extraction
+          description: Populated when outputType is 'extraction'.
+        redaction:
+          $ref: '#/components/schemas/WorkflowV2RedactionOutput'
+          title: Redaction
+          description: Populated when outputType is 'redaction'.
+        reasoning:
+          $ref: '#/components/schemas/WorkflowV2ReasoningOutput'
+          title: Reasoning
+          description: Populated when outputType is 'reasoning'.
+      type: object
+      required:
+      - outputType
+      - label
+      - nodeId
+      title: WorkflowV2RunOutput
+    EffortLevel:
+      type: string
+      enum:
+      - standard
+      - high
+      - extended
+      title: EffortLevel
+    JobTransformationAuthoring:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: transformation-authoring
+        documentId:
+          type: string
+          title: Sample Document ID
+          description: The sample structured document, if one was given.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        description:
+          type: string
+          title: Description
+          description: What the transformation should do, as requested.
+        basedOnTransformationId:
+          type: string
+          title: Based On Transformation ID
+          description: The transformation being changed, when this request changes one.
+        standardizationId:
+          type: string
+          title: Sample Standardization ID
+          description: The sample standardization, if one was given.
+        stage:
+          type: string
+          enum:
+          - writing
+          - testing
+          - reviewing
+          title: Stage
+          description: 'What the job is doing while it runs: writing the code, testing it on the sample, or reviewing it.'
+        attempts:
+          type: integer
+          title: Attempts
+          description: How many times the code has been written so far; above 1 means an earlier attempt failed testing.
+          default: 0
+        maxAttempts:
+          type: integer
+          title: Max Attempts
+          description: The most attempts the job makes before giving up.
+        outcome:
+          type: string
+          enum:
+          - approved
+          - rejected
+          title: Outcome
+          description: 'Set when the job completes: approved (the transformation was saved) or rejected.'
+        transformationId:
+          type: string
+          title: Transformation ID
+          description: The saved transformation's ID, set only when approved.
+        name:
+          type: string
+          title: Name
+          description: The transformation's name.
+        code:
+          type: string
+          title: Code
+          description: The Python code that was reviewed.
+        explanation:
+          type: string
+          title: Explanation
+          description: What the code does, in plain words.
+        preview:
+          title: Preview
+          description: The code's output on the sample, when a sample was given and the output fits.
+        previewTruncated:
+          type: boolean
+          title: Preview Truncated
+          description: True when the output on the sample was too large to include.
+          default: false
+        verifications:
+          items:
+            $ref: '#/components/schemas/JobTransformationReview'
+          type: array
+          title: Review
+          description: The review's verdicts and reasons.
+      type: object
+      required:
+      - jobId
+      - status
+      - description
+      title: JobTransformationAuthoring
+    WorkflowV2ReasoningOutput:
+      properties:
+        extractionId:
+          type: string
+          title: Extractionid
+          description: Persisted reasoning extraction id.
+        reasoning:
+          type: string
+          title: Reasoning
+          description: Free-text reasoning result, if configured.
+        records:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Records
+          description: Structured reasoning records, if configured.
+        recordsTooBig:
+          type: boolean
+          title: Recordstoobig
+          description: True when the caller should fetch the extraction by id.
+        sourceDocumentIds:
+          items:
+            type: string
+          type: array
+          title: Sourcedocumentids
+          description: Source documents used as reasoning input.
+        sourceStandardizationIds:
+          items:
+            type: string
+          type: array
+          title: Sourcestandardizationids
+          description: Extraction results used as reasoning input.
+      type: object
+      title: WorkflowV2ReasoningOutput
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    JobAutogenerateSchema:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: autogenerate-schema
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        schemaId:
+          type: string
+          title: Schema ID
+        schemaName:
+          type: string
+          title: Schema Name
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+        instructions:
+          type: string
+          title: Instructions
+        guidelines:
+          type: string
+          title: Guidelines
+        standardizeUsingSchema:
+          type: boolean
+          title: Standardize Using Schema
+          default: false
+        standardizationMode:
+          $ref: '#/components/schemas/StdMode'
+          title: Standardization Mode
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+        standardizationJobIds:
+          items:
+            type: string
+          type: array
+          title: Standardization Job IDs
+      type: object
+      required:
+      - jobId
+      - status
+      - schemaId
+      - schemaName
+      title: JobAutogenerateSchema
+    JobImproveSchema:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: improve-schema
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        schemaId:
+          type: string
+          title: Schema ID
+      type: object
+      required:
+      - jobId
+      - status
+      - schemaId
+      title: JobImproveSchema
+    WorkflowV2BlockStatus:
+      type: string
+      enum:
+      - idle
+      - running
+      - success
+      - warning
+      - error
+      - timeout
+      title: WorkflowV2BlockStatus
+    WorkflowV2ResultDetail:
+      properties:
+        label:
+          type: string
+          title: Label
+          description: Field or result label.
+        value:
+          type: string
+          title: Value
+          description: Field or result value.
+        confidence:
+          type: number
+          title: Confidence
+          description: Optional confidence score.
+      type: object
+      required:
+      - label
+      - value
+      title: WorkflowV2ResultDetail
+    JobAnalyzeDocument:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: analyze-document
+        documentId:
+          type: string
+          title: Document ID
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        analysisId:
+          type: string
+          title: Analysis ID
+        pages:
+          items:
+            type: integer
+          type: array
+          title: Pages
+        questions:
+          items:
+            type: string
+          type: array
+          title: Questions
+        instructions:
+          type: string
+          title: Instructions
+      type: object
+      required:
+      - jobId
+      - documentId
+      - status
+      - analysisId
+      title: JobAnalyzeDocument
+    JobMerge:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: merge
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+        dataset:
+          type: string
+          title: Dataset
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+        newDocumentId:
+          type: string
+          title: New Document ID
+      type: object
+      required:
+      - jobId
+      - status
+      - documentIds
+      title: JobMerge
+    WorkflowV2StandardizationOutput:
+      properties:
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardizationids
+          description: Convenience list of created standardization ids.
+        items:
+          items:
+            $ref: '#/components/schemas/WorkflowV2StandardizationOutputItem'
+          type: array
+          title: Items
+          description: One item per source document.
+      type: object
+      title: WorkflowV2StandardizationOutput
+    Job:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Job Type
+          description: Type of the job.
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+      type: object
+      required:
+      - jobId
+      - jobType
+      - status
+      title: Job
+    JobDuplicateSchema:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: duplicate-schema
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        schemaId:
+          type: string
+          title: Schema ID
+        schemaName:
+          type: string
+          title: Schema Name
+      type: object
+      required:
+      - jobId
+      - status
+      - schemaId
+      title: JobDuplicateSchema
+    FileType:
+      type: string
+      enum:
+      - pdf
+      - image
+      - text
+      - json
+      - html
+      - word
+      - table
+      title: FileType
+    StdMode:
+      type: string
+      enum:
+      - default
+      - sectionBased
+      - spatial
+      title: StdMode
+    JobTransformationReview:
+      properties:
+        approved:
+          type: boolean
+          title: Approved
+          description: Whether the review approved the code.
+        reason:
+          type: string
+          title: Reason
+          description: The review's reasoning, in plain words.
+      type: object
+      required:
+      - approved
+      - reason
+      title: JobTransformationReview
+    JobClassify:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: classify
+        documentId:
+          type: string
+          title: Document ID
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        classIds:
+          items:
+            type: string
+          type: array
+          title: Class IDs
+        includeUnknown:
+          type: boolean
+          title: Include Unknown
+        multiClass:
+          type: boolean
+          title: Multi Class
+        instructions:
+          type: string
+          title: Instructions
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+        classifyVersion:
+          $ref: '#/components/schemas/ClassifyVersion'
+          title: Classify Version
+          description: 'Version of the classify behavior. Supported values: 1.0, 1.1.'
+        assignedClassIds:
+          items:
+            type: string
+          type: array
+          title: Assigned Class IDs
+        assignedClassNames:
+          items:
+            type: string
+          type: array
+          title: Assigned Class Names
+      type: object
+      required:
+      - jobId
+      - documentId
+      - status
+      - classIds
+      title: JobClassify
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SplitVersion:
+      type: number
+      enum:
+      - 1
+      - 1.1
+      - 1.2
+      title: SplitVersion
+    WorkflowV2RedactionOutput:
+      properties:
+        redactionIds:
+          items:
+            type: string
+          type: array
+          title: Redactionids
+          description: Convenience list of created redaction ids.
+        items:
+          items:
+            $ref: '#/components/schemas/WorkflowV2RedactionOutputItem'
+          type: array
+          title: Items
+          description: One redacted-PDF result per source document.
+      type: object
+      title: WorkflowV2RedactionOutput
+    ProcessingStatus:
+      type: string
+      enum:
+      - processing
+      - completed
+      - error
+      title: ProcessingStatus
+    SectionType:
+      type: string
+      enum:
+      - text
+      - table
+      - image
+      title: SectionType
+    JobClassifyBatch:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: classify-batch
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+        classIds:
+          items:
+            type: string
+          type: array
+          title: Class IDs
+        includeUnknown:
+          type: boolean
+          title: Include Unknown
+        multiClass:
+          type: boolean
+          title: Multi Class
+        instructions:
+          type: string
+          title: Instructions
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+        classifyVersion:
+          $ref: '#/components/schemas/ClassifyVersion'
+          title: Classify Version
+          description: 'Version of the classify behavior. Supported values: 1.0, 1.1.'
+        classifyJobIds:
+          items:
+            type: string
+          type: array
+          title: Classify Job IDs
+      type: object
+      required:
+      - jobId
+      - status
+      - documentIds
+      title: JobClassifyBatch
+    JobDocumentUpload:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Job Type
+          description: Type of the job.
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        fileExtension:
+          $ref: '#/components/schemas/FileExtension'
+          title: File Extension
+        fileType:
+          $ref: '#/components/schemas/FileType'
+          title: File Type
+        parseVersion:
+          type: number
+          title: Parse Version
+        processingMethod:
+          $ref: '#/components/schemas/ProcessingMethod'
+          title: Processing Method
+        numPages:
+          type: integer
+          title: Number of Pages
+        pagesParsed:
+          items:
+            type: integer
+          type: array
+          title: Pages Parsed
+        pages:
+          items:
+            $ref: '#/components/schemas/AnalyzedPage'
+          type: array
+          title: Pages
+        language:
+          type: string
+          title: Language
+        workflowId:
+          type: string
+          title: Workflow ID
+      type: object
+      required:
+      - jobId
+      - jobType
+      - status
+      title: JobDocumentUpload
+    JobWorkflowV2Run:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: workflow-v2-run
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        workflowId:
+          type: string
+          title: Workflow ID
+        inputDocumentIds:
+          items:
+            type: string
+          type: array
+          title: Input Document IDs
+        uploadJobIds:
+          items:
+            type: string
+          type: array
+          title: Upload Job IDs
+        childJobIds:
+          items:
+            type: string
+          type: array
+          title: Child Job IDs
+        totalChildCredits:
+          type: number
+          title: Total Child Credits
+        nodeResults:
+          additionalProperties:
+            $ref: '#/components/schemas/WorkflowV2BlockResult'
+          type: object
+          title: Node Results
+        outputs:
+          items:
+            $ref: '#/components/schemas/WorkflowV2RunOutput'
+          type: array
+          title: Outputs
+      type: object
+      required:
+      - jobId
+      - status
+      - workflowId
+      title: JobWorkflowV2Run
+    Section:
+      properties:
+        type:
+          $ref: '#/components/schemas/SectionType'
+          title: Type
+          description: The type of the section (text, table, image)
+        text:
+          type: string
+          title: Text
+          description: The text content of the section
+        bbox:
+          items:
+            type: number
+          type: array
+          title: Bounding Box
+          description: Bounding box of the section in the format [x1, y1, x2, y2], in percentage units [0, 1] within the page
+        header:
+          $ref: '#/components/schemas/HeaderType'
+          title: Header Type
+          description: 'For text sections, the type of header: paragraph (default), h1 - h6'
+        tableList:
+          items:
+            items:
+              type: string
+            type: array
+          type: array
+          title: Table List
+          description: For table sections, a list of lists representing the table. The outer list represents rows, the inner lists represent column values in those rows. The first row is the header.If there is no header, the first row is a list of empty strings.
+      type: object
+      required:
+      - type
+      - text
+      - bbox
+      title: Section
+    JobReasoning:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: reasoning
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        extractionId:
+          type: string
+          title: Extraction ID
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+        inputStandardizationIds:
+          items:
+            type: string
+          type: array
+          title: Input Standardization IDs
+        schemaId:
+          type: string
+          title: Schema ID
+        quality:
+          type: string
+          title: Quality
+          default: standard
+      type: object
+      required:
+      - jobId
+      - status
+      title: JobReasoning
+    DeletionResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether the deletion was successful or not.
+      type: object
+      required:
+      - success
+      title: DeletionResponse
+    DeleteJobsRequest:
+      properties:
+        jobIds:
+          items:
+            type: string
+          type: array
+          title: Job IDs
+          description: List of job IDs to be deleted.
+      type: object
+      required:
+      - jobIds
+      title: DeleteJobsRequest
+    JobReview:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: review
+        documentId:
+          type: string
+          title: Document ID
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        reviewId:
+          type: string
+          title: Review ID
+        standardizationId:
+          type: string
+          title: Standardization ID
+        reviewInstructions:
+          type: string
+          title: Review Instructions
+      type: object
+      required:
+      - jobId
+      - status
+      - reviewId
+      - standardizationId
+      title: JobReview
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+    AnalyzedPage:
+      properties:
+        sections:
+          items:
+            $ref: '#/components/schemas/Section'
+          type: array
+          title: Sections
+          description: A list of parsed sections in the page.
+          default: []
+        text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Text
+          description: The text content of the page - a concatenation of the text in all sections.
+        pageNum:
+          type: integer
+          title: Page Number
+          description: The number of this page in document (zero indexed).
+          default: 0
+        orientation:
+          $ref: '#/components/schemas/Orientation'
+          description: Orientation of the page.
+          default: normal
+      type: object
+      title: AnalyzedPage
+      description: Public-facing representation of DocuPipeAnalyzedPage.
+    HeaderType:
+      type: string
+      enum:
+      - paragraph
+      - h1
+      - h2
+      - h3
+      - h4
+      - h5
+      - h6
+      title: HeaderType
+    ProcessingMethod:
+      type: string
+      enum:
+      - asImage
+      - removeWatermark
+      title: ProcessingMethod
+    JobQuery:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: query
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        query:
+          type: string
+          title: Query
+        schemaId:
+          type: string
+          title: Schema ID
+        feedback:
+          type: string
+          title: Feedback
+        matchedStandardizationIds:
+          items:
+            type: string
+          type: array
+          title: Matched Standardization IDs
+        matchedDocumentIds:
+          items:
+            type: string
+          type: array
+          title: Matched Document IDs
+      type: object
+      required:
+      - jobId
+      - status
+      - query
+      title: JobQuery
+    SplitMode:
+      type: string
+      enum:
+      - auto
+      - all
+      - never
+      title: SplitMode
+    WorkflowV2RedactionOutputItem:
+      properties:
+        documentId:
+          type: string
+          title: Documentid
+          description: Source document for this redaction.
+        redactedDocumentId:
+          type: string
+          title: Redacteddocumentid
+          description: Flattened redacted document created by this run.
+        redactedDocumentParseJobId:
+          type: string
+          title: Redacteddocumentparsejobid
+          description: Parse job for the flattened redacted document.
+        redactedDocumentParseStatus:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Redacteddocumentparsestatus
+          description: Parse status for the flattened redacted document.
+        redactionId:
+          type: string
+          title: Redactionid
+          description: Created redaction id.
+        jobId:
+          type: string
+          title: Jobid
+          description: Redaction job id.
+        numRedactions:
+          type: integer
+          title: Numredactions
+          description: Number of redaction boxes detected for this document.
+        truncatedPages:
+          items:
+            type: integer
+          type: array
+          title: Truncatedpages
+          description: Pages whose detections hit the per-page redaction limit.
+        downloadUrl:
+          type: string
+          title: Downloadurl
+          description: Authenticated API path that returns a presigned URL for the flattened redacted PDF.
+      type: object
+      required:
+      - documentId
+      - redactionId
+      - numRedactions
+      - downloadUrl
+      title: WorkflowV2RedactionOutputItem
+    JobCreateSchema:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: create-schema
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        schemaId:
+          type: string
+          title: Schema ID
+        schemaName:
+          type: string
+          title: Schema Name
+        pageCount:
+          type: integer
+          title: Page Count
+          description: Number of pages used to create the schema.
+      type: object
+      required:
+      - jobId
+      - status
+      - schemaId
+      title: JobCreateSchema
+    JobTypeStats:
+      properties:
+        numJobs:
+          type: integer
+          title: Numjobs
+        numCredits:
+          type: number
+          title: Numcredits
+      type: object
+      required:
+      - numJobs
+      - numCredits
+      title: JobTypeStats
+    JobWaitResponse:
+      properties:
+        allComplete:
+          type: boolean
+          title: Allcomplete
+          description: True when every requested job has finished (completed or error).
+        anyError:
+          type: boolean
+          title: Anyerror
+          description: True when at least one job finished in error.
+        waitedSeconds:
+          type: number
+          title: Waitedseconds
+          description: How long the request actually waited.
+        jobs:
+          items:
+            $ref: '#/components/schemas/JobWaitStatus'
+          type: array
+          title: Jobs
+          description: Status per requested job id, in the order requested.
+      type: object
+      required:
+      - allComplete
+      - anyError
+      - waitedSeconds
+      - jobs
+      title: JobWaitResponse
+    JobWaitRequest:
+      properties:
+        jobIds:
+          items:
+            type: string
+          type: array
+          title: Jobids
+          description: Job ids to wait for. Any job type.
+        maxWaitSeconds:
+          type: integer
+          title: Maxwaitseconds
+          description: Seconds to wait before returning. Capped at 300. Returns as soon as every job is finished.
+          default: 30
+      type: object
+      required:
+      - jobIds
+      title: JobWaitRequest
+    FileExtension:
+      type: string
+      enum:
+      - pdf
+      - png
+      - jpeg
+      - webp
+      - tiff
+      - jp2
+      - txt
+      - json
+      - xml
+      - html
+      - doc
+      - docx
+      - csv
+      - xlsx
+      - xls
+      - eml
+      title: FileExtension
+    JobArchitectSession:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: architect-session
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+      type: object
+      required:
+      - jobId
+      - status
+      title: JobArchitectSession
+    JobStandardize:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: standardize
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        standardizationId:
+          type: string
+          title: Standardization ID
+        schemaId:
+          type: string
+          title: Schema ID
+        useMetadata:
+          type: boolean
+          title: Use Metadata
+        standardizationMode:
+          $ref: '#/components/schemas/StdMode'
+          title: Standardization Mode
+        displayMode:
+          $ref: '#/components/schemas/DisplayMode'
+          title: Display Mode
+        splitMode:
+          $ref: '#/components/schemas/SplitMode'
+          title: Split Mode
+        effortLevel:
+          $ref: '#/components/schemas/EffortLevel'
+          title: Effort Level
+        releaseVersion:
+          type: number
+          title: Release Version
+        stdVersion:
+          type: number
+          title: Standardization Version
+        citations:
+          type: boolean
+          title: Citations
+          description: Whether every value was cited to its place on the page (bounding boxes + confidence) with a Review object created. Null on jobs created before citations existed.
+        guidelines:
+          type: string
+          title: Guidelines
+        pages:
+          items:
+            type: integer
+          type: array
+          title: Pages
+          description: List of zero-indexed page numbers the standardization was restricted to. If null, the standardization ran against the full document.
+        transformationJobId:
+          type: string
+          title: Transformation Job ID
+          description: Set when transformations were requested with this standardization. The standardization completes first; poll this job for the transformed result.
+        transformationErrorMessage:
+          type: string
+          title: Transformation Error Message
+          description: Set when the requested transformations could not be started. The standardization itself still succeeded.
+      type: object
+      required:
+      - jobId
+      - status
+      - standardizationId
+      - schemaId
+      title: JobStandardize
+    JobAnalyzeData:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: analyze-data
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        analysisId:
+          type: string
+          title: Analysis ID
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+        schemaId:
+          type: string
+          title: Schema ID
+        questions:
+          items:
+            type: string
+          type: array
+          title: Questions
+        instructions:
+          type: string
+          title: Instructions
+      type: object
+      required:
+      - jobId
+      - status
+      - analysisId
+      title: JobAnalyzeData
+    JobStandardizeBatch:
+      properties:
+        jobId:
+          type: string
+          title: Job ID
+          description: Unique identifier of the job.
+        jobType:
+          type: string
+          title: Jobtype
+          default: standardize-batch
+        documentId:
+          type: string
+          title: Document ID
+          description: Unique identifier of the document.
+        filename:
+          type: string
+          title: Filename
+          description: Name of the document the job ran on.
+        dataset:
+          type: string
+          title: Dataset
+          description: Name of the dataset the document belongs to.
+        credits:
+          type: number
+          title: Credits
+          description: Number of credits used by the operation.
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+          title: Processing Status
+          description: Current status of the job.
+        errorMessage:
+          type: string
+          title: Error Message
+          description: Error message if the job failed.
+        processingTime:
+          type: number
+          title: Processing Time
+          description: Processing time in seconds.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the job creation.
+        progress:
+          type: integer
+          title: Progress
+          description: Job progress percentage (0-100). Used by document upload parsing and V3 standardization jobs.
+        schemaId:
+          type: string
+          title: Schema ID
+        documentIds:
+          items:
+            type: string
+          type: array
+          title: Document IDs
+        documentCount:
+          type: integer
+          title: Document Count
+        pageCount:
+          type: integer
+          title: Page Count
+        standardizationIds:
+          items:
+            type: string
+          type: array
+          title: Standardization IDs
+        standardizationJobIds:
+          items:
+            type: string
+          type: array
+          title: Standardization Job IDs
+      type: object
+      required:
+      - jobId
+      - status
+      - documentIds
+      - documentCount
+      - pageCount
+      title: JobStandardizeBatch
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer
+x-provenance:
+  method: searched
+  source: https://docs.docupipe.ai/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.docupipe.ai/reference/apply_transformations.md
+  - https://docs.docupipe.ai/reference/bulk_excel_download.md
+  - https://docs.docupipe.ai/reference/bulk_ocr_download.md
+  - https://docs.docupipe.ai/reference/bulk_original_download.md
+  - https://docs.docupipe.ai/reference/bulk_xml_download.md
+  - https://docs.docupipe.ai/reference/create_presigned_upload_url.md
+  - https://docs.docupipe.ai/reference/create_transformation.md
+  - https://docs.docupipe.ai/reference/delete_analyses.md
+  - https://docs.docupipe.ai/reference/delete_class.md
+  - https://docs.docupipe.ai/reference/delete_document.md
+  - https://docs.docupipe.ai/reference/delete_documents.md
+  - https://docs.docupipe.ai/reference/delete_endpoint.md
+  - https://docs.docupipe.ai/reference/delete_jobs.md
+  - https://docs.docupipe.ai/reference/delete_reviews.md
+  - https://docs.docupipe.ai/reference/delete_schema.md
+  - https://docs.docupipe.ai/reference/delete_standardization.md
+  - https://docs.docupipe.ai/reference/delete_standardizations.md
+  - https://docs.docupipe.ai/reference/delete_workflow.md
+  - https://docs.docupipe.ai/reference/download_excel_url.md
+  - https://docs.docupipe.ai/reference/download_ocr_url.md
+  - https://docs.docupipe.ai/reference/download_original_url.md
+  - https://docs.docupipe.ai/reference/download_public_url.md
+  - https://docs.docupipe.ai/reference/generate_endpoint.md
+  - https://docs.docupipe.ai/reference/get_account.md
+  - https://docs.docupipe.ai/reference/get_analysis.md
+  - https://docs.docupipe.ai/reference/get_convert_excel.md
+  - https://docs.docupipe.ai/reference/get_document.md
+  - https://docs.docupipe.ai/reference/get_document_detailed.md
+  - https://docs.docupipe.ai/reference/get_document_summary.md
+  - https://docs.docupipe.ai/reference/get_document_transformation_result.md
+  - https://docs.docupipe.ai/reference/get_job.md
+  - https://docs.docupipe.ai/reference/get_job_summary.md
+  - https://docs.docupipe.ai/reference/get_portal_link.md
+  - https://docs.docupipe.ai/reference/get_presigned_url.md
+  - https://docs.docupipe.ai/reference/get_proposed_schemas.md
+  - https://docs.docupipe.ai/reference/get_review_by_id.md
+  - https://docs.docupipe.ai/reference/get_schema.md
+  - https://docs.docupipe.ai/reference/get_schema_summary.md
+  - https://docs.docupipe.ai/reference/get_standardization.md
+  - https://docs.docupipe.ai/reference/get_standardization_pdf.md
+  - https://docs.docupipe.ai/reference/get_standardization_review.md
+  - https://docs.docupipe.ai/reference/get_standardization_summary.md
+  - https://docs.docupipe.ai/reference/get_standardization_text.md
+  - https://docs.docupipe.ai/reference/get_standardization_xml.md
+  - https://docs.docupipe.ai/reference/get_transformation.md
+  - https://docs.docupipe.ai/reference/get_transformation_result.md
+  - https://docs.docupipe.ai/reference/get_webhook_endpoint.md
+  - https://docs.docupipe.ai/reference/list_analyses.md
+  - https://docs.docupipe.ai/reference/list_classes.md
+  - https://docs.docupipe.ai/reference/list_datasets.md
+  - https://docs.docupipe.ai/reference/list_documents.md
+  - https://docs.docupipe.ai/reference/list_extractions.md
+  - https://docs.docupipe.ai/reference/list_jobs.md
+  - https://docs.docupipe.ai/reference/list_reviews.md
+  - https://docs.docupipe.ai/reference/list_schemas.md
+  - https://docs.docupipe.ai/reference/list_standardizations.md
+  - https://docs.docupipe.ai/reference/list_transformations.md
+  - https://docs.docupipe.ai/reference/list_webhook_endpoints.md
+  - https://docs.docupipe.ai/reference/list_workflows.md
+  - https://docs.docupipe.ai/reference/match_standardization.md
+  - https://docs.docupipe.ai/reference/merged_excel_download.md
+  - https://docs.docupipe.ai/reference/post_add_class.md
+  - https://docs.docupipe.ai/reference/post_analyze_data.md
+  - https://docs.docupipe.ai/reference/post_analyze_document.md
+  - https://docs.docupipe.ai/reference/post_classify_batch.md
+  - https://docs.docupipe.ai/reference/post_convert_excel.md
+  - https://docs.docupipe.ai/reference/post_copy_classification.md
+  - https://docs.docupipe.ai/reference/post_copy_schema.md
+  - https://docs.docupipe.ai/reference/post_document.md
+  - https://docs.docupipe.ai/reference/post_edit_class.md
+  - https://docs.docupipe.ai/reference/post_edit_schema.md
+  - https://docs.docupipe.ai/reference/post_merge.md
+  - https://docs.docupipe.ai/reference/post_merge_standardizations.md
+  - https://docs.docupipe.ai/reference/post_query.md
+  - https://docs.docupipe.ai/reference/post_review_batch.md
+  - https://docs.docupipe.ai/reference/post_schema.md
+  - https://docs.docupipe.ai/reference/post_schema_autogenerate.md
+  - https://docs.docupipe.ai/reference/post_split_document.md
+  - https://docs.docupipe.ai/reference/post_standardize_batch_v2.md
+  - https://docs.docupipe.ai/reference/post_standardize_v3.md
+  - https://docs.docupipe.ai/reference/post_workflow_on_submit_document.md
+  - https://docs.docupipe.ai/reference/run_workflow_v2.md
+  - https://docs.docupipe.ai/reference/search_documents.md
+  - https://docs.docupipe.ai/reference/search_schemas.md
+  - https://docs.docupipe.ai/reference/search_standardizations.md
+  - https://docs.docupipe.ai/reference/update_documents_dataset.md
+  - https://docs.docupipe.ai/reference/update_documents_metadata.md
+  - https://docs.docupipe.ai/reference/update_review.md
+  - https://docs.docupipe.ai/reference/update_workflow.md
+  - https://docs.docupipe.ai/reference/wait_for_jobs.md
+  merge:
+    pages: 90
+    deduped: 553
+    conflicts_kept_first: 0

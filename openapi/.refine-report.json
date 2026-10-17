@@ -1,0 +1,41 @@
+{
+  "provider": "docupanda",
+  "sources": [
+    "docupanda-docupipe-openapi.yml"
+  ],
+  "outputs": [
+    "docupanda-account-api-openapi.yml",
+    "docupanda-analysis-api-openapi.yml",
+    "docupanda-classification-api-openapi.yml",
+    "docupanda-document-api-openapi.yml",
+    "docupanda-job-api-openapi.yml",
+    "docupanda-review-api-openapi.yml",
+    "docupanda-schema-api-openapi.yml",
+    "docupanda-standardization-api-openapi.yml",
+    "docupanda-transformation-api-openapi.yml",
+    "docupanda-webhook-api-openapi.yml",
+    "docupanda-workflow-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/docupanda-docupipe-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (0 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "docupanda-docupipe-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Account",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Analysis",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Classification",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Document",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Job",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Review",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Schema",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Standardization",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Transformation",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Webhook",
+    "docupanda-docupipe-openapi.yml: declared missing tag: Workflow",
+    "apis.yml register: written (+11 apis, 21 total)"
+  ],
+  "skipped": []
+}

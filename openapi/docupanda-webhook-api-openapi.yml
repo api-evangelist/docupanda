@@ -1,0 +1,444 @@
+openapi: 3.2.0
+info:
+  title: DocuPipe Webhook API
+  version: '1.0'
+servers:
+- url: https://app.docupipe.ai
+tags:
+- name: Webhook
+paths:
+  /webhook/delete-endpoint:
+    post:
+      tags:
+      - Webhook
+      summary: Deregister an Endpoint
+      description: Deregister a webhook endpoint from the current workspace. The endpoint stops receiving new events.
+      operationId: delete_endpoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteWebhookEndpointRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteWebhookEndpointResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /webhook/endpoint/{endpoint_id}:
+    get:
+      summary: Retrieve an Endpoint
+      description: Retrieve a webhook endpoint by its endpoint ID. The response includes the endpoint's signing secret, which you use to verify the svix-id, svix-timestamp and svix-signature headers on every delivered event.
+      operationId: get_webhook_endpoint
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+      parameters:
+      - name: endpoint_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Endpoint Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpointResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Webhook
+  /webhook/endpoints:
+    get:
+      tags:
+      - Webhook
+      summary: List Endpoints
+      description: List all webhook endpoints registered for the current workspace. Signing secrets are not included here - retrieve a single endpoint to get its secret.
+      operationId: list_webhook_endpoints
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WebhookEndpointResponse'
+                type: array
+                title: Response List Webhook Endpoints Webhook Endpoints Get
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /webhook/generate-endpoint:
+    post:
+      tags:
+      - Webhook
+      summary: Register an Endpoint
+      description: Register a webhook endpoint for the current workspace. Set subscribedEvents to receive only those event types. If subscribedEvents is omitted, the endpoint receives all events.
+      operationId: generate_endpoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebhookEndpointRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWebhookEndpointResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+  /webhook/get-portal-link:
+    get:
+      tags:
+      - Webhook
+      summary: Get Webhook Portal URL
+      description: Generates a magic link for you to log on to URL to the app portal. From the portal you can configure webhook subscriptions in a user-friendly interface.
+      operationId: get_portal_link
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookPortalResponse'
+      security:
+      - APIKeyHeader: []
+      - HTTPBearer: []
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CreateWebhookEndpointRequest:
+      properties:
+        url:
+          type: string
+          title: Url
+          description: The URL of the webhook endpoint
+        subscribedEvents:
+          items:
+            $ref: '#/components/schemas/EventTypeEnum'
+          type: array
+          title: Subscribedevents
+          description: The events to subscribe to, if not specified, all events will be sent to the endpoint
+      type: object
+      required:
+      - url
+      title: CreateWebhookEndpointRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    DeleteWebhookEndpointResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: The webhook endpoint was successfully deleted
+          default: true
+      type: object
+      title: DeleteWebhookEndpointResponse
+    WebhookPortalResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+          description: Generates a magic link for you to log on to URL to the app portal. From the portal you can configure webhook subscriptions
+        token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Token
+          description: Svix app portal access token. Only populated for self-hosted on prem deployments of docupipe.
+        appId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Appid
+          description: Svix application ID. Only populated for self-hosted on prem deployments of docupipe.
+        serverUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Serverurl
+          description: Svix server URL for self-hosted Svix portal access.
+      type: object
+      required:
+      - url
+      title: WebhookPortalResponse
+    DeleteWebhookEndpointRequest:
+      properties:
+        endpointId:
+          type: string
+          title: Endpointid
+          description: The ID which identifies the webhook endpoint
+      type: object
+      required:
+      - endpointId
+      title: DeleteWebhookEndpointRequest
+    EventTypeEnum:
+      type: string
+      enum:
+      - document.processed.success
+      - document.processed.error
+      - standardization.processed.success
+      - standardization.processed.error
+      - transformation.processed.success
+      - transformation.processed.error
+      - review.processed.success
+      - review.processed.error
+      - review.verified.success
+      - review.rejected.success
+      - schema.processed.success
+      - schema.processed.error
+      - classification.processed.success
+      - classification.processed.error
+      - split.processed.success
+      - split.processed.error
+      - merge.processed.success
+      - merge.processed.error
+      - workflow.processed.success
+      - workflow.processed.error
+      title: EventTypeEnum
+    CreateWebhookEndpointResponse:
+      properties:
+        endpointId:
+          type: string
+          title: Endpointid
+          description: The ID which identifies the endpoint
+      type: object
+      required:
+      - endpointId
+      title: CreateWebhookEndpointResponse
+    WebhookEndpointResponse:
+      properties:
+        endpointId:
+          type: string
+          title: Endpointid
+          description: The ID which identifies the webhook endpoint
+        url:
+          type: string
+          title: Url
+          description: The URL which receives webhook events
+        description:
+          type: string
+          title: Description
+          description: The webhook endpoint description
+        subscribedEvents:
+          items:
+            $ref: '#/components/schemas/EventTypeEnum'
+          type: array
+          title: Subscribedevents
+          description: The events sent to this endpoint. If not specified, all events are sent
+        disabled:
+          type: boolean
+          title: Disabled
+          description: Whether delivery to this webhook endpoint is disabled
+        secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Secret
+          description: The signing secret for this endpoint, used to verify that a delivered event genuinely came from DocuPipe. Returned when retrieving a single endpoint; omitted when listing endpoints
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+          description: The date and time when the webhook endpoint was created
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+          description: The date and time when the webhook endpoint was last updated
+      type: object
+      required:
+      - endpointId
+      - url
+      - description
+      - disabled
+      - createdAt
+      - updatedAt
+      title: WebhookEndpointResponse
+    ErrorResponse:
+      properties:
+        detail:
+          items:
+            type: string
+          type: array
+          title: Detail
+          description: Details about the error
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    HTTPBearer:
+      type: http
+      scheme: bearer
+x-provenance:
+  method: searched
+  source: https://docs.docupipe.ai/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.docupipe.ai/reference/apply_transformations.md
+  - https://docs.docupipe.ai/reference/bulk_excel_download.md
+  - https://docs.docupipe.ai/reference/bulk_ocr_download.md
+  - https://docs.docupipe.ai/reference/bulk_original_download.md
+  - https://docs.docupipe.ai/reference/bulk_xml_download.md
+  - https://docs.docupipe.ai/reference/create_presigned_upload_url.md
+  - https://docs.docupipe.ai/reference/create_transformation.md
+  - https://docs.docupipe.ai/reference/delete_analyses.md
+  - https://docs.docupipe.ai/reference/delete_class.md
+  - https://docs.docupipe.ai/reference/delete_document.md
+  - https://docs.docupipe.ai/reference/delete_documents.md
+  - https://docs.docupipe.ai/reference/delete_endpoint.md
+  - https://docs.docupipe.ai/reference/delete_jobs.md
+  - https://docs.docupipe.ai/reference/delete_reviews.md
+  - https://docs.docupipe.ai/reference/delete_schema.md
+  - https://docs.docupipe.ai/reference/delete_standardization.md
+  - https://docs.docupipe.ai/reference/delete_standardizations.md
+  - https://docs.docupipe.ai/reference/delete_workflow.md
+  - https://docs.docupipe.ai/reference/download_excel_url.md
+  - https://docs.docupipe.ai/reference/download_ocr_url.md
+  - https://docs.docupipe.ai/reference/download_original_url.md
+  - https://docs.docupipe.ai/reference/download_public_url.md
+  - https://docs.docupipe.ai/reference/generate_endpoint.md
+  - https://docs.docupipe.ai/reference/get_account.md
+  - https://docs.docupipe.ai/reference/get_analysis.md
+  - https://docs.docupipe.ai/reference/get_convert_excel.md
+  - https://docs.docupipe.ai/reference/get_document.md
+  - https://docs.docupipe.ai/reference/get_document_detailed.md
+  - https://docs.docupipe.ai/reference/get_document_summary.md
+  - https://docs.docupipe.ai/reference/get_document_transformation_result.md
+  - https://docs.docupipe.ai/reference/get_job.md
+  - https://docs.docupipe.ai/reference/get_job_summary.md
+  - https://docs.docupipe.ai/reference/get_portal_link.md
+  - https://docs.docupipe.ai/reference/get_presigned_url.md
+  - https://docs.docupipe.ai/reference/get_proposed_schemas.md
+  - https://docs.docupipe.ai/reference/get_review_by_id.md
+  - https://docs.docupipe.ai/reference/get_schema.md
+  - https://docs.docupipe.ai/reference/get_schema_summary.md
+  - https://docs.docupipe.ai/reference/get_standardization.md
+  - https://docs.docupipe.ai/reference/get_standardization_pdf.md
+  - https://docs.docupipe.ai/reference/get_standardization_review.md
+  - https://docs.docupipe.ai/reference/get_standardization_summary.md
+  - https://docs.docupipe.ai/reference/get_standardization_text.md
+  - https://docs.docupipe.ai/reference/get_standardization_xml.md
+  - https://docs.docupipe.ai/reference/get_transformation.md
+  - https://docs.docupipe.ai/reference/get_transformation_result.md
+  - https://docs.docupipe.ai/reference/get_webhook_endpoint.md
+  - https://docs.docupipe.ai/reference/list_analyses.md
+  - https://docs.docupipe.ai/reference/list_classes.md
+  - https://docs.docupipe.ai/reference/list_datasets.md
+  - https://docs.docupipe.ai/reference/list_documents.md
+  - https://docs.docupipe.ai/reference/list_extractions.md
+  - https://docs.docupipe.ai/reference/list_jobs.md
+  - https://docs.docupipe.ai/reference/list_reviews.md
+  - https://docs.docupipe.ai/reference/list_schemas.md
+  - https://docs.docupipe.ai/reference/list_standardizations.md
+  - https://docs.docupipe.ai/reference/list_transformations.md
+  - https://docs.docupipe.ai/reference/list_webhook_endpoints.md
+  - https://docs.docupipe.ai/reference/list_workflows.md
+  - https://docs.docupipe.ai/reference/match_standardization.md
+  - https://docs.docupipe.ai/reference/merged_excel_download.md
+  - https://docs.docupipe.ai/reference/post_add_class.md
+  - https://docs.docupipe.ai/reference/post_analyze_data.md
+  - https://docs.docupipe.ai/reference/post_analyze_document.md
+  - https://docs.docupipe.ai/reference/post_classify_batch.md
+  - https://docs.docupipe.ai/reference/post_convert_excel.md
+  - https://docs.docupipe.ai/reference/post_copy_classification.md
+  - https://docs.docupipe.ai/reference/post_copy_schema.md
+  - https://docs.docupipe.ai/reference/post_document.md
+  - https://docs.docupipe.ai/reference/post_edit_class.md
+  - https://docs.docupipe.ai/reference/post_edit_schema.md
+  - https://docs.docupipe.ai/reference/post_merge.md
+  - https://docs.docupipe.ai/reference/post_merge_standardizations.md
+  - https://docs.docupipe.ai/reference/post_query.md
+  - https://docs.docupipe.ai/reference/post_review_batch.md
+  - https://docs.docupipe.ai/reference/post_schema.md
+  - https://docs.docupipe.ai/reference/post_schema_autogenerate.md
+  - https://docs.docupipe.ai/reference/post_split_document.md
+  - https://docs.docupipe.ai/reference/post_standardize_batch_v2.md
+  - https://docs.docupipe.ai/reference/post_standardize_v3.md
+  - https://docs.docupipe.ai/reference/post_workflow_on_submit_document.md
+  - https://docs.docupipe.ai/reference/run_workflow_v2.md
+  - https://docs.docupipe.ai/reference/search_documents.md
+  - https://docs.docupipe.ai/reference/search_schemas.md
+  - https://docs.docupipe.ai/reference/search_standardizations.md
+  - https://docs.docupipe.ai/reference/update_documents_dataset.md
+  - https://docs.docupipe.ai/reference/update_documents_metadata.md
+  - https://docs.docupipe.ai/reference/update_review.md
+  - https://docs.docupipe.ai/reference/update_workflow.md
+  - https://docs.docupipe.ai/reference/wait_for_jobs.md
+  merge:
+    pages: 90
+    deduped: 553
+    conflicts_kept_first: 0
