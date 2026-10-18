@@ -14,6 +14,13 @@ tags:
 - Artificial Intelligence
 - Document Extraction
 - Document Intelligence
+- Intelligent Document Processing
+- OCR
+- Document AI
+tags_raw:
+- Artificial Intelligence
+- Document Extraction
+- Document Intelligence
 - IDP
 - OCR
 - Document AI
@@ -547,6 +554,8 @@ apis:
   humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
   baseURL: https://app.docupipe.ai
   tags:
+  - Documents
+  tags_raw:
   - Document
   properties:
   - type: OpenAPI
@@ -701,6 +710,8 @@ apis:
   humanURL: https://docs.docupipe.ai/reference/getting-started-with-docupipe
   baseURL: https://app.docupipe.ai
   tags:
+  - Workflows
+  tags_raw:
   - Workflow
   properties:
   - type: OpenAPI
