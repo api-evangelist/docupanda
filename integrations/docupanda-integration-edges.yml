@@ -1,4 +1,4 @@
-generated: '2026-10-14'
+generated: '2026-10-20'
 method: searched
 source:
 - https://zapier.com/apps/docupipe/integrations
@@ -36,6 +36,18 @@ marketplace_apps:
     label: Upload Document
   searches: []
 edges:
+- partner_name: QuickBooks Online
+  partner: quickbooks
+  partner_match: domain+name-among-holders
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  relationship: ipaas-bridge
+  evidence: https://zapier.com/apps/docupipe/integrations/quickbooks
+  direction: third-party
+  category: Accounting
+  partner_url: http://intuit.com/
 - partner_name: Google Forms
   partner: google-forms
   partner_match: domain+name-among-holders
@@ -50,7 +62,7 @@ edges:
   partner_url: http://google.com/
 - partner_name: Dropbox
   partner: dropbox
-  partner_match: domain+name-among-holders
+  partner_match: domain
   partner_candidate: null
   type: marketplace
   marketplace: zapier

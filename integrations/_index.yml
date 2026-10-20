@@ -18,6 +18,19 @@
   relationship: ipaas-bridge
   status: pending-generation
   arazzo: null
+- slug: docupanda-quickbooks-online
+  label: QuickBooks Online
+  partner: quickbooks
+  partner_name: QuickBooks Online
+  category: Accounting
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/docupipe/integrations/quickbooks
+  source: edge
+  relationship: ipaas-bridge
+  status: pending-partner-spec
+  arazzo: null
 - slug: docupanda-google-forms
   label: Google Forms
   partner: google-forms
