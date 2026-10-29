@@ -1,4 +1,4 @@
-# DocuPipe (docupanda)
+# DocuPipe
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,159 +64,153 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-**DocuPipe** (formerly DocuPanda), operated by Hoss Inc., is an AI-powered document
-intelligence API that turns unstructured documents (invoices, leases, medical records, insurance
-claims, contracts, bills of lading, receipts, and more) into schema-conformant JSON.
-The platform combines an OCR + parsing pipeline with custom extraction schemas, an agentic
-standardization engine, classification, workflows, visual source-highlight review, and webhooks.
-It publishes [DocuBench](https://www.docupipe.ai/benchmarks/docubench), an open benchmark for
-schema-based extraction across 72 documents.
+DocuPipe (formerly DocuPanda, operated by Hoss Inc.) is an AI-powered document intelligence API that converts unstructured documents — invoices, leases, medical records, claims, contracts, bills of lading, receipts, and more — into structured JSON. The platform pairs an OCR + parsing pipeline with custom extraction schemas, an agentic standardization engine, classification, workflows, visual review, and webhooks. It publishes DocuBench, an open benchmark for schema-based extraction across 72 documents. DocuPipe lists SOC 2 Type 2 and ISO 27001, offers a HIPAA BAA, and deploys in cloud, VPC, or on-premises.
 
-**URL:** [apis.yml](https://raw.githubusercontent.com/api-evangelist/docupanda/refs/heads/main/apis.yml)
+**Areas:** Artificial Intelligence · Document Extraction · Document Intelligence · Intelligent Document Processing · OCR · Document AI
 
-**Run:** [Capabilities Using Naftiko](https://github.com/naftiko/fleet?utm_source=api-evangelist&utm_medium=readme&utm_campaign=company-api-evangelist&utm_content=repo)
+## DocuPipe on APIs.io
 
-## Tags
+Everything profiled for DocuPipe is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/docupanda/](https://apis.io/providers/docupanda/)** — or go straight to one of the APIs or properties below.
 
-AI, Artificial Intelligence, Document Extraction, Document Intelligence, IDP, OCR, Document AI
+### APIs (21)
 
-## Timestamps
+- [DocuPipe Documents API](https://apis.io/apis/docupanda/docupanda-documents-api/) — Submit, retrieve, list, search, split, merge, bulk-download, and delete documents. DocuPipe parses files into searchable PDFs and structured page-level…
+- [DocuPipe Schemas API](https://apis.io/apis/docupanda/docupanda-schemas-api/) — Create, edit, copy, delete, and list extraction schemas, plus AI auto-generate a schema from sample documents and retrieve schema proposals per document.…
+- [DocuPipe Standardizations API](https://apis.io/apis/docupanda/docupanda-standardizations-api/) — Run the agentic V3 standardization engine (or legacy V2) against documents to produce schema-compliant JSON. Retrieve results as JSON, plaintext, or XML;…
+- [DocuPipe Classifications API](https://apis.io/apis/docupanda/docupanda-classifications-api/) — Classify batches of documents into a workspace-defined taxonomy. Manage the class taxonomy (add, edit, delete, list, copy classes across workspaces) and…
+- [DocuPipe Analysis API](https://apis.io/apis/docupanda/docupanda-analysis-api/) — Run free-form LLM analysis prompts against a single document or a batch and retrieve the resulting analysis by id. Useful for one-off Q&A, summaries, or…
+- [DocuPipe Reviews API](https://apis.io/apis/docupanda/docupanda-reviews-api/) — Generate visual extraction reviews that highlight where each standardized field was sourced in the original document. List, update, share via presigned URL,…
+- [DocuPipe Workflows API](https://apis.io/apis/docupanda/docupanda-workflows-api/) — Define on-submit-document workflows that chain classification, schema selection, standardization, and review automatically when a new document is uploaded.…
+- [DocuPipe Jobs API](https://apis.io/apis/docupanda/docupanda-jobs-api/) — Inspect every job DocuPipe runs on your behalf with the credit cost it consumed. Retrieve a job by id, list jobs, bulk-delete jobs, and pull a summary count…
+- [DocuPipe Webhooks API](https://apis.io/apis/docupanda/docupanda-webhooks-api/) — Register and deregister webhook endpoints to receive event-driven callbacks when documents finish processing, classifications complete, or standardizations…
+- [DocuPipe Account API](https://apis.io/apis/docupanda/docupanda-account-api/) — Fetch the current account profile including remaining credits, plan tier, and workspace context. Pair with the Jobs API to build internal usage dashboards.
+- [DocuPipe Account API](https://apis.io/apis/docupanda/docupanda-account-api/) — The Account API from DocuPipe — 1 operation(s) for account.
+- [DocuPipe Analysis API](https://apis.io/apis/docupanda/docupanda-analysis-api/) — The Analysis API from DocuPipe — 4 operation(s) for analysis.
+- [DocuPipe Classification API](https://apis.io/apis/docupanda/docupanda-classification-api/) — The Classification API from DocuPipe — 6 operation(s) for classification.
+- [DocuPipe Document API](https://apis.io/apis/docupanda/docupanda-document-api/) — The Document API from DocuPipe — 18 operation(s) for document.
+- [DocuPipe Job API](https://apis.io/apis/docupanda/docupanda-job-api/) — The Job API from DocuPipe — 4 operation(s) for job.
+- [DocuPipe Review API](https://apis.io/apis/docupanda/docupanda-review-api/) — The Review API from DocuPipe — 6 operation(s) for review.
+- [DocuPipe Schema API](https://apis.io/apis/docupanda/docupanda-schema-api/) — The Schema API from DocuPipe — 8 operation(s) for schema.
+- [DocuPipe Standardization API](https://apis.io/apis/docupanda/docupanda-standardization-api/) — The Standardization API from DocuPipe — 19 operation(s) for standardization.
+- [DocuPipe Transformation API](https://apis.io/apis/docupanda/docupanda-transformation-api/) — The Transformation API from DocuPipe — 6 operation(s) for transformation.
+- [DocuPipe Webhook API](https://apis.io/apis/docupanda/docupanda-webhook-api/) — The Webhook API from DocuPipe — 5 operation(s) for webhook.
+- [DocuPipe Workflow API](https://apis.io/apis/docupanda/docupanda-workflow-api/) — The Workflow API from DocuPipe — 5 operation(s) for workflow.
 
-- **Created:** 2026-05-25
-- **Modified:** 2026-05-25
+### Published properties
 
-## APIs
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-DocuPipe exposes a single REST surface at `https://app.docupipe.ai`. For profiling purposes the
-operations are grouped into ten logical APIs:
+#### MCP servers (1)
 
-### DocuPipe Documents API
-Submit, retrieve, list, search, split, merge, bulk-download, and delete documents. Parses files
-into searchable PDFs and structured page-level text, tables, and bounding boxes. Handles
-handwriting, checkboxes, tables, and 60+ languages.
+Model Context Protocol servers that expose the API to agents.
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
-- [Getting Started](https://docs.docupipe.ai/docs/getting-started)
-- [API Reference (llms.txt index)](https://docs.docupipe.ai/llms.txt)
+- [docupanda-mcp.yml](https://apis.io/servers/docupanda/docupanda-mcp-yml/)
 
-### DocuPipe Schemas API
-Create, edit, copy, delete, and list extraction schemas. Includes AI auto-generation of a schema
-from sample documents and per-document schema proposals.
+#### Agentic access (1)
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+Which operations an agent can call, which act, and which need a human in the loop.
 
-### DocuPipe Standardizations API
-Run the agentic V3 standardization engine (or legacy V2) against documents to produce
-schema-compliant JSON. Retrieve as JSON, plaintext, or XML; bulk-download as Excel or merged Excel;
-query in natural language; and match standardizations against candidate lists.
+- [Docupanda Agentic Access](https://apis.io/agentic-access/docupanda/docupanda-agentic-access/)
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+#### JSON Schema (6)
 
-### DocuPipe Classifications API
-Classify batches of documents into a workspace-defined taxonomy. Add, edit, delete, list, and copy
-classes across workspaces; route documents to the right downstream schema or workflow.
+The data models the API reads and writes.
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+- [Document](https://apis.io/schemas/docupanda/docupanda-document/)
+- [GetAccountResponse](https://apis.io/schemas/docupanda/docupanda-get-account-response/)
+- [JobStandardize](https://apis.io/schemas/docupanda/docupanda-job-standardize/)
+- [JobTransformationAuthoring](https://apis.io/schemas/docupanda/docupanda-job-transformation-authoring/)
+- [Review](https://apis.io/schemas/docupanda/docupanda-review/)
+- [StandardizeV2BatchRequest](https://apis.io/schemas/docupanda/docupanda-standardize-v2-batch-request/)
 
-### DocuPipe Analysis API
-Run free-form LLM analysis prompts against a single document or a batch and retrieve the result by
-id. Suited to one-off Q&A, summaries, or red-flag checks that do not need a fixed schema.
+#### JSON-LD (1)
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+Linked-data contexts for the provider's vocabulary.
 
-### DocuPipe Reviews API
-Generate visual extraction reviews that highlight where each standardized field was sourced in the
-original document. Shareable via presigned URL. Underpins human-in-the-loop QA on production
-extractions.
+- [Docupanda Context](https://apis.io/jsonld/docupanda/docupanda-context/)
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+#### Governance rules (1)
 
-### DocuPipe Workflows API
-Define on-submit-document workflows that chain classification, schema selection, standardization,
-and review automatically when a new document is uploaded.
+Spectral rulesets for the provider's contracts.
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+- [DocuPipe API Rules](https://apis.io/rules/docupanda/docupanda-rules/)
 
-### DocuPipe Jobs API
-Inspect every job DocuPipe runs on your behalf with the credit cost it consumed. Pulls a summary
-count with credit breakdown for FinOps reporting.
+#### Security (3)
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+Authentication, trust centre, and vulnerability disclosure.
 
-### DocuPipe Webhooks API
-Register and deregister webhook endpoints to receive event-driven callbacks when documents finish
-processing, classifications complete, or standardizations are ready. A portal-link endpoint hands
-users a managed subscription portal.
+- [Docupanda Authentication](https://apis.io/security/docupanda/docupanda-authentication/)
+- [Docupanda Domain Security](https://apis.io/security/docupanda/docupanda-domain-security/)
+- [Docupanda Trust Center](https://apis.io/security/docupanda/docupanda-trust-center/)
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+## Where to find this API
 
-### DocuPipe Account API
-Fetch the current account profile including remaining credits, plan tier, and workspace context.
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-- [Documentation](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
-
-## Common Properties
-
-- [Portal — DocuPipe](https://www.docupipe.ai/)
-- [Portal — DocuPanda (legacy)](https://www.docupanda.io)
+- [Website](https://www.docupipe.ai/)
 - [Documentation](https://docs.docupipe.ai/)
-- [API Reference](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
-- [llms.txt API index](https://docs.docupipe.ai/llms.txt)
-- [Getting Started](https://docs.docupipe.ai/docs/getting-started)
-- [Authentication](https://docs.docupipe.ai/reference/authentication)
-- [Console / SignUp / Login](https://app.docupipe.ai/)
-- [Status Page](https://www.docupipe.ai/status)
+- [Getting started](https://docs.docupipe.ai/docs/getting-started)
+- [API reference](https://docs.docupipe.ai/reference/getting-started-with-docupipe)
+- [Pricing](https://www.docupipe.ai/pricing)
+- [Support](https://help.docupipe.ai/en/)
+- [Changelog](https://www.docupipe.ai/changelog)
 - [Blog](https://www.docupipe.ai/blog)
 - [Security](https://www.docupipe.ai/security)
-- [Trust Center](https://docupipe.com/security)
-- [Pricing](https://www.docupipe.ai/pricing)
-- [GitHub — DocuPanda](https://github.com/DocuPanda)
-- [SDK — Python](https://github.com/DocuPanda/docupanda-python-api)
-- [GitHub — DocuPipe](https://github.com/DocuPipe)
-- [Tool — DocuPipe Desktop](https://github.com/DocuPipe/docupipe-desktop)
-- [Benchmark — DocuBench](https://www.docupipe.ai/benchmarks/docubench)
+- [Compliance](https://www.docupipe.ai/security)
+- [GitHub](https://github.com/DocuPanda)
+- [Status](https://www.docupipe.ai/status)
 
-## Pricing
+## API Evangelist rating
 
-| Tier | Price (mo) | Credits | Overage | Notes |
-|---|---|---|---|---|
-| Starter | Free | 100 + 300 sign-up bonus | — | Full API access, no card |
-| Business | $99 | 2,500 | $0.08/credit | HIPAA BAA available |
-| Premium | $499 | 20,000 | $0.05/credit | Unlimited seats, prod + dev envs |
-| Enterprise | Call | Custom | Negotiated | On-prem, dedicated SE, SLAs |
+**Kin Score 47.9** — developing · rubric 0.25.0 · scored 2026-10-23
 
-Most common workflow (parse + extract) costs 3 credits per page. All paid plans get 20% off when
-billed annually.
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 64.4 |
+| Contract governance | 22.0 |
+| Operational transparency | 44.7 |
+| Developer ergonomics | 51.2 |
+| Access clarity | 28.9 |
 
-## Integrations
+**Agent readiness 28.2** — agent-aware
 
-- **Make** — native DocuPipe app with actions and triggers
-- **Workato** — DocuPipe Document Understanding connector
-- **n8n** — DocuPipe for n8n
-- **Microsoft Power Automate** — official connector
-- **Boost.space** — DocuPipe integration
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | yes |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
 
-## Use Cases
+**Regulatory alignment 20.0** — Horizontal (data, software, accessibility, platform)
 
-- **Finance** — invoices, bank statements, loan applications, purchase orders
-- **Healthcare** — medical records and insurance claims (HIPAA BAA)
-- **Logistics** — bills of lading, shipping documents, customs paperwork
-- **Real Estate** — lease and rental agreement terms
-- **Legal** — contract clause extraction
-- **Global Operations** — 60+ language support
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/docupanda/](https://apis.io/providers/docupanda/).
 
-## Security & Compliance
+## How this profile is made
 
-- SOC 2 Type 2 certified
-- ISO 27001 certified
-- HIPAA compliant (BAA available on Business+ plans)
-- GDPR compliant
-- TLS in transit, encryption at rest
-- Segregated workspaces, audit logs, disaster recovery
-- Cloud, VPC, and on-premises deployment options
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
 
-## Maintainers
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for DocuPipe: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
 
-**FN:** Kin Lane
+## Open an issue
 
-**Email:** info@apievangelist.com
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/docupanda/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
